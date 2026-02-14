@@ -1,26 +1,41 @@
 import { SignJWT, jwtVerify, JWTPayload } from "jose"
 
-const secret = process.env.JWT_SECRET
+function getSecretKey() {
+  const secret = process.env.JWT_SECRET
 
-if (!secret) {
-  throw new Error("JWT_SECRET is not defined")
+  if (!secret) {
+    throw new Error("JWT_SECRET is not defined")
+  }
+
+  return new TextEncoder().encode(secret)
 }
-
-const secretKey = new TextEncoder().encode(secret)
 
 export interface TokenPayload extends JWTPayload {
   userId: string
   role: string
 }
 
-export async function signToken(payload: TokenPayload) {
+export async function signAccessToken(payload: TokenPayload) {
+  const secretKey = getSecretKey()
+
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("1h")
+    .setExpirationTime("15m")
+    .sign(secretKey)
+}
+
+export async function signRefreshToken(payload: TokenPayload) {
+  const secretKey = getSecretKey()
+
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime("7d")
     .sign(secretKey)
 }
 
 export async function verifyToken(token: string): Promise<TokenPayload> {
+  const secretKey = getSecretKey()
+
   const { payload } = await jwtVerify(token, secretKey)
 
   if (!payload.userId || !payload.role) {
@@ -29,18 +44,3 @@ export async function verifyToken(token: string): Promise<TokenPayload> {
 
   return payload as TokenPayload
 }
-
-export async function signAccessToken(payload: TokenPayload) {
-  return await new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("15m")
-    .sign(secretKey)
-}
-
-export async function signRefreshToken(payload: TokenPayload) {
-  return await new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("7d")
-    .sign(secretKey)
-}
-
