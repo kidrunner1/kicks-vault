@@ -1,11 +1,19 @@
-export default function DashboardLayout({
+import Navbar from "../component/Navbar"
+
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-black text-white ">
-      {children}
-    </div>
+    <html lang="en">
+      <body suppressHydrationWarning>
+
+        <Navbar />
+
+        {children}
+
+      </body>
+    </html>
   )
 }
