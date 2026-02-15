@@ -18,7 +18,7 @@ import ProductOverlay from "./ProductOverlay"
 export default function Model3D(): JSX.Element {
 
     return (
-        <div className="relative w-full h-[600px]">
+        <div className="relative w-full h-[1000px]">
 
             <Canvas
                 camera={{ position: [0, 0, 4], fov: 40 }}

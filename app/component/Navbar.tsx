@@ -1,6 +1,6 @@
 "use client"
 
-import { LogOut, Rocket } from "lucide-react"
+import { LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 
@@ -20,63 +20,66 @@ export default function Navbar() {
   return (
 
     <motion.nav
-      initial={{ y: -60, opacity: 0 }}
+      initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
+      transition={{ duration: 0.35 }}
       className="
         fixed
-        top-0
+        top-5
         left-0
         right-0
         z-[9999]
 
-        bg-black
-        border-b border-white/10
-
-        shadow-lg shadow-black/40
+        flex
+        justify-center
+        px-4
       "
     >
 
-      <div className="
-        max-w-7xl
-        mx-auto
+      <div
+        className="
+          w-full
+          max-w-5xl
 
-        px-6
-        h-14
+          bg-gray-900/50
+          backdrop-blur-xl
+          backdrop-saturate-150
 
-        flex
-        items-center
-        justify-between
+          border border-white/10
 
-        text-white
-      ">
+          rounded-2xl
+
+          shadow-lg shadow-black/30
+
+          px-6
+          h-14
+
+          flex
+          items-center
+          justify-between
+
+          text-white
+        "
+      >
 
         {/* Logo */}
-        <div className="
-          flex items-center gap-2
-          font-semibold
-          text-base
-          tracking-wide
-        ">
-
-          <Rocket className="text-purple-500 w-5 h-5"/>
-
-          WEB STORE
-
+        <div className="flex items-center gap-2 font-semibold tracking-wide">
+          <span className="text-lg">👟</span>
+          KicksVault
         </div>
 
 
-        {/* Right side */}
+        {/* Logout */}
         <button
           onClick={handleLogout}
           className="
             flex items-center gap-2
 
-            bg-zinc-800
-            hover:bg-zinc-700
+            bg-white/5
+            hover:bg-white/10
 
-            border border-zinc-700
-            hover:border-zinc-600
+            border border-white/10
+            hover:border-white/20
 
             px-4 py-1.5
             rounded-lg

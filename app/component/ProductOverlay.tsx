@@ -6,9 +6,6 @@ import { motion, Variants } from "framer-motion"
 
 import { useStore } from "../store/store"
 
-/**
- * Animation variants
- */
 const container: Variants = {
     hidden: {
         opacity: 0,
@@ -40,17 +37,10 @@ const item: Variants = {
     },
 }
 
-/**
- * List Props
- */
 interface ListProps {
     children: ReactNode
     open: boolean
 }
-
-/**
- * Animated List
- */
 function List({ children, open }: ListProps): JSX.Element {
     return (
         <motion.ul
@@ -69,9 +59,6 @@ function List({ children, open }: ListProps): JSX.Element {
     )
 }
 
-/**
- * Product Overlay Component
- */
 export default function ProductOverlay(): JSX.Element {
 
     const state = useStore()
@@ -93,33 +80,35 @@ export default function ProductOverlay(): JSX.Element {
             {/* Center info */}
             <div className="info">
 
-                <h1>36</h1>
+                <h1>KicksVault</h1>
 
                 <List open={state.open}>
 
-                    <h3>NIKE AIR</h3>
+                    <h3>DISCOVER</h3>
 
-                    <h3>“ZOOM”</h3>
+                    <h3>COLLECT</h3>
 
                     <h3>
                         <span className="accent">
-                            PEGASUS
+                            YOUR STYLE
                         </span>
                     </h3>
 
-                    <h4>Running Shoes</h4>
+                    <h4>Premium Sneaker Platform</h4>
 
-                    <p className="price">$98.97</p>
+                    <p className="price">Explore Now</p>
 
                     <p>
-                        Year after year Pegasus has proven itself on the feet of runners everywhere.
-                        Now our most trusted style returns with new innovations that make it more itself than ever.
-                        Meet the reliable, comfortable, always ready-to-run Nike Air Zoom Pegasus.
+                        Welcome to KicksVault — your destination for exploring the world of sneakers.
+                        Discover iconic designs, modern releases, and timeless classics all in one place.
+                        Built for sneaker enthusiasts who value style, authenticity, and innovation.
+                        Start your journey and find the perfect pair that defines you.
                     </p>
 
                 </List>
 
             </div>
+
         </>
     )
 }
