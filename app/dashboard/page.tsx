@@ -4,8 +4,7 @@ import { JSX } from "react"
 
 import Navbar from "../component/Navbar"
 import Model3D from "../component/Model3D"
-import { title } from "process"
-import path from "path"
+
 
 /**
  * Landing Page Component

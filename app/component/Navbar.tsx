@@ -19,7 +19,7 @@ export default function Navbar() {
 
   return (
 
-    <div className="fixed top-[10px] left-0 right-0 z-50 flex justify-center pointer-events-none">
+    <div className="fixed top-[10px] left-0 right-0 z-50 flex z-[9999] justify-center pointer-events-none">
 
       <motion.div
         initial={{ y: -40, opacity: 0, scale: 0.95 }}
@@ -28,7 +28,6 @@ export default function Navbar() {
         className="
     pointer-events-auto
 
-    bg-transparent
     backdrop-blur-md
 
     border border-white/10
