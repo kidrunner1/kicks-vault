@@ -19,36 +19,49 @@ export default function Navbar() {
 
   return (
 
-    <div className="fixed top-[10px] left-0 right-0 z-50 flex z-[9999] justify-center pointer-events-none">
+    <motion.nav
+      initial={{ y: -60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="
+        fixed
+        top-0
+        left-0
+        right-0
+        z-[9999]
 
-      <motion.div
-        initial={{ y: -40, opacity: 0, scale: 0.95 }}
-        animate={{ y: 0, opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="
-    pointer-events-auto
+        bg-black
+        border-b border-white/10
 
-    backdrop-blur-md
+        shadow-lg shadow-black/40
+      "
+    >
 
-    border border-white/10
-    shadow-lg shadow-black/30
+      <div className="
+        max-w-7xl
+        mx-auto
 
-    rounded-2xl
+        px-6
+        h-14
 
-    px-6 py-2.5
+        flex
+        items-center
+        justify-between
 
-    flex items-center justify-between
-
-    w-[min(92%,900px)]
-  "
-      >
+        text-white
+      ">
 
         {/* Logo */}
-        <div className="flex items-center gap-2 font-semibold text-white">
+        <div className="
+          flex items-center gap-2
+          font-semibold
+          text-base
+          tracking-wide
+        ">
 
-          <span className="tracking-wide text-black">
-            WEB STORE
-          </span>
+          <Rocket className="text-purple-500 w-5 h-5"/>
+
+          WEB STORE
 
         </div>
 
@@ -59,31 +72,30 @@ export default function Navbar() {
           className="
             flex items-center gap-2
 
-            bg-white/10
-            hover:bg-white/20
+            bg-zinc-800
+            hover:bg-zinc-700
 
-            border border-white/10
-            hover:border-white/20
+            border border-zinc-700
+            hover:border-zinc-600
 
             px-4 py-1.5
-            rounded-xl
+            rounded-lg
 
-            text-sm text-white
+            text-sm
 
             transition-all duration-200
 
             hover:scale-105
             active:scale-95
-            shadow-sm hover:shadow-md
           "
         >
-          <LogOut size={16} className="text-black" />
-          <h1 className="text-black">Logout</h1>
+          <LogOut size={16}/>
+          Logout
         </button>
 
-      </motion.div>
+      </div>
 
-    </div>
+    </motion.nav>
 
   )
 

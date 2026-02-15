@@ -6,18 +6,7 @@ import Navbar from "../component/Navbar"
 import Model3D from "../component/Model3D"
 
 
-/**
- * Landing Page Component
- */
 export default function LandingPage(): JSX.Element {
-
-  const models = [
-    {
-      id:1,
-      title: "Shoe Model",
-      path: "/3D/nike_air_zoom_pegasus_36-transformed.glb"
-    },
-  ]
 
   return (
     <div
@@ -26,8 +15,7 @@ export default function LandingPage(): JSX.Element {
         bg-gray-300
         flex
         flex-col
-      "
-    >
+      ">
 
       {/* Navbar */}
       <Navbar />
