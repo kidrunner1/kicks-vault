@@ -4,7 +4,7 @@ import { Children, ReactNode, JSX } from "react"
 import { motion, Variants } from "framer-motion"
 
 
-import { useStore } from "../store/store"
+import { useStore } from "../../store/store"
 
 const container: Variants = {
     hidden: {

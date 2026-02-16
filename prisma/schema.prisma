@@ -13,12 +13,88 @@ model User {
   password      String
   role          Role     @default(USER)
   refreshToken  String?  
+
+  favorites     Favorite[]
+  
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
-
 
 enum Role {
   USER
   ADMIN
 }
+
+model Brand {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  logo      String?
+
+  shoes     Shoe[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Shoe {
+  id          String   @id @default(uuid())
+
+  name        String
+  slug        String   @unique
+
+  description String
+
+  price       Float?
+
+  releaseDate DateTime?
+
+  featured    Boolean  @default(false)
+
+  brandId     String
+  brand       Brand    @relation(fields: [brandId], references: [id])
+
+  images      ShoeImage[]
+  specs       ShoeSpec[]
+
+  favorites   Favorite[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ShoeImage {
+  id      String @id @default(uuid())
+
+  url     String
+
+  order   Int    @default(0)
+
+  shoeId  String
+  shoe    Shoe   @relation(fields: [shoeId], references: [id], onDelete: Cascade)
+}
+
+model ShoeSpec {
+  id      String @id @default(uuid())
+
+  label   String
+  value   String
+
+  shoeId  String
+  shoe    Shoe   @relation(fields: [shoeId], references: [id], onDelete: Cascade)
+}
+
+model Favorite {
+  id      String @id @default(uuid())
+
+  userId  String
+  shoeId  String
+
+  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shoe    Shoe @relation(fields: [shoeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, shoeId])
+}
+

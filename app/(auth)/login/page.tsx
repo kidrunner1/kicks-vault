@@ -21,7 +21,9 @@ export default function LoginPage() {
 
 
   const handleLogin = async (e: React.FormEvent) => {
+
     e.preventDefault()
+
     setError("")
     setLoading(true)
 
@@ -29,31 +31,42 @@ export default function LoginPage() {
 
       const res = await fetch("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         credentials: "include",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          password
+        }),
+
       })
-
       const data = await res.json()
-
       if (!res.ok) {
+
         setError(data.error || "เข้าสู่ระบบไม่สำเร็จ")
         return
       }
+      // ✅ get current user role
+      const meRes = await fetch("/api/auth/me", {
+        credentials: "include"
+      })
 
-      router.push("/dashboard")
+      const user = await meRes.json()
 
+      if (user.role === "ADMIN") {
+        router.push("/admin")
+      } else {
+        router.push("/dashboard")
+      }
     } catch {
-
       setError("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง")
 
     } finally {
 
       setLoading(false)
-
     }
   }
-
 
   return (
 
@@ -82,7 +95,7 @@ export default function LoginPage() {
             shadow-md
             flex items-center justify-center
           ">
-            <ArrowRight size={24}/>
+            <ArrowRight size={24} />
           </div>
         </div>
 
@@ -112,13 +125,13 @@ export default function LoginPage() {
           {/* EMAIL */}
           <div className="relative">
 
-            <Mail className="absolute left-3 top-3.5 text-gray-400 w-5 h-5"/>
+            <Mail className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
 
             <input
               type="email"
               placeholder=" "
               value={email}
-              onChange={(e)=>setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="
                 peer w-full
@@ -161,13 +174,13 @@ export default function LoginPage() {
           {/* PASSWORD */}
           <div className="relative">
 
-            <Lock className="absolute left-3 top-3.5 text-gray-400 w-5 h-5"/>
+            <Lock className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
 
             <input
-              type={showPassword ? "text":"password"}
+              type={showPassword ? "text" : "password"}
               placeholder=" "
               value={password}
-              onChange={(e)=>setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               required
               className="
                 peer w-full
@@ -208,12 +221,12 @@ export default function LoginPage() {
             {/* SHOW PASSWORD */}
             <button
               type="button"
-              onClick={()=>setShowPassword(!showPassword)}
+              onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-3.5 text-gray-400"
             >
               {showPassword
-                ? <EyeOff size={18}/>
-                : <Eye size={18}/>
+                ? <EyeOff size={18} />
+                : <Eye size={18} />
               }
             </button>
 
@@ -245,11 +258,11 @@ export default function LoginPage() {
 
         {/* DIVIDER */}
         <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-gray-300"/>
+          <div className="flex-1 h-px bg-gray-300" />
           <span className="text-sm text-gray-400">
             หรือเข้าสู่ระบบด้วย
           </span>
-          <div className="flex-1 h-px bg-gray-300"/>
+          <div className="flex-1 h-px bg-gray-300" />
         </div>
 
 
@@ -257,12 +270,12 @@ export default function LoginPage() {
         <div className="grid grid-cols-2 gap-3">
 
           <button className="flex items-center justify-center gap-2 border rounded-xl py-3 bg-white hover:bg-gray-50 transition shadow-sm">
-            <FcGoogle size={20}/>
+            <FcGoogle size={20} />
             Google
           </button>
 
           <button className="flex items-center justify-center gap-2 border rounded-xl py-3 bg-white hover:bg-gray-50 transition shadow-sm text-blue-600">
-            <FaFacebookF size={18}/>
+            <FaFacebookF size={18} />
             Facebook
           </button>
 
@@ -273,7 +286,7 @@ export default function LoginPage() {
         <p className="text-sm mt-6 text-center text-gray-500">
           ยังไม่มีบัญชี?{" "}
           <span
-            onClick={()=>router.push("/register")}
+            onClick={() => router.push("/register")}
             className="text-black font-semibold cursor-pointer hover:underline"
           >
             สมัครสมาชิก

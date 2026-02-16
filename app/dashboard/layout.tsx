@@ -1,4 +1,4 @@
-import Navbar from "../component/Navbar"
+import Navbar from "../component/ui/Navbar"
 
 export default function RootLayout({
   children,
@@ -6,14 +6,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body suppressHydrationWarning>
+    <div className="min-h-screen bg-gray-100">
 
-        <Navbar />
+      <Navbar />
 
-        {children}
+      {children}
 
-      </body>
-    </html>
+
+    </div>
   )
 }

@@ -6,7 +6,7 @@ import { MeshTransmissionMaterial } from "@react-three/drei"
 import { easing } from "maath"
 import * as THREE from "three"
 
-import { state, useStore } from "../store/store"
+import { state, useStore } from "../../store/store"
 
 interface SelectorProps {
     children: ReactNode
