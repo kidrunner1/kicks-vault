@@ -102,7 +102,7 @@ export default function LoginPage() {
 
         {/* TITLE */}
         <h2 className="text-2xl font-bold text-center mb-1">
-          ยิร้ต้อนรับกลับ!
+          ยินดีต้อนรับกลับ!
         </h2>
 
         <p className="text-gray-500 text-center mb-6 text-sm">

@@ -1,22 +1,11 @@
+"use client"
+
 import { proxy, useSnapshot } from "valtio"
 
-/**
- * Store type
- */
-export interface StoreState {
-  open: boolean
-}
-
-/**
- * Global mutable state (WRITE here)
- */
-export const state = proxy<StoreState>({
+export const state = proxy({
   open: false,
 })
 
-/**
- * Hook to read state (READ only)
- */
-export function useStore(): Readonly<StoreState> {
+export function useStore() {
   return useSnapshot(state)
 }

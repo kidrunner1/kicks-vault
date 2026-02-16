@@ -30,7 +30,7 @@ export default function AuthLayout({
         <div
           className="
             absolute inset-0
-            bg-[url('/images/shoes/login.jpg')]
+            bg-[url('/images/shoes/logo.jpg')]
             bg-cover bg-center
             scale-110
             blur-sm

@@ -1,14 +1,16 @@
 // app/fonts.ts
 
-import { Bebas_Neue, Orbitron } from "next/font/google"
+import { Prompt } from "next/font/google"
 
-export const bebas = Bebas_Neue({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-bebas",
-})
-
-export const orbitron = Orbitron({
-  subsets: ["latin"],
-  variable: "--font-orbitron",
+export const prompt = Prompt({
+  subsets: ["latin", "thai"],  // ⭐ สำคัญสำหรับภาษาไทย
+  weight: [
+    "300",
+    "400",
+    "500",
+    "600",
+    "700"
+  ],
+  variable: "--font-prompt",
+  display: "swap",
 })

@@ -149,3 +149,12 @@ body {
 h1, h2, h3 {
   font-family: var(--font-bebas), sans-serif;
 }
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}

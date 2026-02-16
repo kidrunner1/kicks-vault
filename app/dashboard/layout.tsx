@@ -1,18 +1,27 @@
+"use client"
+
 import Navbar from "../component/ui/Navbar"
+import SmoothScroll from "../component/ui/SmoothScroll"
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+
   return (
-    <div className="min-h-screen bg-gray-100">
 
-      <Navbar />
+    <SmoothScroll>
 
-      {children}
+      <div className="min-h-screen bg-gray-100">
 
+        <Navbar />
 
-    </div>
+        {children}
+
+      </div>
+
+    </SmoothScroll>
+
   )
 }

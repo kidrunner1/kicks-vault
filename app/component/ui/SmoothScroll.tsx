@@ -4,7 +4,7 @@ import Lenis from "lenis"
 import { useEffect } from "react"
 
 export default function SmoothScroll({
-  children
+  children,
 }: {
   children: React.ReactNode
 }) {
@@ -17,18 +17,21 @@ export default function SmoothScroll({
       touchMultiplier: 1,
     })
 
+    let rafId: number
+
     function raf(time: number) {
       lenis.raf(time)
-      requestAnimationFrame(raf)
+      rafId = requestAnimationFrame(raf)
     }
 
-    requestAnimationFrame(raf)
+    rafId = requestAnimationFrame(raf)
 
     return () => {
+      cancelAnimationFrame(rafId)
       lenis.destroy()
     }
 
   }, [])
 
-  return <>{children}</>
+  return children
 }

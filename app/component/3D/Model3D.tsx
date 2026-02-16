@@ -1,31 +1,44 @@
 "use client"
 
-import { useRef, JSX } from "react"
-import { Canvas, useFrame } from "@react-three/fiber"
-import Selector from "./Selector"
-import {
-    useGLTF,
-    ContactShadows,
-    Environment,
-} from "@react-three/drei"
+import { JSX } from "react"
+import { Canvas } from "@react-three/fiber"
 
-import * as THREE from "three"
+import Selector from "./Selector"
+import Shoe from "./Shoe"
 import ProductOverlay from "./ProductOverlay"
 
-/**
- * Model3D Root Component
- */
+import {
+    ContactShadows,
+    Environment,
+    AdaptiveDpr,
+    AdaptiveEvents,
+} from "@react-three/drei"
+
 export default function Model3D(): JSX.Element {
 
     return (
-        <div className="relative w-full h-250">
 
+        <div
+            style={{
+                position: "relative",
+                width: "100%",
+                height: "100vh",
+            }}
+        >
+
+            {/* 3D Canvas Layer */}
             <Canvas
                 camera={{ position: [0, 0, 4], fov: 40 }}
+                dpr={[1, 1.5]}
                 shadows
-                dpr={[1, 2]}
+                style={{
+                    position: "absolute",
+                    inset: 0,
+                }}
             >
 
+                <AdaptiveDpr pixelated />
+                <AdaptiveEvents />
 
                 <ambientLight intensity={0.7} />
 
@@ -37,10 +50,11 @@ export default function Model3D(): JSX.Element {
                     castShadow
                 />
 
-                <Environment preset="city" background blur={1} />
+                {/* lighter than city */}
+                <Environment preset="city" background blur={1}/>
 
                 <ContactShadows
-                    resolution={512}
+                    resolution={256}
                     position={[0, -0.8, 0]}
                     opacity={1}
                     scale={10}
@@ -54,55 +68,19 @@ export default function Model3D(): JSX.Element {
 
             </Canvas>
 
-            <ProductOverlay />
+            {/* Overlay Layer */}
+            <div
+                style={{
+                    position: "absolute",
+                    inset: 0,
+                    pointerEvents: "none",
+                    zIndex: 10,
+                }}
+            >
+                <ProductOverlay />
+            </div>
 
         </div>
+
     )
 }
-
-
-/**
- * Shoe Component
- */
-function Shoe(props: JSX.IntrinsicElements["group"]): JSX.Element {
-
-    const ref = useRef<THREE.Group>(null!)
-
-    const { nodes, materials } = useGLTF(
-        "/3D/nike_air_zoom_pegasus_36-transformed.glb"
-    ) as any
-
-    useFrame((state) => {
-
-        const t = state.clock.getElapsedTime()
-
-        ref.current.rotation.set(
-            Math.cos(t / 4) / 8,
-            Math.sin(t / 3) / 4,
-            0.15 + Math.sin(t / 2) / 8
-        )
-
-        ref.current.position.y =
-            (0.5 + Math.cos(t / 2)) / 7
-    })
-
-    return (
-        <group ref={ref} {...props}>
-
-            <mesh
-                receiveShadow
-                castShadow
-                geometry={nodes.defaultMaterial.geometry}
-                material={materials.NikeShoe}
-            />
-
-        </group>
-    )
-}
-
-/**
- * Preload model
- */
-useGLTF.preload(
-    "/3D/nike_air_zoom_pegasus_36-transformed.glb"
-)

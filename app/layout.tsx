@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { bebas, orbitron } from "./fonts";
+import { prompt } from "./fonts";
 
 export const metadata: Metadata = {
   title: "KicksVault",
@@ -18,9 +18,8 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`
-          ${bebas.variable}
-          ${orbitron.variable}
-          font-[var(--font-orbitron)]
+          ${prompt.variable}
+          font-(--font-orbitron)
           antialiased
         `}
       >

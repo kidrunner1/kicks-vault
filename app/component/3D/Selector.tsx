@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, ReactNode, JSX } from "react"
+import { useRef, ReactNode } from "react"
 import { useFrame } from "@react-three/fiber"
 import { MeshTransmissionMaterial } from "@react-three/drei"
 import { easing } from "maath"
@@ -8,16 +8,20 @@ import * as THREE from "three"
 
 import { state, useStore } from "../../store/store"
 
-interface SelectorProps {
+export default function Selector({
+    children,
+}: {
     children: ReactNode
-}
-
-export default function Selector({ children }: SelectorProps): JSX.Element {
+}) {
 
     const ref = useRef<THREE.Mesh>(null!)
-    const store = useStore()
+
+    const snap = useStore()
+    const open = snap.open
 
     useFrame(({ viewport, camera, pointer }, delta) => {
+
+        if (!ref.current) return
 
         const { width, height } =
             viewport.getCurrentViewport(camera, [0, 0, 3])
@@ -25,38 +29,40 @@ export default function Selector({ children }: SelectorProps): JSX.Element {
         easing.damp3(
             ref.current.position,
             [(pointer.x * width) / 2, (pointer.y * height) / 2, 3],
-            store.open ? 0 : 0.1,
+            open ? 0 : 0.1,
             delta
         )
 
         easing.damp3(
             ref.current.scale,
-            store.open ? 4 : 0.01,
-            store.open ? 0.5 : 0.2,
+            open ? 4 : 0.01,
+            open ? 0.5 : 0.2,
             delta
         )
 
         easing.dampC(
             (ref.current.material as THREE.MeshPhysicalMaterial).color,
-            store.open ? "#f0f0f0" : "#ccc",
+            open ? "#f0f0f0" : "#ccc",
             0.1,
             delta
         )
+
     })
 
     return (
         <>
             <mesh ref={ref}>
-                <circleGeometry args={[1, 64]} />
 
+                <circleGeometry args={[1, 16]} />
                 <MeshTransmissionMaterial
-                    samples={16}
-                    resolution={512}
-                    anisotropicBlur={0.1}
+                    samples={4}
+                    resolution={128}
+                    anisotropicBlur={0.05}
                     thickness={0.1}
                     roughness={0.4}
-                    toneMapped
                 />
+
+
             </mesh>
 
             <group
