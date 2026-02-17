@@ -55,37 +55,43 @@ import type { NextRequest } from "next/server"
 import { verifyToken } from "./lib/jwt"
 
 export async function proxy(request: NextRequest) {
+
   const { pathname } = request.nextUrl
   const token = request.cookies.get("accessToken")?.value
 
+  const isHome = pathname === "/"
+
   const isProtectedRoute =
+    isHome ||                     // ✅ ทำให้ / เป็น protected
     pathname.startsWith("/profile") ||
     pathname.startsWith("/favorites")
 
   const isLoginPage = pathname.startsWith("/login")
   const isRegisterPage = pathname.startsWith("/register")
 
-  if (!isProtectedRoute && !isLoginPage && !isRegisterPage) {
-    return NextResponse.next()
-  }
-
+  // 🔐 ถ้าเป็น protected route และไม่มี token
   if (isProtectedRoute && !token) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
   if (token) {
     try {
+
       await verifyToken(token)
 
+      // 🔁 ถ้า login แล้วพยายามเข้า login/register
       if (isLoginPage || isRegisterPage) {
         return NextResponse.redirect(new URL("/", request.url))
       }
 
       return NextResponse.next()
+
     } catch {
+
       if (isProtectedRoute) {
         return NextResponse.redirect(new URL("/login", request.url))
       }
+
     }
   }
 
@@ -94,10 +100,14 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",                       // ✅ เพิ่ม root
     "/profile/:path*",
     "/favorites/:path*",
     "/login",
     "/register",
   ],
 }
+
+
+
 
