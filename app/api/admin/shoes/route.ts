@@ -49,6 +49,7 @@ export async function POST(req: Request) {
         description: description || "",
         featured: featured ?? false,
         brandId,
+        price: parseFloat(body.price) || 0,
 
         images: {
           create: images?.map((url: string, index: number) => ({

@@ -1,145 +1,127 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { JSX } from "react/jsx-runtime"
 
-const features = [
+interface StatementBlock {
+  title: string
+  subtitle: string
+  description: string
+}
+
+const statements: StatementBlock[] = [
   {
-    title: "DISCOVER",
-    desc: "Explore curated sneaker collections from iconic classics to modern releases.",
-    highlight: "1000+ sneakers"
+    title: "DISCOVERY",
+    subtitle: "Curated with intention",
+    description:
+      "Every silhouette, every colorway, every era — thoughtfully selected to represent sneaker culture at its highest level."
   },
   {
-    title: "IMMERSIVE",
-    desc: "Experience sneakers in interactive 3D. Rotate, inspect, and feel every detail.",
-    highlight: "3D interaction"
+    title: "IMMERSION",
+    subtitle: "Designed for presence",
+    description:
+      "Not just browsing. Experience form, proportion, and detail through fluid interaction and intentional motion."
   },
   {
-    title: "COLLECT",
-    desc: "Save your favorite pairs and build your personal sneaker vault.",
-    highlight: "Your collection"
-  },
-  {
-    title: "AUTHENTIC",
-    desc: "Every sneaker is verified and presented with premium accuracy.",
-    highlight: "Trusted platform"
-  },
-  {
-    title: "FAST",
-    desc: "Built with modern tech for lightning-fast browsing and smooth experience.",
-    highlight: "Next.js powered"
-  },
-  {
-    title: "FUTURE",
-    desc: "KicksVault evolves with sneaker culture and new digital experiences.",
-    highlight: "Next generation"
+    title: "COLLECTION",
+    subtitle: "Personal, elevated",
+    description:
+      "Build a refined archive of pieces that define your style — a digital vault crafted for modern collectors."
   }
 ]
 
-export default function FeatureSection() {
-
+export default function EditorialSection(): JSX.Element {
   return (
+    <section className="bg-white text-black px-6 md:px-12 py-40">
 
-    <section className="
-      min-h-screen
-      flex
-      flex-col
-      items-center
-      justify-center
-      bg-white
-      px-6
-      py-32
-    ">
-
-      {/* SECTION TITLE */}
-      <motion.h2
-        initial={{ opacity: 0, y: 40 }}
+      {/* Massive Statement */}
+      <motion.div
+        initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
-        className="
-          font-[var(--font-bebas)]
-          text-6xl
-          tracking-widest
-          text-gray-900
-          mb-20
-        "
+        viewport={{ once: true }}
+        transition={{
+          duration: 1.2,
+          ease: [0.22, 1, 0.36, 1]
+        }}
+        className="max-w-6xl mx-auto mb-32"
       >
-        THE PLATFORM
-      </motion.h2>
+        <h2 className="
+          font-[var(--font-bebas)]
+          text-[12vw]
+          leading-none
+          tracking-tight
+        ">
+          MORE THAN
+        </h2>
+        <h2 className="
+          font-[var(--font-bebas)]
+          text-[12vw]
+          leading-none
+          tracking-tight
+        ">
+          A STORE
+        </h2>
 
+        <p className="mt-10 max-w-xl text-lg text-gray-600">
+          KicksVault is a digital space where sneaker culture meets elevated design.
+          Every interaction is crafted with intention.
+        </p>
+      </motion.div>
 
-      {/* GRID */}
-      <div className="
-        grid
-        grid-cols-1
-        md:grid-cols-2
-        lg:grid-cols-3
-        gap-10
-        max-w-6xl
-      ">
+      {/* Editorial Blocks */}
+      <div className="space-y-40 max-w-6xl mx-auto">
 
-        {features.map((f, i) => (
-
+        {statements.map((item, index) => (
           <motion.div
-            key={i}
+            key={item.title}
             initial={{ opacity: 0, y: 80 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.8,
-              delay: i * 0.1,
-              ease: "easeOut"
-            }}
             viewport={{ once: true }}
-            className="
-              group
-              bg-gray-50
-              p-10
-              rounded-3xl
-              border border-gray-200
-
-              hover:bg-black
-              hover:text-white
-
-              transition-all
-              duration-500
-            "
+            transition={{
+              duration: 1,
+              delay: index * 0.15,
+              ease: [0.22, 1, 0.36, 1]
+            }}
+            className={`
+              grid md:grid-cols-2 gap-16 items-center
+              ${index % 2 !== 0 ? "md:flex-row-reverse" : ""}
+            `}
           >
-
-            {/* highlight */}
-            <div className="
-              text-sm
-              text-gray-400
-              group-hover:text-gray-300
-              mb-4
-              font-[var(--font-orbitron)]
-            ">
-              {f.highlight}
+            {/* Big Title */}
+            <div>
+              <h3 className="
+                font-[var(--font-bebas)]
+                text-6xl md:text-7xl
+                tracking-wide
+              ">
+                {item.title}
+              </h3>
             </div>
 
-            {/* title */}
-            <h3 className="
-              font-[var(--font-bebas)]
-              text-3xl
-              tracking-wide
-              mb-4
-            ">
-              {f.title}
-            </h3>
+            {/* Text Content */}
+            <div>
+              <p className="
+                text-sm
+                uppercase
+                tracking-widest
+                text-gray-400
+                mb-6
+              ">
+                {item.subtitle}
+              </p>
 
-            {/* desc */}
-            <p className="
-              text-gray-600
-              group-hover:text-gray-300
-              transition
-            ">
-              {f.desc}
-            </p>
-
+              <p className="
+                text-lg
+                text-gray-700
+                leading-relaxed
+              ">
+                {item.description}
+              </p>
+            </div>
           </motion.div>
-
         ))}
 
       </div>
-
     </section>
-
   )
 }

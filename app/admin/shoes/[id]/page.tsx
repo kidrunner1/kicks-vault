@@ -7,17 +7,14 @@ export default function EditShoePage() {
 
     const router = useRouter()
     const params = useParams()
-
     const id = params.id as string
-
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
     const [image, setImage] = useState("")
     const [brandId, setBrandId] = useState("")
-
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
-
+    const [price, setPrice] = useState("")
 
     function generateSlug(name: string) {
         return name
@@ -47,6 +44,7 @@ export default function EditShoePage() {
                 setDescription(data.description)
                 setImage(data.images?.[0]?.url || "")
                 setBrandId(data.brandId)
+                setPrice(data.price ? String(data.price) : "")
 
             } catch {
 
@@ -72,10 +70,17 @@ export default function EditShoePage() {
 
             setSaving(true)
 
+            const numericPrice = parseFloat(price)
+
+            if (isNaN(numericPrice)) {
+                alert("Invalid price")
+                setSaving(false)
+                return
+            }
+
             const res = await fetch(`/api/admin/shoes/${id}`, {
 
                 method: "PUT",
-
                 credentials: "include",
 
                 headers: {
@@ -88,6 +93,7 @@ export default function EditShoePage() {
                     slug: generateSlug(name),
                     description,
                     brandId,
+                    price: numericPrice,   // ✅ เพิ่มตรงนี้
                     images: image ? [image] : [],
                     specs: []
 
@@ -98,27 +104,19 @@ export default function EditShoePage() {
             const data = await res.json()
 
             if (!res.ok) {
-
                 alert(data.error || "Update failed")
                 return
-
             }
 
             router.push("/admin/shoes")
 
         } catch {
-
             alert("Update failed")
-
         } finally {
-
             setSaving(false)
-
         }
 
     }
-
-
 
     if (loading)
         return (
@@ -246,6 +244,32 @@ export default function EditShoePage() {
 
                 </div>
 
+                {/* PRICE */}
+                <div>
+
+                    <label className="text-sm text-gray-400">
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        value={price}
+                        onChange={e => setPrice(e.target.value)}
+                        className="
+      w-full
+      mt-1
+      p-2
+      rounded-lg
+      bg-gray-800
+      border border-gray-700
+      text-white
+      focus:outline-none
+      focus:border-blue-500
+    "
+                    />
+
+                </div>
 
 
                 {/* BRAND ID */}

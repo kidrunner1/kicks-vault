@@ -19,7 +19,7 @@ export default function HeroSection() {
       items-center
       justify-start
       overflow-hidden
-      bg-gradient-to-b
+      bg-linear-to-b
       from-gray-200
       to-gray-300
     ">
@@ -43,7 +43,7 @@ export default function HeroSection() {
           font-bold
           text-gray-900
         ">
-          KicksVault
+          KICKSVAULT
         </h1>
 
         <p className="

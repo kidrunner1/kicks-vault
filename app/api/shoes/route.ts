@@ -33,8 +33,14 @@ export async function GET(request: Request) {
 
     ])
 
+    // 🔥 FIX: Convert Decimal → string
+    const formattedShoes = shoes.map((shoe) => ({
+      ...shoe,
+      price: shoe.price ? shoe.price.toString() : null
+    }))
+
     return NextResponse.json({
-      data: shoes,
+      data: formattedShoes,
       meta: {
         total,
         page,
@@ -55,4 +61,3 @@ export async function GET(request: Request) {
   }
 
 }
-

@@ -57,5 +57,5 @@ export default function Shoe(props: any) {
 }
 
 useGLTF.preload(
-  "/models/nike_air_zoom_pegasus_36-transformed.glb"
+  "/3D/nike_air_zoom_pegasus_36-transformed.glb"
 )

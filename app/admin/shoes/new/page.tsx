@@ -13,6 +13,7 @@ export default function AddShoePage() {
     const [brandId, setBrandId] = useState("")
     const [brands, setBrands] = useState<any[]>([])
     const [loading, setLoading] = useState(false)
+    const [price, setPrice] = useState("")
 
     useEffect(() => {
 
@@ -78,6 +79,14 @@ export default function AddShoePage() {
 
             }
 
+            const numericPrice = parseFloat(price)
+
+            if (!name || !brandId || isNaN(numericPrice)) {
+                alert("Name, Brand and valid Price are required")
+                return
+            }
+
+
             router.push("/admin/shoes")
 
         } catch (err) {
@@ -117,6 +126,16 @@ export default function AddShoePage() {
                 value={description}
                 onChange={e => setDescription(e.target.value)}
             />
+
+            <input
+                type="number"
+                step="0.01"
+                className="w-full p-2 border bg-black"
+                placeholder="Price"
+                value={price}
+                onChange={e => setPrice(e.target.value)}
+            />
+
 
 
             <input

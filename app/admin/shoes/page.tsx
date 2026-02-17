@@ -6,6 +6,7 @@ import Link from "next/link"
 interface Shoe {
     id: string
     name: string
+    price: string | number
     brand: { name: string }
     images: { url: string }[]
 }
@@ -122,35 +123,18 @@ export default function AdminShoesPage() {
 
                     {/* HEAD */}
                     <thead className="bg-gray-800">
-
                         <tr>
-
-                            <th className="p-4 text-left text-gray-300">
-                                Image
-                            </th>
-
-                            <th className="p-4 text-left text-gray-300">
-                                Name
-                            </th>
-
-                            <th className="p-4 text-left text-gray-300">
-                                Brand
-                            </th>
-
-                            <th className="p-4 text-left text-gray-300">
-                                Actions
-                            </th>
-
+                            <th className="p-4 text-left text-gray-300">Image</th>
+                            <th className="p-4 text-left text-gray-300">Name</th>
+                            <th className="p-4 text-left text-gray-300">Brand</th>
+                            <th className="p-4 text-left text-gray-300">Price</th>
+                            <th className="p-4 text-left text-gray-300">Actions</th>
                         </tr>
-
                     </thead>
-
 
                     {/* BODY */}
                     <tbody>
-
                         {shoes.map(shoe => (
-
                             <tr
                                 key={shoe.id}
                                 className="
@@ -159,7 +143,6 @@ export default function AdminShoesPage() {
                                     transition
                                 "
                             >
-
                                 {/* IMAGE */}
                                 <td className="p-4">
 
@@ -178,18 +161,24 @@ export default function AdminShoesPage() {
 
                                 </td>
 
-
                                 {/* NAME */}
                                 <td className="p-4 font-medium">
                                     {shoe.name}
                                 </td>
 
-
                                 {/* BRAND */}
                                 <td className="p-4 text-gray-400">
                                     {shoe.brand?.name}
                                 </td>
-
+                                {/* PRICE */}
+                                <td className="p-4 text-gray-300 font-medium">
+                                    {shoe.price != null
+                                        ? new Intl.NumberFormat("en-US", {
+                                            style: "currency",
+                                            currency: "USD",
+                                        }).format(Number(shoe.price))
+                                        : "-"}
+                                </td>
 
                                 {/* ACTIONS */}
                                 <td className="p-4 flex gap-4">
@@ -215,21 +204,13 @@ export default function AdminShoesPage() {
                                     >
                                         Delete
                                     </button>
-
                                 </td>
-
                             </tr>
-
                         ))}
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
-
     )
 
 }

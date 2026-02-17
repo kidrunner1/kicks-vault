@@ -1,121 +1,130 @@
+"use client"
+
+import { motion } from "framer-motion"
+
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-
   return (
+    <div className="min-h-screen flex bg-black text-white overflow-hidden">
 
-    <div
-      className="
-        min-h-screen
-        flex
-        bg-gray-100
-      "
-    >
-
-      {/* LEFT BRANDING */}
-      <div
-        className="
-          hidden lg:flex
-          w-1/2
-          relative
-          items-center justify-center
-          p-16
-          overflow-hidden
-        "
-      >
+      {/* =========================
+          LEFT — CINEMATIC PANEL
+      ========================== */}
+      <div className="hidden lg:flex w-1/2 relative items-center justify-center px-20">
 
         {/* Background Image */}
-        <div
+        <motion.div
+          initial={{ scale: 1.1, opacity: 0 }}
+          animate={{ scale: 1.05, opacity: 0.3 }}
+          transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
           className="
-            absolute inset-0
+            relative z-10
             bg-[url('/images/shoes/logo.jpg')]
             bg-cover bg-center
-            scale-110
-            blur-sm
           "
         />
 
-        {/* Dark overlay */}
-        <div
-          className="
-            absolute inset-0
-            bg-gradient-to-br
-            from-gray-900/90
-            via-gray-800/80
-            to-gray-900/90
-          "
-        />
+        {/* Dark Gradient */}
+        <div className="relative z-10 bg-gradient-to-b from-black/90 via-black/80 to-black" />
 
-        {/* glow effect */}
-        <div
+        {/* Grain Texture */}
+        <div className="
+          relative z-10
+          bg-[url('/images/noise.jpg')]
+          opacity-10
+          mix-blend-overlay
+          pointer-events-none
+        " />
+
+        {/* Light Sweep */}
+        <motion.div
+          initial={{ x: "-100%" }}
+          animate={{ x: "100%" }}
+          transition={{
+            duration: 2.5,
+            ease: [0.76, 0, 0.24, 1],
+          }}
           className="
-            absolute
-            w-96 h-96
-            bg-gray-400/20
+            relative z-10
+            bg-gradient-to-r
+            from-transparent
+            via-white/10
+            to-transparent
             blur-3xl
-            rounded-full
           "
         />
 
-        {/* content */}
-        <div className="relative text-white max-w-md">
+        {/* Branding */}
+        <div className="relative z-10 max-w-lg">
 
-          <div
-            className="
-              w-14 h-14
-              bg-white/10
-              backdrop-blur-md
-              rounded-2xl
-              flex items-center justify-center
-              mb-6
-              shadow-lg
-              text-2xl
-            "
+          {/* Split Typography */}
+          <div className="overflow-hidden">
+            <motion.h1
+              initial={{ y: "100%" }}
+              animate={{ y: "0%" }}
+              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+              className="text-[6rem] leading-none uppercase tracking-tight"
+            >
+              KICKS
+            </motion.h1>
+          </div>
+
+          <div className="overflow-hidden">
+            <motion.h1
+              initial={{ y: "100%" }}
+              animate={{ y: "0%" }}
+              transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="text-[6rem] leading-none uppercase tracking-tight"
+            >
+              VAULT
+            </motion.h1>
+          </div>
+
+          {/* Animated Divider */}
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: "120px" }}
+            transition={{ duration: 1, delay: 1 }}
+            className="h-[2px] bg-white mt-8"
+          />
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 1.2 }}
+            className="text-gray-400 text-lg mt-8 max-w-md leading-relaxed"
           >
-            👟
-          </div>
-
-          <h1 className="text-4xl font-bold mb-4 leading-tight">
-            KicksVault
-          </h1>
-
-          <p className="text-gray-300 text-lg leading-relaxed">
-            Your secure gateway to the ultimate sneaker collection.
-            Discover, collect, and manage your kicks with confidence.
-          </p>
-
-          <div className="mt-6 text-gray-400 text-sm space-y-1">
-            <div>• Premium Sneaker Platform</div>
-            <div>• Secure Authentication</div>
-            <div>• Modern & Minimal Design</div>
-            <div>• Built with Next.js 15</div>
-          </div>
+            Enter a curated digital archive of modern sneaker culture.
+            Designed for collectors who value presence.
+          </motion.p>
 
         </div>
 
       </div>
 
-
-      {/* RIGHT FORM */}
-      <div
+      {/* =========================
+          RIGHT — FORM PANEL
+      ========================== */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, delay: 0.8 }}
         className="
           w-full lg:w-1/2
           flex items-center justify-center
-          p-6 lg:p-12
-         
+          px-6 lg:px-20
+          bg-white
+          text-black
         "
       >
-
-        <div>
+        <div className="w-full max-w-md">
           {children}
         </div>
-
-      </div>
-
+      </motion.div>
 
     </div>
-
   )
 }

@@ -45,7 +45,8 @@ model Shoe {
 
   description String
 
-  price       Float?
+  price       Decimal? @db.Decimal(10, 2)
+
 
   releaseDate DateTime?
 

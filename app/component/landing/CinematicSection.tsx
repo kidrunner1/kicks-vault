@@ -4,67 +4,58 @@ import {
     motion,
     useScroll,
     useTransform,
-    useSpring
+    useMotionTemplate
 } from "framer-motion"
 
 import { useRef } from "react"
 import MarqueeText from "./MarqueeText"
+import { JSX } from "react/jsx-runtime"
 
-export default function CinematicSection() {
-
-    const ref = useRef(null)
+export default function CinematicSection(): JSX.Element {
+    const ref = useRef<HTMLDivElement | null>(null)
 
     const { scrollYProgress } = useScroll({
         target: ref,
         offset: ["start end", "end start"],
     })
 
-    // smooth physics
-    const smooth = useSpring(scrollYProgress, {
-        stiffness: 80,
-        damping: 20,
-        mass: 0.5
-    })
+    /* =========================
+       SCROLL TRANSFORMS
+    ========================== */
 
-    // IMAGE SPLIT
-    const leftImageX = useTransform(smooth, [0, 1], [-300, 0])
-    const rightImageX = useTransform(smooth, [0, 1], [300, 0])
+    const leftImageX = useTransform(scrollYProgress, [0, 1], [-300, 0])
+    const rightImageX = useTransform(scrollYProgress, [0, 1], [300, 0])
+    const bgY = useTransform(scrollYProgress, [0, 1], [-150, 150])
+    const scale = useTransform(scrollYProgress, [0, 1], [0.85, 1.15])
 
-    // PARALLAX
-    const bgY = useTransform(smooth, [0, 1], [-150, 150])
+    // Depth blur (focus in/out)
+    const blur = useTransform(scrollYProgress, [0, 0.5, 1], [8, 0, 8])
+    const blurValue = useTransform(scrollYProgress, [0, 0.5, 1], [8, 0, 8])
 
-    // SCALE (3D feel)
-    const scale = useTransform(smooth, [0, 1], [0.8, 1.2])
+    const blurFilter = useMotionTemplate`blur(${blurValue}px)`
 
-    // TEXT REVEAL
-    const leftTextX = useTransform(smooth, [0, 1], [-200, 0])
-    const rightTextX = useTransform(smooth, [0, 1], [200, 0])
 
-    const opacity = useTransform(smooth, [0, 0.4], [0, 1])
+    const leftTextX = useTransform(scrollYProgress, [0, 1], [-200, 0])
+    const rightTextX = useTransform(scrollYProgress, [0, 1], [200, 0])
+    const opacity = useTransform(scrollYProgress, [0, 0.4], [0, 1])
+
+    const lightSweepX = useTransform(
+        scrollYProgress,
+        [0, 1],
+        ["-100%", "100%"]
+    )
 
     return (
-
         <section
             ref={ref}
-            className="
-        h-[300vh]
-        bg-black
-        relative
-      "
+            className="h-[300vh] bg-black relative"
         >
+            {/* Sticky Container */}
+            <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
 
-            {/* STICKY CONTAINER */}
-            <div className="
-        sticky
-        top-0
-        h-screen
-        flex
-        items-center
-        justify-center
-        overflow-hidden
-      ">
-
-                {/* PARALLAX BACKGROUND */}
+                {/* =========================
+            PARALLAX BACKGROUND
+        ========================== */}
                 <motion.div
                     style={{ y: bgY }}
                     className="
@@ -77,129 +68,174 @@ export default function CinematicSection() {
             scale-125
           "
                 />
-                {/* BACKGROUND MARQUEE LAYER */}
-                <div className="absolute top-20 w-full">
-                    <MarqueeText text="KICKSV AULT" speed={2} />
 
+                {/* =========================
+            GRAIN TEXTURE
+        ========================== */}
+                <div
+                    className="
+            absolute
+            inset-0
+            opacity-10
+            mix-blend-overlay
+            pointer-events-none
+            z-10
+          "
+                />
+
+                {/* =========================
+            MARQUEE BACKGROUND
+        ========================== */}
+                <div className="absolute top-20 w-full z-20">
+                    <MarqueeText text="KICKSV AULT" speed={2} />
                 </div>
 
-                <div className="absolute bottom-20 w-full">
+                <div className="absolute bottom-20 w-full z-20">
                     <MarqueeText text="ENTER THE FUTURE" speed={-2} />
                 </div>
 
-                {/* LEFT IMAGE */}
-                <motion.img
-                    src="/images/shoes/nike-01.jpg"
-                    style={{
-                        x: leftImageX,
-                        scale
-                    }}
+                {/* =========================
+            LIGHT SWEEP
+        ========================== */}
+                <motion.div
+                    style={{ x: lightSweepX }}
                     className="
             absolute
-            w-[400px]
-            left-1/2
-            -translate-x-[110%]
-            z-10
+            inset-0
+            bg-gradient-to-r
+            from-transparent
+            via-white/10
+            to-transparent
+            blur-3xl
+            z-30
+            pointer-events-none
           "
                 />
 
-                {/* RIGHT IMAGE */}
+                {/* LEFT IMAGE*/}
                 <motion.img
                     src="/images/shoes/nike-01.jpg"
+                    alt="Sneaker Left"
                     style={{
-                        x: rightImageX,
-                        scale
+                        x: leftImageX,
+                        scale,
+                        filter: blurFilter
+
                     }}
                     className="
             absolute
-            w-[400px]
+            w-[420px]
             left-1/2
-            translate-x-[10%]
-            z-10
+            -translate-x-[115%]
+            z-40
+            will-change-transform
           "
                 />
-                {/* LEFT TEXT */}
-                <motion.h2
+
+                {/* Reflection */}
+                <motion.img
+                    src="/images/shoes/nike-01.jpg"
+                    alt="Sneaker Reflection"
                     style={{
-                        x: leftTextX,
-                        opacity
+                        x: leftImageX,
+                        scale,
+                        opacity: 0.15
                     }}
+                    className="
+            absolute
+            w-105
+            left-1/2
+            -translate-x-[115%]
+            translate-y-[120%]
+            scale-y-[-1]
+            blur-md
+            z-0
+            pointer-events-none
+          "
+                />
+
+                {/* =========================
+            RIGHT IMAGE
+        ========================== */}
+                <motion.img
+                    src="/images/shoes/nike-01.jpg"
+                    alt="Sneaker Right"
+                    style={{
+                        x: rightImageX,
+                        scale,
+                        filter: blurFilter
+
+                    }}
+                    className="
+            absolute
+            w-[420px]
+            left-1/2
+            translate-x-[15%]
+            z-40
+            will-change-transform
+          "
+                />
+
+                {/* =========================
+            LEFT TEXT
+        ========================== */}
+                <motion.h2
+                    style={{ x: leftTextX, opacity }}
                     className="
             absolute
             left-16
             text-white
-            text-8xl
-            font-bold
+            text-[9rem]
             font-[var(--font-bebas)]
             tracking-widest
+            z-50
           "
                 >
                     KICKS
                 </motion.h2>
 
-                {/* RIGHT TEXT */}
+                {/* =========================
+            RIGHT TEXT
+        ========================== */}
                 <motion.h2
-                    style={{
-                        x: rightTextX,
-                        opacity
-                    }}
+                    style={{ x: rightTextX, opacity }}
                     className="
             absolute
             right-16
             text-white
-            text-8xl
-            font-bold
+            text-[9rem]
             font-[var(--font-bebas)]
             tracking-widest
+            z-50
           "
                 >
                     VAULT
                 </motion.h2>
 
-
-                {/* CENTER TEXT stagger */}
-                <motion.div
-                    initial="hidden"
-                    animate="visible"
-                    className="
-            absolute
-            bottom-10
-            text-white
-            text-center
-          "
-                >
-
-                    {"ENTER THE FUTURE".split("").map((char, i) => (
-
-                        <motion.span
-                            key={i}
-                            initial={{
-                                opacity: 0,
-                                y: 50
-                            }}
-                            animate={{
-                                opacity: 1,
-                                y: 0
-                            }}
+                {/* =========================
+            MASK REVEAL CENTER TEXT
+        ========================== */}
+                <div className="absolute bottom-14 text-white text-center z-50">
+                    <div className="overflow-hidden">
+                        <motion.h3
+                            initial={{ y: "100%" }}
+                            whileInView={{ y: "0%" }}
                             transition={{
-                                delay: i * 0.05
+                                duration: 1.2,
+                                ease: [0.22, 1, 0.36, 1],
                             }}
                             className="
-                inline-block
                 text-2xl
+                tracking-[0.4em]
                 font-[var(--font-orbitron)]
               "
                         >
-                            {char}
-                        </motion.span>
-
-                    ))}
-
-                </motion.div>
+                            ENTER THE FUTURE
+                        </motion.h3>
+                    </div>
+                </div>
 
             </div>
-
         </section>
-
     )
 }
