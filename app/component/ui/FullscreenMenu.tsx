@@ -19,7 +19,7 @@ const images = [
 const menuItems = [
     { name: "HOME", href: "/" },
     { name: "SHOP", href: "/product" },
-    { name: "ACCOUNT", href: "/profile" },
+    // { name: "ACCOUNT", href: "/profile" },
 ]
 
 export default function FullscreenMenu({ onClose }: Props) {

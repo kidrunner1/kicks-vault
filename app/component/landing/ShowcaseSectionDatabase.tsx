@@ -50,22 +50,12 @@ export default function ShowcaseSectionDatabase({ shoes }: Props) {
   return (
     <section
       ref={ref}
-      className="relative h-[400vh] bg-black"
+      className="relative h-[400vh] bg-gray-500"
     >
       {/* Progress Bar */}
       <motion.div
         style={{ scaleX: progressScale }}
-        className="
-          fixed
-          top-0
-          left-0
-          h-0.5
-          w-full
-          origin-left
-          bg-white
-          z-50
-        "
-      />
+        className="fixed  top-0  left-0 h-0.5  w-full  origin-left  bg-linear-to-r  from-white  via-neutral-400  to-white  z-50" />
 
       <div className="sticky top-0 h-screen overflow-hidden">
 
@@ -116,41 +106,33 @@ export default function ShowcaseSectionDatabase({ shoes }: Props) {
                 >
 
                   <div
-                    className="
-    relative
-    w-200
-    h-200
-    aspect-square
-    flex
-    items-center
-    justify-center
-    rounded-2xl
-    overflow-hidden
-  "
-                  >
-                    <motion.img
-                      src={shoe.images[0]?.url}
-                      alt={shoe.name}
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      whileInView={{ scale: 1, opacity: 1 }}
+                    className="  relative  w-150  h-150 flex items-center justify-center " >
+
+                    <motion.div
+                      animate={{ y: [0, -10, 0] }}
                       transition={{
-                        duration: 1.2,
-                        ease: [0.22, 1, 0.36, 1]
+                        duration: 6,
+                        repeat: Infinity,
+                        ease: "easeInOut"
                       }}
-                      className="
-      max-w-[85%]
-      max-h-[85%]
-      object-contain
-      drop-shadow-[0_40px_80px_rgba(0,0,0,0.8)]
-      transition-transform
-      duration-700
-      group-hover:scale-105
-    "
-                    />
+                      className="relative"
+                    >
+                      <motion.img
+                        src={shoe.images[0]?.url}
+                        alt={shoe.name}
+                        initial={{ scale: 0.85, opacity: 0 }}
+                        whileInView={{ scale: 1, opacity: 1 }}
+                        transition={{
+                          duration: 1.2,
+                          ease: [0.22, 1, 0.36, 1]
+                        }}
+                        className=" max-w-[90%] object-contain drop-shadow-[0_80px_120px_rgba(0,0,0,0.9)] transition-transform  duration-700  group-hover:scale-105 " />
+
+                    </motion.div>
                   </div>
 
                   {/* TEXT BLOCK */}
-                  <div className="max-w-lg">
+                  <div className="max-w-xl">
 
                     {/* Brand */}
                     <motion.div
@@ -161,14 +143,7 @@ export default function ShowcaseSectionDatabase({ shoes }: Props) {
                         delay: 0.2,
                         ease: [0.22, 1, 0.36, 1]
                       }}
-                      className="
-                        text-gray-400
-                        uppercase
-                        tracking-[0.4em]
-                        text-xs
-                        mb-6
-                      "
-                    >
+                      className=" text-neutral-500 uppercase  tracking-[0.5em]  text-[10px]  mb-8" >
                       {shoe.brand.name}
                     </motion.div>
 
@@ -181,16 +156,13 @@ export default function ShowcaseSectionDatabase({ shoes }: Props) {
                         delay: 0.3,
                         ease: [0.22, 1, 0.36, 1]
                       }}
-                      className="
-                        text-[6rem]
-                        leading-none
-                        font-(--font-bebas)
-                        tracking-tight
-                        mb-6
-                      "
-                    >
+                      className="text-[7rem]  leading-[0.9]  font-(--font-bebas)  tracking-tight  mb-8"  >
+
                       {shoe.name}
                     </motion.h2>
+
+                    {/* Divider */}
+                    <div className="w-16 h-[1px] bg-neutral-700 mb-8" />
 
                     {/* Description */}
                     <motion.p
@@ -201,15 +173,13 @@ export default function ShowcaseSectionDatabase({ shoes }: Props) {
                         delay: 0.5,
                         ease: [0.22, 1, 0.36, 1]
                       }}
-                      className="
-                        text-gray-300
-                        leading-relaxed
-                      "
+                      className="  text-neutral-400 leading-relaxed text-lg "
                     >
                       {shoe.description}
                     </motion.p>
 
                   </div>
+
 
                 </Link>
 

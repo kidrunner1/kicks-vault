@@ -11,57 +11,128 @@ const Model3D = dynamic(
 export default function HeroSection() {
 
   return (
+    <section
+      className="
+        relative
+        h-screen
+        overflow-hidden
+        bg-neutral-100
+      "
+    >
 
-    <section className="
-      relative
-      h-screen
-      flex
-      items-center
-      justify-start
-      overflow-hidden
-      bg-linear-to-b
-      from-gray-200
-      to-gray-300
-    ">
+      {/* Ambient Light */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-40 left-1/3 w-[800px] h-[800px] bg-white/60 blur-[200px] rounded-full" />
+      </div>
 
-      {/* Text */}
+      {/* TEXT BLOCK */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
+        transition={{
+          duration: 1.2,
+          ease: [0.22, 1, 0.36, 1]
+        }}
         className="
           absolute
-          top-32
-          ml-16
-          text-center
+          top-24
+          left-20
           z-10
+          max-w-xl
         "
       >
 
+        {/* Small Label */}
+        <div className="
+          uppercase
+          tracking-[0.5em]
+          text-xs
+          text-neutral-500
+          mb-6
+        ">
+          Premium Sneaker Archive
+        </div>
+
+        {/* Main Heading */}
         <h1 className="
-          text-6xl
+          text-[5.5rem]
+          leading-[0.9]
           font-bold
-          text-gray-900
+          tracking-tight
+          text-neutral-900
         ">
           KICKSVAULT
         </h1>
 
+        {/* Divider */}
+        <div className="w-20 h-[1px] bg-neutral-300 my-8" />
+
+        {/* Tagline */}
         <p className="
-          text-gray-600
-          mt-4
+          text-neutral-600
           text-lg
+          leading-relaxed
         ">
-          Discover the future of sneaker culture
+          Discover the future of sneaker culture —
+          curated silhouettes crafted for modern collectors.
         </p>
 
-      </motion.div>
+        {/* CTA */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.97 }}
+          className="
+            mt-10
+            px-8
+            py-4
+            rounded-full
+            bg-neutral-900
+            text-white
+            text-sm
+            tracking-widest
+            uppercase
+            transition-colors
+            hover:bg-black
+          "
+        >
+          Explore Collection
+        </motion.button>
 
+      </motion.div>
 
       {/* 3D Model */}
       <Model3D />
 
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="
+          absolute
+          bottom-10
+          left-1/2
+          -translate-x-1/2
+          flex
+          flex-col
+          items-center
+          text-neutral-500
+          text-xs
+          tracking-widest
+        "
+      >
+        Scroll
+
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{
+            duration: 2,
+            repeat: Infinity
+          }}
+          className="w-[1px] h-8 bg-neutral-400 mt-2"
+        />
+      </motion.div>
 
     </section>
-
   )
 }

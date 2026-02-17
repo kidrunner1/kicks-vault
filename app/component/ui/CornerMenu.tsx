@@ -16,17 +16,7 @@ export default function CornerMenu() {
     return (
         <>
             {/* FIXED CONTAINER */}
-            <div className="
-        fixed
-        top-6
-        right-6
-        mr-20
-        z-10000
-        flex
-        items-center
-        gap-4
-      ">
-
+            <div className="fixed top-6 right-6 mr-20 z-10000 flex items-center gap-4">
                 {/* STORE BUTTON */}
                 <motion.button
                     onClick={() => router.push("/product")}
@@ -34,29 +24,50 @@ export default function CornerMenu() {
                     whileHover="hover"
                     animate="rest"
                     className="
-    relative
-    h-14
-    px-8
-    rounded-2xl
-    overflow-hidden
-    border border-white/20
-    bg-white/5
-    backdrop-blur-xl
-    text-white
-    uppercase
-    tracking-widest
-    text-sm
-    flex items-center gap-3
-  "
+        relative h-14 px-8 
+        rounded-2xl 
+        overflow-hidden
+        border border-neutral-700
+        bg-neutral-900
+        text-white 
+        uppercase tracking-widest text-sm 
+        flex items-center gap-3
+        transition-colors duration-300
+    "
                 >
-                    <ShoppingBag size={18} />
+                    <div className="relative overflow-hidden h-4.5 w-4.5 z-10">
 
-                    <div className="flex overflow-hidden h-5">
+                        {/* Default Icon */}
+                        <motion.div
+                            variants={{
+                                rest: { y: 0 },
+                                hover: { y: -20 }
+                            }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute inset-0 flex items-center justify-center"
+                        >
+                            <ShoppingBag size={18} className="text-white" />
+                        </motion.div>
 
+                        {/* Hover Icon */}
+                        <motion.div
+                            variants={{
+                                rest: { y: 20 },
+                                hover: { y: 0 }
+                            }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute inset-0 flex items-center justify-center"
+                        >
+                            <ShoppingBag size={18} className="text-neutral-900" />
+                        </motion.div>
+
+                    </div>
+
+
+                    <div className="flex overflow-hidden h-5 relative z-10">
                         {text.map((char, i) => (
                             <div key={i} className="relative overflow-hidden">
 
-                                {/* Default Layer */}
                                 <motion.span
                                     variants={{
                                         rest: { y: 0 },
@@ -71,7 +82,6 @@ export default function CornerMenu() {
                                     {char}
                                 </motion.span>
 
-                                {/* Hover Layer */}
                                 <motion.span
                                     variants={{
                                         rest: { y: 20 },
@@ -88,7 +98,6 @@ export default function CornerMenu() {
 
                             </div>
                         ))}
-
                     </div>
 
                     {/* Hover Background */}
@@ -98,10 +107,10 @@ export default function CornerMenu() {
                             hover: { opacity: 1 }
                         }}
                         transition={{ duration: 0.3 }}
-                        className="absolute inset-0 bg-white -z-10"
+                        className="absolute inset-0 bg-white"
                     />
-
                 </motion.button>
+
 
                 {/* MENU BUTTON */}
                 <MenuButton

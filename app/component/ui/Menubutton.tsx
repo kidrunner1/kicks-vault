@@ -8,7 +8,6 @@ interface Props {
 }
 
 export default function MenuButton({ open, toggle }: Props) {
-
   return (
     <motion.button
       onClick={toggle}
@@ -22,26 +21,19 @@ export default function MenuButton({ open, toggle }: Props) {
         h-14
         rounded-2xl
         border
-        border-white/20
-        bg-white/5
-        backdrop-blur-xl
+        border-neutral-700
+        bg-neutral-900
         flex
         items-center
         justify-center
-        transition
+        transition-colors
+        duration-300
         hover:bg-white
         group
       "
     >
+      <svg width="26" height="26" viewBox="0 0 24 24" className="relative">
 
-      {/* SVG ICON */}
-      <svg
-        width="26"
-        height="26"
-        viewBox="0 0 24 24"
-        className="relative"
-      >
-        {/* Top Line */}
         <motion.line
           x1="6"
           y1="8"
@@ -50,17 +42,12 @@ export default function MenuButton({ open, toggle }: Props) {
           stroke="currentColor"
           strokeWidth="2"
           initial={false}
-          animate={
-            open
-              ? { rotate: 45, y: 4 }
-              : { rotate: 0, y: 0 }
-          }
+          animate={open ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }}
           transition={{ duration: 0.3 }}
           style={{ transformOrigin: "12px 12px" }}
           className="text-white group-hover:text-black"
         />
 
-        {/* Middle Line */}
         <motion.line
           x1="9"
           y1="12"
@@ -69,16 +56,11 @@ export default function MenuButton({ open, toggle }: Props) {
           stroke="currentColor"
           strokeWidth="2"
           initial={false}
-          animate={
-            open
-              ? { opacity: 0 }
-              : { opacity: 1 }
-          }
+          animate={open ? { opacity: 0 } : { opacity: 1 }}
           transition={{ duration: 0.2 }}
           className="text-white group-hover:text-black"
         />
 
-        {/* Bottom Line */}
         <motion.line
           x1="6"
           y1="16"
@@ -87,17 +69,13 @@ export default function MenuButton({ open, toggle }: Props) {
           stroke="currentColor"
           strokeWidth="2"
           initial={false}
-          animate={
-            open
-              ? { rotate: -45, y: -4 }
-              : { rotate: 0, y: 0 }
-          }
+          animate={open ? { rotate: -45, y: -4 } : { rotate: 0, y: 0 }}
           transition={{ duration: 0.3 }}
           style={{ transformOrigin: "12px 12px" }}
           className="text-white group-hover:text-black"
         />
-      </svg>
 
+      </svg>
     </motion.button>
   )
 }
