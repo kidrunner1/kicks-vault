@@ -1,27 +1,31 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
-import ProductDetail from "../../../component/product/ProductDetail"
+import ProductDetail from "@/app/component/product/ProductDetail"
 
-export default async function ProductPage(props: {
-  params: Promise<{ slug: string }>
-}) {
-
-  const { slug } = await props.params   // 👈 สำคัญมาก
-
-  if (!slug) {
-    return notFound()
+interface Props {
+  params: {
+    slug: string
   }
+}
+
+export default async function ProductPage({ params }: Props) {
 
   const product = await prisma.shoe.findUnique({
-    where: { slug },
+    where: { slug: params.slug },
     include: {
       brand: true,
       images: { orderBy: { order: "asc" } },
-      specs: true,
+      specs: true
     }
   })
 
   if (!product) return notFound()
 
-  return <ProductDetail product={product} />
+  // 🔥 FIX: Convert Decimal → string
+  const formattedProduct = {
+    ...product,
+    price: product.price ? product.price.toString() : null
+  }
+
+  return <ProductDetail product={formattedProduct} />
 }
