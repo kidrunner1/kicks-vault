@@ -4,19 +4,21 @@ import { ReactNode, useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
 
 interface FormInputProps {
-  type?: "text" | "email" | "password"
+  type: string
   label: string
-  icon?: ReactNode
+  icon?: React.ReactNode
   value: string
   onChange: (value: string) => void
+  error?: string
 }
 
 export default function FormInput({
-  type = "text",
+  type,
   label,
   icon,
   value,
   onChange,
+  error,
 }: FormInputProps) {
 
   const [showPassword, setShowPassword] =

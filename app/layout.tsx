@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import { ibmThai, fjalla } from "./fonts"
+import { Toaster } from "sonner"
+
 
 export const metadata: Metadata = {
   title: "KicksVault",
@@ -24,6 +26,10 @@ export default function RootLayout({
 
 
         {children}
+        <Toaster
+          position="top-right"
+          theme="dark"
+        />
       </body>
     </html>
   )

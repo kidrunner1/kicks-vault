@@ -5,21 +5,54 @@ import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Mail, Lock } from "lucide-react"
 import FormInput from "../../component/ui/FormInput"
+import { z } from "zod"
 
 export default function LoginPage() {
 
   const router = useRouter()
+  const loginSchema = z.object({
+    email: z.string().email("Invalid email format"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+  })
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState("")
+  const [fieldErrors, setFieldErrors] = useState<{
+    email?: string
+    password?: string
+  }>({})
+
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
 
-    setError("")
+    if (loading) return
+
+    setFormError("")
+    setFieldErrors({})
     setLoading(true)
+
+    // Client validation
+    const parsed = loginSchema.safeParse({ email, password })
+
+    if (!parsed.success) {
+      const errors: Record<string, string> = {}
+
+      parsed.error.issues.forEach(issue => {
+        const field = issue.path[0]
+        if (typeof field === "string") {
+          errors[field] = issue.message
+        }
+      })
+
+      setFieldErrors(errors)
+      setLoading(false)
+      return
+    }
+
 
     try {
       const res = await fetch("/api/auth/login", {
@@ -31,8 +64,10 @@ export default function LoginPage() {
 
       const data = await res.json()
 
-      if (!res.ok)
-        throw new Error(data.error || "เข้าสู่ระบบไม่สำเร็จ")
+      if (!res.ok) {
+        setFormError(data.error || "Invalid credentials")
+        return
+      }
 
       const meRes = await fetch("/api/auth/me", {
         credentials: "include",
@@ -43,11 +78,24 @@ export default function LoginPage() {
       router.push(user.role === "ADMIN" ? "/admin" : "/")
 
     } catch (err: any) {
-      setError(err.message)
+      setFormError("Unable to connect. Please try again.")
     } finally {
       setLoading(false)
     }
   }
+
+  const handleEmailChange = (val: string) => {
+  setEmail(val)
+  setFieldErrors(prev => ({ ...prev, email: undefined }))
+}
+
+const handlePasswordChange = (val: string) => {
+  setPassword(val)
+  setFieldErrors(prev => ({ ...prev, password: undefined }))
+}
+
+
+
 
   return (
     <div className="w-full">
@@ -95,6 +143,7 @@ export default function LoginPage() {
             icon={<Mail size={18} />}
             value={email}
             onChange={setEmail}
+            error={fieldErrors.email}
           />
 
           <FormInput
@@ -103,7 +152,9 @@ export default function LoginPage() {
             icon={<Lock size={18} />}
             value={password}
             onChange={setPassword}
+            error={fieldErrors.password}
           />
+
 
           {/* Submit Button */}
           <button

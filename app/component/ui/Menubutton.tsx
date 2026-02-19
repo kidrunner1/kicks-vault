@@ -19,9 +19,7 @@ export default function MenuButton({ open, toggle }: Props) {
         right-6
         w-14
         h-14
-        rounded-2xl
-        border
-        border-neutral-700
+        rounded-2xl    
         bg-neutral-900
         flex
         items-center

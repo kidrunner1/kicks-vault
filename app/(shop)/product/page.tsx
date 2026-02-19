@@ -63,7 +63,7 @@ export default async function ProductsPage() {
               <div className="relative">
 
                 {/* IMAGE */}
-                <div className="relative aspect-[4/5] overflow-hidden">
+                <div className="relative aspect-4/5 overflow-hidden">
 
                   <Image
                     src={normalizeImagePath(shoe.images[0]?.url)}
@@ -72,7 +72,7 @@ export default async function ProductsPage() {
                     className="
                       object-cover
                       transition-transform
-                      duration-[1200ms]
+                      duration-1200
                       ease-[cubic-bezier(0.22,1,0.36,1)]
                       group-hover:scale-105
                     "
@@ -81,7 +81,7 @@ export default async function ProductsPage() {
                   {/* subtle gradient fade */}
                   <div className="
                     absolute inset-0
-                    bg-gradient-to-t
+                    bg-linear-to-t
                     from-black/70
                     via-transparent
                     to-transparent

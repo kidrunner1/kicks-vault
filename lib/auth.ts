@@ -1,30 +1,26 @@
 import { cookies } from "next/headers"
 import { verifyToken } from "./jwt"
-
+import { AuthError } from "@/lib/errors/auth-error"
+ 
 export async function getCurrentUser() {
-
     const cookieStore = await cookies()
-
     const token = cookieStore.get("accessToken")?.value
 
-    if (!token)
+    if (!token) {
         return null
+    }
 
     try {
-
         const payload = await verifyToken(token)
 
         return {
-            id: payload.userId,   // ⭐ FIX ตรงนี้
-            role: payload.role
+            id: payload.userId,
+            role: payload.role,
         }
-
-    } catch {
-
+    } catch (error) {
+        console.error("TOKEN_VERIFY_FAILED:", error)
         return null
-
     }
-
 }
 
 export async function requireAdmin() {
@@ -32,10 +28,10 @@ export async function requireAdmin() {
     const user = await getCurrentUser()
 
     if (!user)
-        throw new Error("Unauthorized")
+        throw new AuthError("Unauthorized", 401)
 
     if (user.role !== "ADMIN")
-        throw new Error("Forbidden")
+        throw new AuthError("Forbidden", 403)
 
     return user
 

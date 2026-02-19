@@ -1,5 +1,7 @@
 
 import CornerMenu from "../component/ui/CornerMenu"
+import FloatingCartButton from "../component/cart/FloatingCartButton"
+
 
 export default function ShopLayout({
   children,
@@ -10,6 +12,7 @@ export default function ShopLayout({
     <div className="min-h-screen bg-black text-white">
       <CornerMenu />
       {children}
+      <FloatingCartButton />
     </div>
   )
 }
