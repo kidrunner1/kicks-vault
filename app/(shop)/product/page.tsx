@@ -16,7 +16,7 @@ export default async function ProductsPage() {
     }
   })
 
-  // 🔥 Convert Decimal → string
+  // Convert Decimal → string (App Router safe)
   const formattedShoes = shoes.map(shoe => ({
     ...shoe,
     price: shoe.price ? shoe.price.toString() : null
@@ -29,12 +29,26 @@ export default async function ProductsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="relative min-h-screen bg-red text-red overflow-hidden">
 
-      {/* ================= HEADER ================= */}
-      <section className="px-8 md:px-16 pt-40 pb-24 max-w-7xl mx-auto">
+      {/* ================= NOISE BACKGROUND ================= */}
+      <div
+        className="
+          pointer-events-none
+          absolute inset-0
+          z-0
+opacity-[0.20]          
+bg-[url('/images/noise.jpg')]
+          bg-repeat
+        "
+      />
 
+      {/* ================= CONTENT ================= */}
+      <section className="relative z-10 px-8 md:px-16 pt-40 pb-24 max-w-7xl mx-auto">
+
+        {/* ================= HEADER ================= */}
         <div className="mb-24 max-w-3xl">
+
           <p className="text-xs uppercase tracking-[0.4em] text-white/40">
             Archive
           </p>
@@ -47,6 +61,7 @@ export default async function ProductsPage() {
             A curated selection of modern sneakers —
             blending innovation, heritage, and culture.
           </p>
+
         </div>
 
         {/* ================= GRID ================= */}

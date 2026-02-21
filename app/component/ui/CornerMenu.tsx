@@ -27,7 +27,6 @@ export default function CornerMenu() {
         relative h-14 px-8 
         rounded-2xl 
         overflow-hidden
-        
         bg-neutral-900
         text-white 
         uppercase tracking-widest text-sm 

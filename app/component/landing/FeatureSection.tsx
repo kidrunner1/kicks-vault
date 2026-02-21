@@ -50,7 +50,7 @@ export default function EditorialSection() {
 
       {/* Subtle Background Atmosphere */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-white blur-[180px] opacity-60 rounded-full" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-225 h-225 bg-white blur-[180px] opacity-60 rounded-full" />
       </div>
 
 
@@ -69,7 +69,7 @@ export default function EditorialSection() {
         <div className="relative inline-block">
 
           <h2 className="
-            font-[var(--font-bebas)]
+            font-(--font-bebas)
             text-[13vw]
             leading-[0.85]
             tracking-tight
@@ -78,7 +78,7 @@ export default function EditorialSection() {
           </h2>
 
           <h2 className="
-            font-[var(--font-bebas)]
+            font-(--font-bebas)
             text-[13vw]
             leading-[0.85]
             tracking-tight
@@ -87,7 +87,7 @@ export default function EditorialSection() {
           </h2>
 
           {/* Accent Line */}
-          <div className="absolute -left-6 top-4 w-[2px] h-[80%] bg-neutral-300" />
+          <div className="absolute -left-6 top-4 w-0.5 h-[80%] bg-neutral-300" />
 
         </div>
 
@@ -106,7 +106,7 @@ export default function EditorialSection() {
       </motion.div>
 
       {/* Divider */}
-      <div className="w-full h-[1px] bg-neutral-200 mb-40 max-w-7xl mx-auto" />
+      <div className="w-full h-px bg-neutral-200 mb-40 max-w-7xl mx-auto" />
 
       {/* Editorial Blocks */}
       <div className="relative max-w-7xl mx-auto space-y-48">
@@ -134,7 +134,7 @@ export default function EditorialSection() {
               {/* Big Title */}
               <div className={isReversed ? "md:order-2 text-right" : ""}>
                 <h3 className="
-                  font-[var(--font-bebas)]
+                  font-(--font-bebas)
                   text-7xl md:text-8xl
                   tracking-tight
                   leading-[0.9]
@@ -157,7 +157,7 @@ export default function EditorialSection() {
                   {item.subtitle}
                 </p>
 
-                <div className="w-16 h-[1px] bg-neutral-300 mb-8" />
+                <div className="w-16 h-px bg-neutral-300 mb-8" />
 
                 <p className="
                   text-lg

@@ -1,9 +1,11 @@
 "use client"
 import { useState } from "react"
 import { useCartStore } from "@/app/store/cart-store"
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import ProductGallery from "./ProductGallery"
 import { toast } from "sonner"
+import SizeChart from "../ui/SizeChart"
+import FloatingCartButton from "../cart/FloatingCartButton"
 
 interface Product {
   id: string
@@ -31,12 +33,26 @@ export default function ProductDetail({ product }: Props) {
       : null
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const [showSizeChart, setShowSizeChart] = useState(false)
+  const [isSizeModalOpen, setIsSizeModalOpen] = useState(false)
 
   const addItem = useCartStore(state => state.addItem)
 
 
   return (
-    <main className="min-h-screen bg-black text-white pt-40 pb-40 px-8">
+    <main className="relative min-h-screen bg-black text-white pt-40 pb-40 px-8 overflow-hidden">
+      {/* Noise Background */}
+      <div
+        className="
+    pointer-events-none
+    absolute inset-0
+    z-0
+    opacity-[0.20]
+    bg-[url('/images/noise.jpg')]
+    bg-repeat
+  "
+      />
+
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-28">
 
@@ -109,53 +125,113 @@ export default function ProductDetail({ product }: Props) {
             {product.description}
           </p>
           {/* ================= SIZE SELECTOR ================= */}
-          <div className="mb-14">
+          <div className="
+  mb-16
+  border border-white/10
+  bg-white/2
+  rounded-3xl
+  p-10
+  space-y-8
+">
 
-            <p className="text-xs uppercase tracking-[0.3em] text-white/40 mb-6">
-              Select Size
-            </p>
+            <div className="flex justify-between items-center">
+              <p className="text-xs uppercase tracking-[0.3em] text-white/40">
+                Select Size
+              </p>
 
-            <div className="flex flex-wrap gap-4">
+              {selectedSize && (
+                <span className="text-xs text-white/50">
+                  Selected: {selectedSize}
+                </span>
+              )}
+            </div>
+
+            {/* SIZE BUTTONS */}
+            <div className="grid grid-cols-4 sm:grid-cols-5 gap-4">
 
               {product.sizes.map(size => {
 
                 const isOut = size.stock === 0
-                const isActive = selectedSize === size.size
                 const isLow = size.stock > 0 && size.stock <= 3
+                const isActive = selectedSize === size.size
 
                 return (
-                  <button
+                  <motion.button
                     key={size.id}
                     disabled={isOut}
                     onClick={() => setSelectedSize(size.size)}
+                    whileTap={{ scale: 0.96 }}
                     className={`
-            px-5 py-3
+            relative
+            py-4
             border
-            rounded-full
+            rounded-xl
             text-sm
-            tracking-wide
-            transition
+            transition-all
             duration-300
 
-            ${isOut ? "border-white/10 text-white/20 cursor-not-allowed" : "border-white/20"}
+            ${isOut
+                        ? "border-white/5 text-white/20 cursor-not-allowed bg-white/1"
+                        : "border-white/20 hover:border-white/40 hover:bg-white/5"
+                      }
 
-            ${isActive ? "bg-white text-black" : ""}
-
-            hover:bg-white hover:text-black
+            ${isActive
+                        ? "bg-white text-black border-white"
+                        : ""
+                      }
           `}
                   >
                     {size.size}
-                  </button>
+
+                    {/* Low Stock Indicator */}
+                    {isLow && !isOut && (
+                      <span className="
+              absolute
+              -bottom-5
+              left-1/2
+              -translate-x-1/2
+              text-[10px]
+              text-red-400
+              tracking-wide
+            ">
+                        Only {size.stock} left
+                      </span>
+                    )}
+                  </motion.button>
                 )
               })}
 
             </div>
 
-            {selectedSize && (
-              <p className="text-xs text-white/40 mt-4">
-                Selected size: {selectedSize}
+            {/* OUT OF STOCK MESSAGE */}
+            {!product.sizes.some(s => s.stock > 0) && (
+              <p className="text-sm text-red-400">
+                Currently out of stock
               </p>
             )}
+
+            {/* Size Guide */}
+            <button
+              type="button"
+              onClick={() => setIsSizeModalOpen(true)}
+              className="
+      relative
+      text-xs
+      uppercase
+      tracking-[0.25em]
+      text-white/40
+      hover:text-white
+      transition
+      after:absolute
+      after:left-0
+      after:-bottom-1
+      after:h-px
+      after:w-full
+      after:bg-white/30
+    "
+            >
+              Size Guide
+            </button>
 
           </div>
 
@@ -182,22 +258,8 @@ export default function ProductDetail({ product }: Props) {
 
               toast.success("Added to cart")
             }}
-            className="
-    relative
-    overflow-hidden
-    border
-    border-white/20
-    px-10 py-4
-    rounded-full
-    uppercase
-    tracking-widest
-    text-sm
-    transition
-    duration-500
-    hover:bg-white
-    hover:text-black
-  "
-          >
+            className="relative overflow-hidden border border-white/20 px-10 py-4 rounded-full uppercase tracking-widest text-sm transition  duration-500
+     hover:bg-white hover:text-black">
             Add to Collection
           </button>
 
@@ -238,13 +300,76 @@ export default function ProductDetail({ product }: Props) {
               ))}
 
             </div>
-
           </div>
-
         </motion.div>
-
       </div>
+      <AnimatePresence>
+        {isSizeModalOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => setIsSizeModalOpen(false)}
+              className=" fixed inset-0 bg-black/70 backdrop-blur-sm  z-50 " />
+            {/* Modal */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+              className="
+          fixed
+          inset-0
+          z-50
+          flex
+          items-center
+          justify-center
+          px-6
+        "
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="
+            w-full
+            max-w-3xl
+            max-h-[80vh]
+            overflow-y-auto
+            bg-black
+            border border-white/10
+            rounded-3xl
+            p-10
+            shadow-2xl
+          "
+              >
+                {/* Close Button */}
+                <div className="flex justify-between items-center mb-8">
+                  <h2 className="text-xl tracking-tight">
+                    Size Guide
+                  </h2>
 
+                  <button
+                    onClick={() => setIsSizeModalOpen(false)}
+                    className="
+                text-white/40
+                hover:text-white
+                transition
+              "
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <SizeChart brand={product.brand.name} />
+
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+      <FloatingCartButton />
     </main>
   )
 }

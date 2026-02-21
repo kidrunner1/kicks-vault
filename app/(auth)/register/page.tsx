@@ -4,7 +4,9 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Mail, Lock } from "lucide-react"
+import { z } from "zod"
 import FormInput from "../../component/ui/FormInput"
+import { toast } from "sonner"
 
 export default function RegisterPage() {
 
@@ -12,14 +14,55 @@ export default function RegisterPage() {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+  const [formError, setFormError] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [fieldErrors, setFieldErrors] = useState<{
+    email?: string
+    password?: string
+    confirmPassword?: string
+  }>({})
   const [loading, setLoading] = useState(false)
+
+  const registerSchema = z.object({
+    email: z.string().email("Invalid email format"),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string()
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  })
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    setError("")
+    if (loading) return
+
+    setFormError("")
+    setFieldErrors({})
     setLoading(true)
+
+    const parsed = registerSchema.safeParse({
+      email,
+      password,
+      confirmPassword,
+    })
+
+    if (!parsed.success) {
+      const errors: Record<string, string> = {}
+
+      parsed.error.issues.forEach(issue => {
+        const field = issue.path[0]
+        if (typeof field === "string") {
+          errors[field] = issue.message
+        }
+      })
+
+      setFieldErrors(errors)
+      setLoading(false)
+      return
+    }
 
     try {
       const res = await fetch("/api/auth/register", {
@@ -30,13 +73,21 @@ export default function RegisterPage() {
 
       const data = await res.json()
 
-      if (!res.ok)
-        throw new Error(data.error || "ไม่สามารถสมัครสมาชิกได้")
+      if (!res.ok) {
+        setFormError(data.error || "Unable to register")
+        return
+      }
 
-      router.push("/login?registered=true")
+      // 🎉 Success Toast
+      toast.success("Account created successfully")
 
-    } catch (err: any) {
-      setError(err.message)
+      // Smooth redirect
+      setTimeout(() => {
+        router.push("/login")
+      }, 1000)
+
+    } catch {
+      setFormError("Unable to connect. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -66,13 +117,21 @@ export default function RegisterPage() {
         </div>
 
         {/* Error */}
-        {error && (
+        {formError && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 text-sm text-red-600"
+            className="
+      mb-6
+      text-sm
+      text-red-500
+      border border-red-500/20
+      bg-red-500/5
+      px-4 py-3
+      rounded-lg
+    "
           >
-            {error}
+            {formError}
           </motion.div>
         )}
 
@@ -88,6 +147,7 @@ export default function RegisterPage() {
             icon={<Mail size={18} />}
             value={email}
             onChange={setEmail}
+            error={fieldErrors.email}
           />
 
           <FormInput
@@ -96,6 +156,16 @@ export default function RegisterPage() {
             icon={<Lock size={18} />}
             value={password}
             onChange={setPassword}
+            error={fieldErrors.password}
+          />
+
+          <FormInput
+            type="password"
+            label="Confirm Password"
+            icon={<Lock size={18} />}
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+            error={fieldErrors.confirmPassword}
           />
 
           {/* Submit */}
