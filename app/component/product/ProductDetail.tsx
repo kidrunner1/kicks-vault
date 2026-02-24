@@ -6,6 +6,7 @@ import ProductGallery from "./ProductGallery"
 import { toast } from "sonner"
 import SizeChart from "../ui/SizeChart"
 import FloatingCartButton from "../cart/FloatingCartButton"
+import FavoriteButton from "../ui/FavoriteButton"
 
 interface Product {
   id: string
@@ -20,10 +21,10 @@ interface Product {
 
 interface Props {
   product: Product
+  isFavorited: boolean
 }
 
-export default function ProductDetail({ product }: Props) {
-
+export default function ProductDetail({ product, isFavorited }: Props) {
   const formattedPrice =
     product.price != null
       ? new Intl.NumberFormat("en-US", {
@@ -33,11 +34,9 @@ export default function ProductDetail({ product }: Props) {
       : null
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
-  const [showSizeChart, setShowSizeChart] = useState(false)
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false)
 
   const addItem = useCartStore(state => state.addItem)
-
 
   return (
     <main className="relative min-h-screen bg-black text-white pt-40 pb-40 px-8 overflow-hidden">
@@ -93,14 +92,22 @@ export default function ProductDetail({ product }: Props) {
           </p>
 
           {/* Name */}
-          <h1 className="
-            text-5xl md:text-6xl
-            leading-[1.1]
-            tracking-tight
-            mb-8
-          ">
-            {product.name}
-          </h1>
+          <div className="flex items-start justify-between gap-6 mb-8">
+
+            <h1 className="
+    text-5xl md:text-6xl
+    leading-[1.1]
+    tracking-tight
+  ">
+              {product.name}
+            </h1>
+
+            <FavoriteButton
+              shoeId={product.id}
+              initialFavorited={isFavorited}
+            />
+
+          </div>
 
           {/* Price */}
           {formattedPrice && (
@@ -187,7 +194,7 @@ export default function ProductDetail({ product }: Props) {
                     {isLow && !isOut && (
                       <span className="
               absolute
-              -bottom-5
+              -bottom-10
               left-1/2
               -translate-x-1/2
               text-[10px]

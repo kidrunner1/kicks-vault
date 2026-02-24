@@ -13,21 +13,34 @@ function getSecretKey() {
 export interface TokenPayload extends JWTPayload {
   userId: string
   role: string
+  type: "access" | "refresh"
 }
 
-export async function signAccessToken(payload: TokenPayload) {
+export async function signAccessToken(payload: {
+  userId: string
+  role: string
+}) {
   const secretKey = getSecretKey()
 
-  return await new SignJWT(payload)
+  return await new SignJWT({
+    ...payload,
+    type: "access"
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("15m")
     .sign(secretKey)
 }
 
-export async function signRefreshToken(payload: TokenPayload) {
+export async function signRefreshToken(payload: {
+  userId: string
+  role: string
+}) {
   const secretKey = getSecretKey()
 
-  return await new SignJWT(payload)
+  return await new SignJWT({
+    ...payload,
+    type: "refresh"
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")
     .sign(secretKey)

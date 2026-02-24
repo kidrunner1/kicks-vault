@@ -94,7 +94,7 @@ model Favorite {
 
   createdAt DateTime @default(now())
 
-  @@unique([userId, shoeId])
+  @@unique([userId, shoeId], name: "userId_shoeId") 
 }
 
 model Order {

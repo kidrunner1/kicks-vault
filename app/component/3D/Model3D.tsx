@@ -51,7 +51,7 @@ export default function Model3D(): JSX.Element {
                 />
 
                 {/* lighter than city */}
-                <Environment preset="city" background blur={1}/>
+                <Environment preset="city" background blur={1} />
 
                 <ContactShadows
                     resolution={256}

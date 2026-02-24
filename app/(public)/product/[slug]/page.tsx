@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import ProductDetail from "@/app/component/product/ProductDetail"
+import { getCurrentUser } from "@/lib/auth"
 
 interface Props {
   params: {
@@ -10,8 +11,7 @@ interface Props {
 
 export default async function ProductPage({ params }: Props) {
 
-  const resolvedParams = await params
-  const slug = resolvedParams.slug
+  const { slug } = await params
 
   if (!slug) {
     return notFound()
@@ -28,6 +28,23 @@ export default async function ProductPage({ params }: Props) {
   })
 
   if (!product) return notFound()
+
+  const user = await getCurrentUser()
+
+  let isFavorited = false
+
+  if (user) {
+    const favorite = await prisma.favorite.findUnique({
+      where: {
+        userId_shoeId: {
+          userId: user.id,
+          shoeId: product.id
+        }
+      }
+    })
+
+    isFavorited = !!favorite
+  }
 
   const safeSizes = product.sizes.map(size => ({
     id: size.id,
@@ -47,5 +64,10 @@ export default async function ProductPage({ params }: Props) {
     sizes: safeSizes
   }
 
-  return <ProductDetail product={formattedProduct} />
+  return (
+    <ProductDetail
+      product={formattedProduct}
+      isFavorited={isFavorited}
+    />
+  )
 }

@@ -3,19 +3,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { normalizeImagePath } from "@/lib/image"; // ✅ ใช้ตัวกลาง
 
 interface Props {
   images: {
     id: string;
     url: string;
   }[];
-}
-
-const normalizeImagePath = (url?: string) => {
-  if (!url) return "/placeholder.png"
-
-  const cleaned = url.replace(/\\/g, "/")
-  return cleaned.startsWith("/") ? cleaned : "/" + cleaned
 }
 
 export default function ProductGallery({ images }: Props) {
@@ -48,6 +42,7 @@ export default function ProductGallery({ images }: Props) {
               src={normalizeImagePath(selected.url)}
               alt="Product image"
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
           </motion.div>
@@ -60,16 +55,16 @@ export default function ProductGallery({ images }: Props) {
           <button
             key={img.id}
             onClick={() => setSelected(img)}
-            className={`relative w-20 h-20 rounded-xl overflow-hidden border ${
-              selected?.id === img.id
+            className={`relative w-20 h-20 rounded-xl overflow-hidden border ${selected?.id === img.id
                 ? "border-black"
                 : "border-neutral-200"
-            }`}
+              }`}
           >
             <Image
               src={normalizeImagePath(img.url)}
               alt=""
               fill
+              sizes="80px"
               className="object-cover"
             />
           </button>

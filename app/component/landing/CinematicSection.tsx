@@ -120,19 +120,20 @@ export default function CinematicSection(): JSX.Element {
     LEFT IMAGE (OUTER)
 ========================== */}
                 <motion.img
-                    src="/images/shoes/nike-01.jpg"
-                    alt="Sneaker Left"
+                    src="/images/man1.png"
+                    alt="Male Profile"
                     style={{
                         x: leftImageX,
                         scale,
-                        filter: blurFilter
                     }}
                     className="
     absolute
-    left-[-5%]
-    w-[420px]
+    left-0
+    bottom-0
+    h-[90vh]
+    object-contain
     z-40
-    will-change-transform
+    pointer-events-none
   "
                 />
 
@@ -140,19 +141,20 @@ export default function CinematicSection(): JSX.Element {
     RIGHT IMAGE (OUTER)
 ========================== */}
                 <motion.img
-                    src="/images/shoes/nike-01.jpg"
-                    alt="Sneaker Right"
+                    src="/images/man2.png"
+                    alt="Female Profile"
                     style={{
                         x: rightImageX,
                         scale,
-                        filter: blurFilter
                     }}
                     className="
     absolute
-    right-[-5%]
-    w-[420px]
+    right-0
+    bottom-0
+    h-[90vh]
+    object-contain
     z-40
-    will-change-transform
+    pointer-events-none
   "
                 />
 
