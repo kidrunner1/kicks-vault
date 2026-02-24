@@ -3,7 +3,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { normalizeImagePath } from "@/lib/image"
 
-export const revalidate = 60
+export const dynamic = "force-dynamic"
 export default async function ProductsPage() {
 
   const shoes = await prisma.shoe.findMany({
