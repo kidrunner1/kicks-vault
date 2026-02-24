@@ -51,7 +51,7 @@ export async function verifyToken(token: string): Promise<TokenPayload> {
 
   const { payload } = await jwtVerify(token, secretKey)
 
-  if (!payload.userId || !payload.role) {
+  if (!payload.userId || !payload.role || !payload.type) {
     throw new Error("Invalid token structure")
   }
 

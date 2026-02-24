@@ -24,6 +24,8 @@ interface Props {
   isFavorited: boolean
 }
 
+export const revalidate = 60
+
 export default function ProductDetail({ product, isFavorited }: Props) {
   const formattedPrice =
     product.price != null
