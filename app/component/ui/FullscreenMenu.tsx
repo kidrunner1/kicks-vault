@@ -62,9 +62,6 @@ export default function FullscreenMenu({ onClose }: Props) {
       {/* Soft radial light */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.6),transparent_60%)]" />
 
-      {/* Noise */}
-      <div className="absolute inset-0 opacity-[0.05] bg-[url('/images/noise.jpg')] bg-repeat pointer-events-none" />
-
       {/* ================= CONTENT ================= */}
       <div className="relative z-10 grid lg:grid-cols-2 h-full items-center">
 

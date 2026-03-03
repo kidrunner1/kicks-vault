@@ -1,23 +1,23 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
-import { verifyToken, signAccessToken, signRefreshToken } from "@/lib/jwt"
+import {
+    verifyRefreshToken,
+    signAccessToken,
+    signRefreshToken,
+} from "@/lib/jwt"
 import bcrypt from "bcrypt"
 
 export async function POST() {
     try {
-        const cookieStore = cookies()
-        const refreshToken = (await cookieStore).get("refreshToken")?.value
+        const cookieStore = await cookies()
+        const refreshToken = cookieStore.get("refreshToken")?.value
 
         if (!refreshToken) {
             return unauthorizedResponse()
         }
 
-        const payload = await verifyToken(refreshToken)
-
-        if (payload.type !== "refresh") {
-            return unauthorizedResponse()
-        }
+        const payload = await verifyRefreshToken(refreshToken)
 
         const user = await prisma.user.findUnique({
             where: { id: payload.userId },
@@ -29,7 +29,7 @@ export async function POST() {
         })
 
         if (!user || !user.refreshToken) {
-            return unauthorizedResponse()
+            return unauthorizedResponse(true)
         }
 
         const isValid = await bcrypt.compare(
@@ -85,7 +85,7 @@ export async function POST() {
 
         return response
 
-    } catch (error) {
+    } catch {
         return unauthorizedResponse(true)
     }
 }

@@ -34,20 +34,6 @@ export default function EditorialSection() {
   return (
     <section className="relative bg-neutral-50 text-neutral-900 px-6 md:px-20 py-48 overflow-hidden">
 
-      {/* Noise Texture */}
-      <div
-        className="
-      pointer-events-none
-      absolute
-      inset-0
-      opacity-[0.04]
-      mix-blend-multiply
-      bg-[url('/images/noise.jpg')]
-      bg-repeat
-      bg-size-[300px]
-    "
-      />
-
       {/* Subtle Background Atmosphere */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-225 h-225 bg-white blur-[180px] opacity-60 rounded-full" />

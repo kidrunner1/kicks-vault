@@ -34,7 +34,7 @@ export async function createOrder(data: CreateOrderInput) {
   const parsed = OrderSchema.safeParse(data)
 
   if (!parsed.success) {
-    throw new Error("Invalid order data")
+    throw new Error("ข้อมูลคำสั่งซื้อไม่ถูกต้อง")
   }
 
   const { items } = parsed.data
@@ -45,7 +45,7 @@ export async function createOrder(data: CreateOrderInput) {
 
   const user = await getCurrentUser()
   if (!user) {
-    throw new Error("Unauthorized")
+    throw new Error("ไม่พบผู้ใช้งาน")
   }
 
   // -----------------------------
@@ -64,11 +64,11 @@ export async function createOrder(data: CreateOrderInput) {
     })
 
     if (!sizeRecord) {
-      throw new Error("Size not found")
+      throw new Error("ไม่พบไซส์ที่เลือก")
     }
 
     if (sizeRecord.stock < item.quantity) {
-      throw new Error("Insufficient stock")
+      throw new Error("จำนวนสินค้าที่สั่งมีมากกว่าจำนวนที่มีในสต็อก")
     }
   }
 

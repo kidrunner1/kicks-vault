@@ -1,43 +1,68 @@
 import { cookies } from "next/headers"
-import { verifyToken } from "./jwt"
+import {
+  verifyAccessToken,
+  verifyRefreshToken,
+  signAccessToken,
+} from "./jwt"
 import { prisma } from "@/lib/prisma"
 import { AuthError } from "@/lib/errors/auth-error"
 
 export async function getCurrentUser() {
   const cookieStore = await cookies()
-  const token = cookieStore.get("accessToken")?.value
 
-  if (!token) return null
+  const accessToken = cookieStore.get("accessToken")?.value
+  const refreshToken = cookieStore.get("refreshToken")?.value
 
-  try {
-    const payload = await verifyToken(token)
+  // 🔹 ไม่มี token เลย
+  if (!accessToken && !refreshToken) return null
 
-    const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
-      select: {
-        id: true,
-        email: true,
-        role: true,
-      },
-    })
+  let userId: string | null = null
 
-    return user
-
-  } catch (error) {
-    console.error("TOKEN_VERIFY_FAILED:", error)
-    return null
+  // 🔹 ลอง verify access ก่อน
+  if (accessToken) {
+    try {
+      const payload = await verifyAccessToken(accessToken)
+      userId = payload.userId
+    } catch {
+      // access expired → fallback ไป refresh
+    }
   }
-}
 
-export async function requireAdmin() {
+  // 🔥 ถ้า access ใช้ไม่ได้ → ลอง refresh
+  if (!userId && refreshToken) {
+    try {
+      const payload = await verifyRefreshToken(refreshToken)
+      userId = payload.userId
 
-  const user = await getCurrentUser()
+      // ออก access token ใหม่
+      const newAccessToken = await signAccessToken({
+        userId: payload.userId,
+        role: payload.role,
+      })
 
-  if (!user)
-    throw new AuthError("Unauthorized", 401)
+      cookieStore.set("accessToken", newAccessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 15,
+      })
 
-  if (user.role !== "ADMIN")
-    throw new AuthError("Forbidden", 403)
+    } catch {
+      return null
+    }
+  }
+
+  if (!userId) return null
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+    },
+  })
 
   return user
 }

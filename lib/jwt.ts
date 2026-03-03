@@ -16,43 +16,63 @@ export interface TokenPayload extends JWTPayload {
   type: "access" | "refresh"
 }
 
+// 🔐 ACCESS TOKEN
 export async function signAccessToken(payload: {
   userId: string
   role: string
 }) {
-  const secretKey = getSecretKey()
-
-  return await new SignJWT({
+  return new SignJWT({
     ...payload,
-    type: "access"
+    type: "access",
   })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("15m")
-    .sign(secretKey)
+    .sign(getSecretKey())
 }
 
+// 🔐 REFRESH TOKEN
 export async function signRefreshToken(payload: {
   userId: string
   role: string
 }) {
-  const secretKey = getSecretKey()
-
-  return await new SignJWT({
+  return new SignJWT({
     ...payload,
-    type: "refresh"
+    type: "refresh",
   })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("7d")
-    .sign(secretKey)
+    .sign(getSecretKey())
 }
 
-export async function verifyToken(token: string): Promise<TokenPayload> {
-  const secretKey = getSecretKey()
+// ✅ VERIFY ACCESS ONLY
+export async function verifyAccessToken(
+  token: string
+): Promise<TokenPayload> {
+  const { payload } = await jwtVerify(token, getSecretKey())
 
-  const { payload } = await jwtVerify(token, secretKey)
+  if (
+    !payload.userId ||
+    !payload.role ||
+    payload.type !== "access"
+  ) {
+    throw new Error("Invalid access token")
+  }
 
-  if (!payload.userId || !payload.role || !payload.type) {
-    throw new Error("Invalid token structure")
+  return payload as TokenPayload
+}
+
+// ✅ VERIFY REFRESH ONLY
+export async function verifyRefreshToken(
+  token: string
+): Promise<TokenPayload> {
+  const { payload } = await jwtVerify(token, getSecretKey())
+
+  if (
+    !payload.userId ||
+    !payload.role ||
+    payload.type !== "refresh"
+  ) {
+    throw new Error("Invalid refresh token")
   }
 
   return payload as TokenPayload

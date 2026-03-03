@@ -18,7 +18,7 @@ export default function FavoriteRemoveButton({ shoeId }: Props) {
     const handleRemove = () => {
         startTransition(async () => {
             await toggleFavorite(shoeId)
-            toast("Removed from favorites")
+            toast("ลบออกจากรายการโปรดแล้ว")
             router.refresh()
         })
     }

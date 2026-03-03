@@ -52,8 +52,8 @@ export default function FavoriteButton({
 
             toast.success(
                 res.state === "ADDED"
-                    ? "Added to favorites."
-                    : "Removed from favorites."
+                    ? "เพิ่มลงในรายการโปรดแล้ว"
+                    : "ลบออกจากรายการโปรดแล้ว"
             )
         })
     }
