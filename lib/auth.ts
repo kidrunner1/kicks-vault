@@ -66,3 +66,15 @@ export async function getCurrentUser() {
 
   return user
 }
+
+export async function requireAdmin() {
+  const user = await getCurrentUser()
+
+  if (!user)
+    throw new AuthError("Unauthorized", 401)
+
+  if (user.role !== "ADMIN")
+    throw new AuthError("Forbidden", 403)
+
+  return user
+}
