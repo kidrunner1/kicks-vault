@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 
 export default async function AccountPage() {
@@ -6,126 +7,66 @@ export default async function AccountPage() {
   const user = await getCurrentUser()
   if (!user) return null
 
+  const orders = await prisma.order.findMany({
+    where: { userId: user.id },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+  })
+
+  const totalOrders = orders.length
+  const totalSpent = orders.reduce((acc, o) => acc + Number(o.total), 0)
+
   return (
-    <main className="relative min-h-screen bg-black text-white overflow-hidden">
+    <div className="space-y-16">
 
-      {/* ================= BACKGROUND ================= */}
-      <div className="absolute inset-0 opacity-[0.20] bg-[url('/images/noise.jpg')] bg-repeat pointer-events-none" />
-    
+      {/* ================= COVER ================= */}
+      <div className="relative bg-gradient-to-r from-black/80 to-black/60 rounded-3xl p-16 text-white overflow-hidden">
 
-      <section className="relative z-10 max-w-6xl mx-auto px-8 pt-40 pb-40 space-y-24">
+        <div className="relative z-10">
 
-        {/* ================= HERO ================= */}
-        <div className="space-y-6">
+          <div className="flex items-center gap-8">
 
-          <p className="text-xs uppercase tracking-[0.4em] text-white/40">
-            Welcome Back
-          </p>
+            {/* Avatar */}
+            <div className="w-24 h-24 rounded-full bg-white text-black flex items-center justify-center text-3xl font-semibold">
+              {user.email[0].toUpperCase()}
+            </div>
 
-          <h1 className="text-5xl md:text-6xl tracking-tight leading-tight">
-            {user.email}
-          </h1>
+            {/* Info */}
+            <div>
+              <h1 className="text-3xl font-semibold">
+                {user.email}
+              </h1>
+            </div>
 
-          <p className="text-white/50 max-w-xl">
-            Manage your orders, review your collection,
-            and explore your account details.
-          </p>
-
-        </div>
-
-        {/* ================= ACCOUNT OVERVIEW ================= */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-
-          <div className="
-            border border-white/10
-            p-12
-            rounded-3xl
-            bg-white/2
-            transition
-            hover:border-white/20
-          ">
-            <p className="text-white/40 text-xs uppercase tracking-[0.3em] mb-6">
-              Account Type
-            </p>
-            <p className="text-2xl font-medium">
-              {user.role}
-            </p>
           </div>
 
-          <div className="
-            border border-white/10
-            p-12
-            rounded-3xl
-            bg-white/2
-            transition
-            hover:border-white/20
-          ">
-            <p className="text-white/40 text-xs uppercase tracking-[0.3em] mb-6">
-              Status
-            </p>
-            <p className="text-2xl font-medium text-green-400">
-              Active
-            </p>
-          </div>
+          {/* Stats */}
+          <div className="flex gap-12 mt-12 text-sm">
 
-        </div>
-
-        {/* ================= QUICK ACTIONS ================= */}
-        <div className="border-t border-white/10 pt-20">
-
-          <h2 className="text-sm uppercase tracking-[0.3em] text-white/40 mb-12">
-            Quick Access
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-
-            <Link
-              href="/account/orders"
-              className="
-                border border-white/10
-                p-10
-                rounded-2xl
-                hover:border-white/20
-                transition
-              "
-            >
-              <p className="text-white/40 text-sm mb-4">
+            <div>
+              <p className="text-white/50 uppercase tracking-wider text-xs mb-2">
                 Orders
               </p>
-              <p className="text-xl">
-                View Order History
+              <p className="text-xl font-medium">
+                {totalOrders}
               </p>
-            </Link>
+            </div>
 
-            <Link
-              href="/"
-              className="
-                border border-white/10
-                p-10
-                rounded-2xl
-                hover:border-white/20
-                transition
-              "
-            >
-              <p className="text-white/40 text-sm mb-4">
-                Explore
+            <div>
+              <p className="text-white/50 uppercase tracking-wider text-xs mb-2">
+                Total Spent
               </p>
-              <p className="text-xl">
-                Continue Shopping
+              <p className="text-xl font-medium">
+                ${totalSpent.toFixed(2)}
               </p>
-            </Link>
+            </div>
 
-            <div className="
-              border border-white/10
-              p-10
-              rounded-2xl
-              opacity-60
-            ">
-              <p className="text-white/40 text-sm mb-4">
-                Settings
+            <div>
+              <p className="text-white/50 uppercase tracking-wider text-xs mb-2">
+                Status
               </p>
-              <p className="text-xl">
-                Coming Soon
+              <p className="text-xl font-medium text-green-400">
+                Active
               </p>
             </div>
 
@@ -133,8 +74,77 @@ export default async function AccountPage() {
 
         </div>
 
-      </section>
+      </div>
 
-    </main>
+      {/* ================= GRID CONTENT ================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+        {/* LEFT COLUMN */}
+        <div className="space-y-10">
+
+          <div className="bg-white border border-black/10 rounded-3xl p-8">
+            <h3 className="text-lg font-semibold mb-6">
+              Account Details
+            </h3>
+
+            <div className="space-y-4 text-sm text-black/70">
+              <p><span className="font-medium">Email:</span> {user.email}</p>
+              <p><span className="font-medium">Member Since:</span> 2026</p>
+            </div>
+          </div>
+
+        </div>
+
+        {/* RIGHT COLUMN */}
+        <div className="lg:col-span-2 space-y-10">
+
+          <div className="bg-white border border-black/10 rounded-3xl p-8">
+            <h3 className="text-lg font-semibold mb-8">
+              Recent Orders
+            </h3>
+
+            {orders.length === 0 && (
+              <p className="text-black/50 text-sm">
+                No orders yet.
+              </p>
+            )}
+
+            <div className="space-y-6">
+
+              {orders.map(order => (
+                <Link
+                  key={order.id}
+                  href={`/account/orders/${order.id}`}
+                  className="flex justify-between items-center border-b border-black/10 pb-4 hover:opacity-80 transition"
+                >
+                  <div>
+                    <p className="font-medium">
+                      Order #{order.id.slice(0, 8)}
+                    </p>
+                    <p className="text-sm text-black/50">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  <div className="text-right">
+                    <p className="font-medium">
+                      ${Number(order.total).toFixed(2)}
+                    </p>
+                    <p className="text-sm text-black/50">
+                      {order.status}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
   )
 }

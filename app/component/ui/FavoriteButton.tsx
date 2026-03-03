@@ -19,7 +19,6 @@ export default function FavoriteButton({
     const [isFavorited, setIsFavorited] = useState(initialFavorited)
     const [isPending, startTransition] = useTransition()
 
-    // ✅ Sync in case parent revalidates
     useEffect(() => {
         setIsFavorited(initialFavorited)
     }, [initialFavorited])
@@ -31,7 +30,6 @@ export default function FavoriteButton({
         const previousState = isFavorited
         const optimisticState = !previousState
 
-        // Optimistic update
         setIsFavorited(optimisticState)
 
         startTransition(async () => {
@@ -39,7 +37,6 @@ export default function FavoriteButton({
             const res = await toggleFavorite(shoeId)
 
             if (!res.success) {
-                // Rollback safely
                 setIsFavorited(previousState)
 
                 if (res.error === "UNAUTHORIZED") {
@@ -53,29 +50,34 @@ export default function FavoriteButton({
                 return
             }
 
-            if (res.state === "ADDED") {
-                toast.success("Added to favorites.")
-            }
-
-            if (res.state === "REMOVED") {
-                toast.success("Removed from favorites.")
-            }
+            toast.success(
+                res.state === "ADDED"
+                    ? "Added to favorites."
+                    : "Removed from favorites."
+            )
         })
     }
 
     return (
-        <button
+        <motion.button
             onClick={handleToggle}
             disabled={isPending}
             aria-pressed={isFavorited}
+            whileTap={{ scale: 0.9 }}
             className={`
-        relative group
+        w-11 h-11
+        rounded-full
+        border
+        flex items-center justify-center
         transition
-        ${isPending ? "pointer-events-none opacity-70" : ""}
+        ${isFavorited
+                    ? "bg-black border-black"
+                    : "bg-white border-black/10 hover:border-black/30"
+                }
+        ${isPending ? "opacity-60 pointer-events-none" : ""}
       `}
         >
             <motion.div
-                whileTap={{ scale: 0.85 }}
                 animate={{
                     scale: isFavorited ? 1.15 : 1,
                 }}
@@ -83,14 +85,15 @@ export default function FavoriteButton({
             >
                 <Heart
                     className={`
-            w-6 h-6
+            w-5 h-5
             transition-all duration-300
             ${isFavorited
                             ? "fill-white text-white"
-                            : "text-white/40 group-hover:text-white"}
+                            : "text-black/60 group-hover:text-black"
+                        }
           `}
                 />
             </motion.div>
-        </button>
+        </motion.button>
     )
 }

@@ -72,9 +72,6 @@ export default function CinematicSection(): JSX.Element {
                 {/* Vignette */}
                 <div className="absolute inset-0 bg-linear-to-b from-black via-transparent to-black z-10 pointer-events-none" />
 
-                {/* Noise */}
-                <div className="absolute inset-0 opacity-[0.05] bg-[url('/images/noise.jpg')] bg-repeat pointer-events-none z-20" />
-
                 {/* =========================
             GRAIN TEXTURE
         ========================== */}
@@ -115,49 +112,6 @@ export default function CinematicSection(): JSX.Element {
     pointer-events-none
   "
                 />
-
-                {/* =========================
-    LEFT IMAGE (OUTER)
-========================== */}
-                <motion.img
-                    src="/images/man1.png"
-                    alt="Male Profile"
-                    style={{
-                        x: leftImageX,
-                        scale,
-                    }}
-                    className="
-    absolute
-    left-0
-    bottom-0
-    h-[90vh]
-    object-contain
-    z-40
-    pointer-events-none
-  "
-                />
-
-                {/* =========================
-    RIGHT IMAGE (OUTER)
-========================== */}
-                <motion.img
-                    src="/images/man2.png"
-                    alt="Female Profile"
-                    style={{
-                        x: rightImageX,
-                        scale,
-                    }}
-                    className="
-    absolute
-    right-0
-    bottom-0
-    h-[90vh]
-    object-contain
-    z-40
-    pointer-events-none
-  "
-                />
-
                 {/* =========================
     CENTER TEXT BLOCK
 ========================== */}

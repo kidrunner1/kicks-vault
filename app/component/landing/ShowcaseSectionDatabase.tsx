@@ -1,13 +1,9 @@
 "use client"
 
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useSpring,
-} from "framer-motion"
-import { useRef } from "react"
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Shoe, Brand, ShoeImage, ShoeSpec } from "@prisma/client"
 
 type ShoeWithRelations = Shoe & {
@@ -23,173 +19,116 @@ interface Props {
   })[]
 }
 
+export default function ShowcaseSlider({ shoes }: Props) {
+  const [index, setIndex] = useState(0)
 
-export default function ShowcaseSectionDatabase({ shoes }: Props) {
+  const next = () => {
+    setIndex((prev) => (prev + 1) % shoes.length)
+  }
 
-  const ref = useRef<HTMLDivElement>(null)
+  const prev = () => {
+    setIndex((prev) => (prev - 1 + shoes.length) % shoes.length)
+  }
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"]
-  })
+  // Auto slide
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     next()
+  //   }, 6000)
 
-  const smooth = useSpring(scrollYProgress, {
-    stiffness: 60,
-    damping: 20
-  })
-  // Horizontal scroll based on scroll progress
+  //   return () => clearInterval(interval)
+  // }, [])
 
-  const x = useTransform(
-    smooth,
-    [0, 1],
-    ["0%", `-${Math.max(shoes.length - 1, 0) * 100}%`]
-  )
-  // Progress bar scale
-  const progressScale = useTransform(smooth, [0, 1], [0, 1])
+  const shoe = shoes[index]
 
   return (
-    <section
-      ref={ref}
-      className="relative h-[400vh] bg-gray-500"
-    >
-      {/* Progress Bar */}
-      <motion.div
-        style={{ scaleX: progressScale }}
-        className="fixed  top-0  left-0 h-0.5  w-full  origin-left  bg-linear-to-r  from-white  via-neutral-400  to-white  z-50" />
+    <section className="relative h-screen bg-black text-white overflow-hidden">
 
-      <div className="sticky top-0 h-screen overflow-hidden">
-
+      {/* Slide Content */}
+      <AnimatePresence mode="wait">
         <motion.div
-          style={{ x }}
-          className="flex h-full"
+          key={shoe.id}
+          initial={{ opacity: 0, x: 100 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -100 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute inset-0 flex items-center justify-center px-16"
         >
 
-          {shoes.map((shoe, index) => {
+          <Link
+            href={`/product/${shoe.slug}`}
+            className="flex items-center gap-24 group"
+          >
 
-            return (
+            {/* Image */}
+            <motion.div
+              animate={{ y: [0, -12, 0] }}
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="w-[500px] flex justify-center"
+            >
+              <img
+                src={shoe.images[0]?.url}
+                alt={shoe.name}
+                className="object-contain drop-shadow-[0_80px_120px_rgba(0,0,0,0.9)] group-hover:scale-105 transition-transform duration-700"
+              />
+            </motion.div>
 
-              <div
-                key={shoe.id}
-                className="
-                  min-w-screen
-                  h-full
-                  flex
-                  items-center
-                  justify-center
-                  px-20
-                  relative
-                "
-              >
+            {/* Text */}
+            <div className="max-w-xl">
 
-                {/* Gradient Spotlight */}
-                <div className="
-                  absolute
-                  inset-0
-                  bg-linear-to-r
-                  from-black
-                  via-transparent
-                  to-black
-                  opacity-60
-                  pointer-events-none
-                " />
+              <p className="uppercase tracking-[0.5em] text-xs text-neutral-500 mb-6">
+                {shoe.brand.name}
+              </p>
 
-                <Link
-                  href={`/product/${shoe.slug}`}
-                  className="
-                    flex
-                    items-center
-                    gap-24
-                    text-white
-                    z-10
-                    group
-                  "
-                >
+              <h2 className="text-[6rem] leading-[0.9] font-(--font-bebas) tracking-tight mb-6">
+                {shoe.name}
+              </h2>
 
-                  <div
-                    className="  relative  w-150  h-150 flex items-center justify-center " >
+              <div className="w-16 h-px bg-neutral-700 mb-6" />
 
-                    <motion.div
-                      animate={{ y: [0, -10, 0] }}
-                      transition={{
-                        duration: 6,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className="relative"
-                    >
-                      <motion.img
-                        src={shoe.images[0]?.url}
-                        alt={shoe.name}
-                        initial={{ scale: 0.85, opacity: 0 }}
-                        whileInView={{ scale: 1, opacity: 1 }}
-                        transition={{
-                          duration: 1.2,
-                          ease: [0.22, 1, 0.36, 1]
-                        }}
-                        className=" max-w-[90%] object-contain drop-shadow-[0_80px_120px_rgba(0,0,0,0.9)] transition-transform  duration-700  group-hover:scale-105 " />
+              <p className="text-neutral-400 leading-relaxed text-lg">
+                {shoe.description}
+              </p>
 
-                    </motion.div>
-                  </div>
+            </div>
 
-                  {/* TEXT BLOCK */}
-                  <div className="max-w-xl">
-
-                    {/* Brand */}
-                    <motion.div
-                      initial={{ y: 40, opacity: 0 }}
-                      whileInView={{ y: 0, opacity: 1 }}
-                      transition={{
-                        duration: 0.8,
-                        delay: 0.2,
-                        ease: [0.22, 1, 0.36, 1]
-                      }}
-                      className=" text-neutral-500 uppercase  tracking-[0.5em]  text-[10px]  mb-8" >
-                      {shoe.brand.name}
-                    </motion.div>
-
-                    {/* Name */}
-                    <motion.h2
-                      initial={{ y: 60, opacity: 0 }}
-                      whileInView={{ y: 0, opacity: 1 }}
-                      transition={{
-                        duration: 1,
-                        delay: 0.3,
-                        ease: [0.22, 1, 0.36, 1]
-                      }}
-                      className="text-[7rem]  leading-[0.9]  font-(--font-bebas)  tracking-tight  mb-8"  >
-
-                      {shoe.name}
-                    </motion.h2>
-
-                    {/* Divider */}
-                    <div className="w-16 h-[1px] bg-neutral-700 mb-8" />
-
-                    {/* Description */}
-                    <motion.p
-                      initial={{ y: 40, opacity: 0 }}
-                      whileInView={{ y: 0, opacity: 1 }}
-                      transition={{
-                        duration: 1,
-                        delay: 0.5,
-                        ease: [0.22, 1, 0.36, 1]
-                      }}
-                      className="  text-neutral-400 leading-relaxed text-lg "
-                    >
-                      {shoe.description}
-                    </motion.p>
-
-                  </div>
-
-
-                </Link>
-
-              </div>
-            )
-          })}
-
+          </Link>
         </motion.div>
+      </AnimatePresence>
 
+      {/* Navigation Arrows */}
+      <button
+        onClick={prev}
+        className="absolute left-8 top-1/2 -translate-y-1/2 z-20 p-3 border border-white/20 rounded-full hover:bg-white/10 transition"
+      >
+        <ChevronLeft size={22} />
+      </button>
+
+      <button
+        onClick={next}
+        className="absolute right-8 top-1/2 -translate-y-1/2 z-20 p-3 border border-white/20 rounded-full hover:bg-white/10 transition"
+      >
+        <ChevronRight size={22} />
+      </button>
+
+      {/* Dots */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3">
+        {shoes.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setIndex(i)}
+            className={`h-2 rounded-full transition-all ${i === index
+                ? "w-8 bg-white"
+                : "w-2 bg-white/40"
+              }`}
+          />
+        ))}
       </div>
+
     </section>
   )
 }

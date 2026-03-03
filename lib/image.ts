@@ -1,14 +1,18 @@
-export function normalizeImagePath(url?: string) {
+export function normalizeImagePath(url?: string | null) {
     if (!url) return "/placeholder.png"
 
-    // ถ้าเป็น external URL → return ตรง ๆ
-    if (url.startsWith("http")) {
-        return url
+    const trimmed = url.trim()
+
+    // External URL
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+        return trimmed
     }
 
-    const cleaned = url.replace(/\\/g, "/")
+    // Replace Windows backslashes
+    let cleaned = trimmed.replace(/\\/g, "/")
 
-    return cleaned.startsWith("/")
-        ? cleaned
-        : "/" + cleaned
+    // Remove duplicate leading slashes
+    cleaned = cleaned.replace(/^\/+/, "")
+
+    return `/${cleaned}`
 }

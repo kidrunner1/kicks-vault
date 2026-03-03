@@ -5,36 +5,46 @@ import { verifyToken, signAccessToken, signRefreshToken } from "@/lib/jwt"
 import bcrypt from "bcrypt"
 
 export async function POST() {
-
-    const cookieStore = cookies()
-    const refreshToken = (await cookieStore).get("refreshToken")?.value
-
-    if (!refreshToken) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     try {
+        const cookieStore = cookies()
+        const refreshToken = (await cookieStore).get("refreshToken")?.value
+
+        if (!refreshToken) {
+            return unauthorizedResponse()
+        }
 
         const payload = await verifyToken(refreshToken)
 
-        // ✅ เช็คว่าเป็น refresh token จริง
         if (payload.type !== "refresh") {
-            throw new Error("Invalid token type")
+            return unauthorizedResponse()
         }
 
         const user = await prisma.user.findUnique({
             where: { id: payload.userId },
+            select: {
+                id: true,
+                role: true,
+                refreshToken: true,
+            },
         })
 
         if (!user || !user.refreshToken) {
-            throw new Error("Invalid refresh token")
+            return unauthorizedResponse()
         }
 
-        // ✅ Compare แบบ secure (กรณี hash แล้ว)
-        const isValid = await bcrypt.compare(refreshToken, user.refreshToken)
+        const isValid = await bcrypt.compare(
+            refreshToken,
+            user.refreshToken
+        )
 
+        // 🔐 Reuse Detection
         if (!isValid) {
-            throw new Error("Invalid refresh token")
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { refreshToken: null },
+            })
+
+            return unauthorizedResponse(true)
         }
 
         // 🔁 ROTATION
@@ -60,7 +70,7 @@ export async function POST() {
         response.cookies.set("accessToken", newAccessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            sameSite: "strict",
             path: "/",
             maxAge: 60 * 15,
         })
@@ -68,7 +78,7 @@ export async function POST() {
         response.cookies.set("refreshToken", newRefreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            sameSite: "strict",
             path: "/",
             maxAge: 60 * 60 * 24 * 7,
         })
@@ -76,10 +86,20 @@ export async function POST() {
         return response
 
     } catch (error) {
-
-        return NextResponse.json(
-            { error: "Unauthorized" },
-            { status: 401 }
-        )
+        return unauthorizedResponse(true)
     }
+}
+
+function unauthorizedResponse(clearCookies = false) {
+    const response = NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+    )
+
+    if (clearCookies) {
+        response.cookies.set("accessToken", "", { maxAge: 0 })
+        response.cookies.set("refreshToken", "", { maxAge: 0 })
+    }
+
+    return response
 }

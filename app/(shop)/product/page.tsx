@@ -24,46 +24,68 @@ export default async function ProductsPage() {
   }))
 
   return (
-    <main className="relative min-h-screen bg-black text-white overflow-hidden">
+    <main className="min-h-screen bg-[#f5f5f3] text-black">
+      
+      <section className="px-8 md:px-16 pt-32 pb-16 max-w-7xl mx-auto">
 
-      {/* NOISE */}
-      <div
-        className="
-          pointer-events-none
-          absolute inset-0
-          z-0
-          opacity-[0.20]
-          bg-[url('/images/noise.jpg')]
-          bg-repeat
-        "
-      />
+        <h1 className="text-6xl md:text-7xl font-semibold tracking-tight">
+          Get Inspired
+        </h1>
 
-      <section className="relative z-10 px-8 md:px-16 pt-40 pb-24 max-w-7xl mx-auto">
+        <p className="mt-6 text-lg text-black/60 max-w-2xl leading-relaxed">
+          Discover the latest additions to our sneaker collection.
+          From everyday essentials to statement pieces.
+        </p>
 
-        {/* HEADER */}
-        <div className="mb-24 max-w-3xl">
-          <p className="text-xs uppercase tracking-[0.4em] text-white/40">
-            Archive
-          </p>
+      </section>
 
-          <h1 className="text-6xl md:text-7xl mt-6 tracking-tight leading-[1.1]">
-            The Collection
-          </h1>
+      <div className="px-8 md:px-16 max-w-7xl mx-auto mb-14">
 
-          <p className="text-white/50 mt-8 text-lg leading-relaxed">
-            A curated selection of modern sneakers —
-            blending innovation, heritage, and culture.
-          </p>
+        <div className="flex flex-wrap gap-4 items-center justify-between">
+
+          <div className="flex flex-wrap gap-4">
+
+            {["All Categories", "All Brands", "All Prices"].map((item) => (
+              <button
+                key={item}
+                className="
+            px-6 py-3
+            rounded-full
+            bg-white
+            border
+            border-black/10
+            text-sm
+            hover:border-black
+            transition
+          "
+              >
+                {item}
+              </button>
+            ))}
+
+          </div>
+
+          <button className="
+      px-6 py-3
+      rounded-full
+      bg-white
+      border
+      border-black/10
+      text-sm
+    ">
+            Sort: New In
+          </button>
+
         </div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-20">
+      </div>
+
+      <section className="px-8 md:px-16 pb-32 max-w-7xl mx-auto">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12">
 
           {formattedShoes.map((shoe) => {
-
-            const imageUrl = normalizeImagePath(
-              shoe.images[0]?.url
-            )
+            const imageUrl = normalizeImagePath(shoe.images[0]?.url)
 
             return (
               <Link
@@ -71,64 +93,49 @@ export default async function ProductsPage() {
                 href={`/product/${shoe.slug}`}
                 className="group"
               >
-                <div className="relative">
+                <div>
 
                   {/* IMAGE */}
-                  <div className="relative aspect-4/5 overflow-hidden">
+                  <div className="
+              relative
+              aspect-[4/5]
+              bg-white
+              rounded-xl
+              overflow-hidden
+            ">
 
                     <Image
                       src={imageUrl}
                       alt={shoe.name}
                       fill
-                      sizes="(max-width: 768px) 100vw,
-                             (max-width: 1200px) 50vw,
-                             33vw"
                       className="
-                        object-cover
-                        transition-transform
-                        duration-[1200ms]
-                        ease-[cubic-bezier(0.22,1,0.36,1)]
-                        group-hover:scale-105
-                      "
+                  object-contain
+                  p-8
+                  transition-transform
+                  duration-500
+                  group-hover:scale-105
+                "
                     />
 
-                    <div className="
-                      absolute inset-0
-                      bg-gradient-to-t
-                      from-black/70
-                      via-transparent
-                      to-transparent
-                    " />
                   </div>
 
                   {/* INFO */}
-                  <div className="mt-8 space-y-3">
+                  <div className="mt-6 space-y-2">
 
-                    <p className="text-[10px] uppercase tracking-[0.4em] text-white/40">
-                      {shoe.brand.name}
-                    </p>
-
-                    <h2 className="
-                      text-3xl
-                      tracking-tight
-                      transition-colors
-                      duration-300
-                      group-hover:text-white/80
-                    ">
+                    <h2 className="text-base font-medium">
                       {shoe.name}
                     </h2>
 
-                    {shoe.price != null && (
-                      <div className="pt-2">
-                        <div className="text-xs tracking-[0.3em] text-white/30 uppercase">
-                          Price
-                        </div>
-                        <div className="text-xl font-medium mt-1">
-                          {new Intl.NumberFormat("en-US", {
-                            style: "currency",
-                            currency: "USD",
-                          }).format(Number(shoe.price))}
-                        </div>
+                    <p className="text-sm text-black/60">
+                      {shoe.brand.name}
+                    </p>
+
+                    {shoe.price && (
+                      <div className="text-sm font-medium">
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        }).format(Number(shoe.price))}
                       </div>
                     )}
 

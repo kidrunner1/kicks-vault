@@ -32,6 +32,9 @@ export default function LoginPage() {
     if (loading) return
 
     setFormError("")
+
+    
+
     setFieldErrors({})
     setLoading(true)
 
@@ -85,17 +88,18 @@ export default function LoginPage() {
   }
 
   const handleEmailChange = (val: string) => {
-  setEmail(val)
-  setFieldErrors(prev => ({ ...prev, email: undefined }))
-}
+    setEmail(val)
+    setFieldErrors(prev => ({ ...prev, email: undefined }))
+    setFormError("")
+  }
 
-const handlePasswordChange = (val: string) => {
-  setPassword(val)
-  setFieldErrors(prev => ({ ...prev, password: undefined }))
-}
+  const handlePasswordChange = (val: string) => {
+    setPassword(val)
+    setFieldErrors(prev => ({ ...prev, password: undefined }))
+    setFormError("")
+  }
 
-
-
+  
 
   return (
     <div className="w-full">
@@ -121,13 +125,13 @@ const handlePasswordChange = (val: string) => {
         </div>
 
         {/* Error */}
-        {error && (
+        {formError && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 text-sm text-red-600"
+            className="mb-6 rounded-md bg-red-50 border border-red-200 p-4 text-sm text-red-600"
           >
-            {error}
+            {formError}
           </motion.div>
         )}
 
@@ -142,7 +146,7 @@ const handlePasswordChange = (val: string) => {
             label="Email"
             icon={<Mail size={18} />}
             value={email}
-            onChange={setEmail}
+            onChange={handleEmailChange}
             error={fieldErrors.email}
           />
 
@@ -151,7 +155,7 @@ const handlePasswordChange = (val: string) => {
             label="Password"
             icon={<Lock size={18} />}
             value={password}
-            onChange={setPassword}
+            onChange={handlePasswordChange}
             error={fieldErrors.password}
           />
 

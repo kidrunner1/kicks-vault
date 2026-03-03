@@ -77,27 +77,6 @@ export default function HeroSection() {
           curated silhouettes crafted for modern collectors.
         </p>
 
-        {/* CTA */}
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.97 }}
-          className="
-            mt-10
-            px-8
-            py-4
-            rounded-full
-            bg-neutral-900
-            text-white
-            text-sm
-            tracking-widest
-            uppercase
-            transition-colors
-            hover:bg-black
-          "
-        >
-          Explore Collection
-        </motion.button>
-
       </motion.div>
 
       {/* 3D Model */}
