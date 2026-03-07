@@ -10,7 +10,6 @@ interface CreateOrderInput {
     shoeId: string
     size: string
     quantity: number
-    price: number
   }[]
 }
 
@@ -25,8 +24,7 @@ export async function createOrder(data: CreateOrderInput) {
       z.object({
         shoeId: z.string().uuid(),
         size: z.string().min(1),
-        quantity: z.number().min(1),
-        price: z.number().positive()
+        quantity: z.number().min(1)
       })
     ).min(1)
   })
@@ -44,52 +42,24 @@ export async function createOrder(data: CreateOrderInput) {
   // -----------------------------
 
   const user = await getCurrentUser()
+
   if (!user) {
-    throw new Error("ไม่พบผู้ใช้งาน")
+    throw new Error("กรุณาเข้าสู่ระบบเพื่อทำการสั่งซื้อ")
   }
 
   // -----------------------------
-  // 3️⃣ Pre-check Stock
-  // -----------------------------
-
-  for (const item of items) {
-
-    const sizeRecord = await prisma.shoeSize.findUnique({
-      where: {
-        shoeId_size: {
-          shoeId: item.shoeId,
-          size: item.size
-        }
-      }
-    })
-
-    if (!sizeRecord) {
-      throw new Error("ไม่พบไซส์ที่เลือก")
-    }
-
-    if (sizeRecord.stock < item.quantity) {
-      throw new Error("จำนวนสินค้าที่สั่งมีมากกว่าจำนวนที่มีในสต็อก")
-    }
-  }
-
-  // -----------------------------
-  // 4️⃣ Calculate Total (validated data only)
-  // -----------------------------
-
-  const total = items.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  )
-
-  // -----------------------------
-  // 5️⃣ Transaction: Decrement Stock + Create Order
+  // 3️⃣ Transaction
   // -----------------------------
 
   const orderId = await prisma.$transaction(async (tx) => {
 
-    // Decrement stock
+    let total = 0
+
+    const orderItems = []
+
     for (const item of items) {
 
+      // fetch size
       const sizeRecord = await tx.shoeSize.findUnique({
         where: {
           shoeId_size: {
@@ -99,42 +69,56 @@ export async function createOrder(data: CreateOrderInput) {
         }
       })
 
-      if (!sizeRecord || sizeRecord.stock < item.quantity) {
-        throw new Error("Stock error")
+      if (!sizeRecord) {
+        throw new Error("ไม่พบไซส์ที่เลือก")
       }
 
-      await tx.shoeSize.update({
-        where: { id: sizeRecord.id },
-        data: {
-          stock: {
-            decrement: item.quantity
-          }
-        }
+      if (sizeRecord.stock < item.quantity) {
+        throw new Error("สินค้าในสต็อกไม่เพียงพอ")
+      }
+
+      // fetch shoe price
+      const shoe = await tx.shoe.findUnique({
+        where: { id: item.shoeId },
+        select: { price: true }
+      })
+
+      if (!shoe || shoe.price === null) {
+        throw new Error("ไม่พบราคาสินค้า")
+      }
+
+      const itemTotal = Number(shoe.price) * item.quantity
+
+      total += itemTotal
+
+      orderItems.push({
+        shoeId: item.shoeId,
+        quantity: item.quantity,
+        size: item.size,
+        price: new Decimal(shoe.price)
+      })
+
+      orderItems.push({
+        shoeId: item.shoeId,
+        quantity: item.quantity,
+        size: item.size,
+        price: new Decimal(shoe.price)
       })
     }
 
-    // Create order
+    // create order
     const order = await tx.order.create({
       data: {
         userId: user.id,
         total: new Decimal(total),
         items: {
-          create: items.map(i => ({
-            shoeId: i.shoeId,
-            quantity: i.quantity,
-            size: i.size,
-            price: new Decimal(i.price)
-          }))
+          create: orderItems
         }
       }
     })
 
     return order.id
   })
-
-  // -----------------------------
-  // 6️⃣ Return Order ID (IMPORTANT 🔥)
-  // -----------------------------
 
   return orderId
 }

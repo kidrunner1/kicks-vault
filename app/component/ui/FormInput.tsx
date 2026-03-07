@@ -11,6 +11,7 @@ interface FormInputProps {
   value: string
   onChange: (value: string) => void
   error?: string
+  disabled?: boolean
 }
 
 export default function FormInput({
@@ -20,6 +21,7 @@ export default function FormInput({
   value,
   onChange,
   error,
+  disabled,
 }: FormInputProps) {
 
   const [showPassword, setShowPassword] = useState(false)

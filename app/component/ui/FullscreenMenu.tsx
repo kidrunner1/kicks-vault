@@ -4,6 +4,8 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import AnimatedMenuText from "./AnimatedMenuText"
+import { useAuthStore } from "@/lib/auth-store"
 
 interface Props {
   onClose: () => void
@@ -16,17 +18,29 @@ const images = [
   "/images/shoes/nike-04.jpg",
 ]
 
-const menuItems = [
+const guestMenu = [
   { name: "HOME", href: "/" },
   { name: "SHOP", href: "/product" },
-  { name: "ACCOUNT", href: "/account" },
+  { name: "LOGIN", href: "/login" },
+  { name: "REGISTER", href: "/register" },
+]
+
+const userMenu = [
+  { name: "HOME", href: "/" },
+  { name: "SHOP", href: "/product" },
+  { name: "PROFILE", href: "/account" },
 ]
 
 export default function FullscreenMenu({ onClose }: Props) {
-
   const router = useRouter()
+
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const logout = useAuthStore((state) => state.logout)
+
   const [imageShift, setImageShift] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const menuItems = isAuthenticated ? userMenu : guestMenu
 
   const handleLogout = async () => {
     if (isLoggingOut) return
@@ -38,8 +52,12 @@ export default function FullscreenMenu({ onClose }: Props) {
       credentials: "include",
     })
 
+    // clear auth store
+    logout()
+
+    router.refresh()
     onClose()
-    router.push("/login")
+    router.push("/")
   }
 
   return (
@@ -51,23 +69,14 @@ export default function FullscreenMenu({ onClose }: Props) {
         duration: 0.9,
         ease: [0.76, 0, 0.24, 1],
       }}
-      className="fixed inset-0 z-9999 overflow-hidden"
+      className="fixed inset-0 z-[9999] bg-neutral-100"
     >
+      <div className="grid lg:grid-cols-2 h-full">
 
-      {/* ================= BACKGROUND LAYERS ================= */}
+        {/* LEFT IMAGE GRID */}
 
-      {/* Base */}
-      <div className="absolute inset-0 bg-neutral-100" />
-
-      {/* Soft radial light */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.6),transparent_60%)]" />
-
-      {/* ================= CONTENT ================= */}
-      <div className="relative z-10 grid lg:grid-cols-2 h-full items-center">
-
-        {/* ================= LEFT — IMAGE GRID ================= */}
         <div
-          className="hidden lg:grid grid-cols-2 grid-rows-2 gap-6 p-16 h-[75vh] self-center"
+          className="hidden lg:grid grid-cols-2 grid-rows-2 gap-6 p-20 h-[80vh] self-center"
           onMouseEnter={() => setImageShift(true)}
           onMouseLeave={() => setImageShift(false)}
         >
@@ -75,114 +84,46 @@ export default function FullscreenMenu({ onClose }: Props) {
             <motion.div
               key={i}
               animate={{
-                y: imageShift ? (i % 2 === 0 ? -15 : 15) : 0,
+                y: imageShift ? (i % 2 === 0 ? -18 : 18) : 0,
                 x: imageShift ? (i < 2 ? -10 : 10) : 0,
               }}
               transition={{
                 duration: 0.8,
                 ease: [0.65, 0, 0.35, 1],
               }}
-              className="relative overflow-hidden rounded-2xl shadow-xl"
+              className="overflow-hidden rounded-2xl shadow-xl"
             >
               <img
                 src={img}
-                alt="Menu Sneaker"
                 className="w-full h-full object-cover"
+                alt="Sneaker"
               />
             </motion.div>
           ))}
         </div>
 
-        {/* ================= RIGHT — MENU ================= */}
-        <div className="flex flex-col justify-center items-end pr-24 space-y-14">
+        {/* RIGHT MENU */}
 
-          {menuItems.map((item) => {
-            const letters = item.name.split("")
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={onClose}
-              >
-                <AnimatedMenuText letters={letters} />
-              </Link>
-            )
-          })}
+        <div className="flex flex-col justify-center items-center gap-14">
 
-          {/* Logout */}
-          <div
-            onClick={handleLogout}
-            className={`cursor-pointer ${isLoggingOut ? "opacity-50 pointer-events-none" : ""}`}
-          >
-            <AnimatedMenuText letters={"LOGOUT".split("")} />
-          </div>
+          {menuItems.map((item) => (
+            <Link key={item.name} href={item.href} onClick={onClose}>
+              <AnimatedMenuText letters={item.name.split("")} />
+            </Link>
+          ))}
+
+          {isAuthenticated && (
+            <div
+              onClick={handleLogout}
+              className={`cursor-pointer ${isLoggingOut ? "opacity-50 pointer-events-none" : ""
+                }`}
+            >
+              <AnimatedMenuText letters={"LOGOUT".split("")} />
+            </div>
+          )}
 
         </div>
       </div>
-    </motion.div>
-  )
-}
-
-/* ===================================
-   Animated Text Component
-=================================== */
-
-interface AnimatedMenuTextProps {
-  letters: string[]
-}
-
-function AnimatedMenuText({ letters }: AnimatedMenuTextProps) {
-  return (
-    <motion.div
-      initial="rest"
-      whileHover="hover"
-      animate="rest"
-      className="
-        flex
-        text-6xl
-        font-semibold
-        tracking-[-0.02em]
-        leading-none
-        overflow-hidden
-      "
-    >
-      {letters.map((char, i) => (
-        <div key={i} className="relative overflow-hidden h-17.5">
-
-          {/* Default */}
-          <motion.span
-            variants={{
-              rest: { y: 0 },
-              hover: { y: -70 },
-            }}
-            transition={{
-              duration: 0.45,
-              delay: i * 0.035,
-              ease: [0.65, 0, 0.35, 1],
-            }}
-            className="block text-neutral-700"
-          >
-            {char}
-          </motion.span>
-
-          {/* Hover */}
-          <motion.span
-            variants={{
-              rest: { y: 70 },
-              hover: { y: 0 },
-            }}
-            transition={{
-              duration: 0.45,
-              delay: i * 0.035,
-              ease: [0.65, 0, 0.35, 1],
-            }}
-            className="absolute left-0 top-0 text-black"
-          >
-            {char}
-          </motion.span>
-
-        </div>
-      ))}
     </motion.div>
   )
 }

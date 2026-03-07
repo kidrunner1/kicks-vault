@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import {
-  verifyAccessToken,
-  verifyRefreshToken,
-  signAccessToken,
-} from "./lib/jwt"
 
 export async function proxy(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value
   const { pathname } = request.nextUrl
 
-  const isProtectedRoute =
-    pathname === "/" ||
-    pathname.startsWith("/profile") ||
-    pathname.startsWith("/favorites")
+  const protectedRoutes = [
+    "/profile",
+    "/favorites",
+    "/checkout",
+  ]
+
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  )
 
   const isAuthPage =
     pathname.startsWith("/login") ||

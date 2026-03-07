@@ -67,7 +67,14 @@ export async function POST(req: Request) {
     })
 
     const response = NextResponse.json(
-      { message: "เข้าสู่ระบบสำเร็จ" },
+      {
+        message: "เข้าสู่ระบบสำเร็จ",
+        user: {
+          id: user.id,
+          role: user.role,
+          email: email
+        },
+      },
       { status: 200 }
     )
 

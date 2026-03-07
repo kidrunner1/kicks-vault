@@ -5,6 +5,8 @@ import { toggleFavorite } from "@/app/actions/toggle-favorite"
 import { Heart } from "lucide-react"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+import { useAuthStore } from "@/lib/auth-store"
 
 interface Props {
     shoeId: string
@@ -16,6 +18,10 @@ export default function FavoriteButton({
     initialFavorited
 }: Props) {
 
+    const router = useRouter()
+
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+
     const [isFavorited, setIsFavorited] = useState(initialFavorited)
     const [isPending, startTransition] = useTransition()
 
@@ -25,11 +31,19 @@ export default function FavoriteButton({
 
     const handleToggle = () => {
 
+        // ⭐ Auth check
+        if (!isAuthenticated) {
+            toast.error("Please login to continue.")
+            router.push("/login")
+            return
+        }
+
         if (isPending) return
 
         const previousState = isFavorited
         const optimisticState = !previousState
 
+        // optimistic UI
         setIsFavorited(optimisticState)
 
         startTransition(async () => {
@@ -37,11 +51,10 @@ export default function FavoriteButton({
             const res = await toggleFavorite(shoeId)
 
             if (!res.success) {
+
                 setIsFavorited(previousState)
 
-                if (res.error === "UNAUTHORIZED") {
-                    toast.error("Please login to continue.")
-                } else if (res.error === "NOT_FOUND") {
+                if (res.error === "NOT_FOUND") {
                     toast.error("Product not found.")
                 } else {
                     toast.error("Something went wrong.")
@@ -52,9 +65,12 @@ export default function FavoriteButton({
 
             toast.success(
                 res.state === "ADDED"
-                    ? "เพิ่มลงในรายการโปรดแล้ว"
-                    : "ลบออกจากรายการโปรดแล้ว"
+                    ? "Added to favorites"
+                    : "Removed from favorites"
             )
+
+            // optional refresh favorites page
+            router.refresh()
         })
     }
 
@@ -63,6 +79,7 @@ export default function FavoriteButton({
             onClick={handleToggle}
             disabled={isPending}
             aria-pressed={isFavorited}
+            aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
             whileTap={{ scale: 0.9 }}
             className={`
         w-11 h-11
@@ -70,10 +87,10 @@ export default function FavoriteButton({
         border
         flex items-center justify-center
         transition
+        group
         ${isFavorited
                     ? "bg-black border-black"
-                    : "bg-white border-black/10 hover:border-black/30"
-                }
+                    : "bg-white border-black/10 hover:border-black/30"}
         ${isPending ? "opacity-60 pointer-events-none" : ""}
       `}
         >
@@ -81,7 +98,11 @@ export default function FavoriteButton({
                 animate={{
                     scale: isFavorited ? 1.15 : 1,
                 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 20
+                }}
             >
                 <Heart
                     className={`
@@ -89,8 +110,7 @@ export default function FavoriteButton({
             transition-all duration-300
             ${isFavorited
                             ? "fill-white text-white"
-                            : "text-black/60 group-hover:text-black"
-                        }
+                            : "text-black/60 group-hover:text-black"}
           `}
                 />
             </motion.div>

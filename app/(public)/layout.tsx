@@ -17,6 +17,8 @@ export default function PublicLayout({
         {children}
 
       </SmoothScroll>
+
+      
     </div>
   )
 }

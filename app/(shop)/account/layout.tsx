@@ -102,9 +102,7 @@ export default async function AccountLayout({
           </div>
 
         </div>
-
-      </div>
-
+      </div> 
     </main>
   )
 }

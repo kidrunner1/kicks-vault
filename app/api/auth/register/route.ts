@@ -16,7 +16,7 @@ export async function POST(req: Request) {
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
-            return NextResponse.json({ error: "มีผู้ใช้งานนี้แล้ว" }, { status: 409 });
+            return NextResponse.json({ error: "อีเมลนี้ถูกใช้งานแล้ว" }, { status: 409 });
         }
 
         // Hash the password

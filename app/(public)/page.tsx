@@ -29,5 +29,7 @@ export default async function LandingPage() {
       <ShowcaseSectionDatabase shoes={formattedShoes} />
       <FeatureSection />
     </main>
+
+    
   )
 }

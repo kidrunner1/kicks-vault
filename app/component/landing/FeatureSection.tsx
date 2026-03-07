@@ -1,167 +1,227 @@
 "use client"
 
+import Navbar from "../ui/Navbar"
 import { motion } from "framer-motion"
+import Image from "next/image"
 
-interface StatementBlock {
-  title: string
-  subtitle: string
-  description: string
-}
-
-const statements: StatementBlock[] = [
+const trending = [
   {
-    title: "DISCOVERY",
-    subtitle: "Curated with intention",
-    description:
-      "Every silhouette, every colorway, every era — thoughtfully selected to represent sneaker culture at its highest level."
+    name: "Nike Dunk Low Orange",
+    price: 320,
+    image: "/images/shoes/nike-02.jpg",
   },
   {
-    title: "IMMERSION",
-    subtitle: "Designed for presence",
-    description:
-      "Not just browsing. Experience form, proportion, and detail through fluid interaction and intentional motion."
+    name: "Nike SB Retro",
+    price: 280,
+    image: "/images/shoes/nike-02.jpg",
   },
   {
-    title: "COLLECTION",
-    subtitle: "Personal, elevated",
-    description:
-      "Build a refined archive of pieces that define your style — a digital vault crafted for modern collectors."
-  }
+    name: "Air Jordan Vintage",
+    price: 450,
+    image: "/images/shoes/nike-03.jpg",
+  },
+  {
+    name: "Nike Dunk Premium",
+    price: 390,
+    image: "/images/shoes/nike-04.jpg",
+  },
 ]
 
-export default function EditorialSection() {
+const brands = [
+  { name: "Nike", image: "/images/shoes/nike.png" },
+  { name: "Jordan", image: "/images/shoes/Puma-icon.jpg" },
+  { name: "Adidas", image: "/images/shoes/adidas.png" },
+  { name: "Converse", image: "/images/shoes/convers-icon.jpg" },
+]
+
+export default function DiscoverySection() {
 
   return (
-    <section className="relative bg-neutral-50 text-neutral-900 px-6 md:px-20 py-48 overflow-hidden">
+    <div className="bg-neutral-50 min-h-screen">
 
-      {/* Subtle Background Atmosphere */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-225 h-225 bg-white blur-[180px] opacity-60 rounded-full" />
-      </div>
+      {/* NAVBAR */}
 
+      <Navbar />
 
-      {/* Massive Statement */}
-      <motion.div
-        initial={{ opacity: 0, y: 80 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{
-          duration: 1.2,
-          ease: [0.22, 1, 0.36, 1]
-        }}
-        className="relative max-w-7xl mx-auto mb-40"
-      >
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 space-y-24">
 
-        <div className="relative inline-block">
+        {/* HERO SECTION */}
 
-          <h2 className="
-            font-(--font-bebas)
-            text-[13vw]
-            leading-[0.85]
-            tracking-tight
-          ">
-            MORE THAN
-          </h2>
+        <div className="grid md:grid-cols-3 gap-6">
 
-          <h2 className="
-            font-(--font-bebas)
-            text-[13vw]
-            leading-[0.85]
-            tracking-tight
-          ">
-            A STORE
-          </h2>
+          {/* HERO BANNER */}
 
-          {/* Accent Line */}
-          <div className="absolute -left-6 top-4 w-0.5 h-[80%] bg-neutral-300" />
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="md:col-span-2 h-105 relative rounded-3xl overflow-hidden"
+          >
+
+            <Image
+              src="/images/hero-sneaker.jpg"
+              alt="Hero"
+              fill
+              className="object-cover"
+            />
+
+            <div className="absolute inset-0 bg-black/40" />
+
+            <div className="absolute left-12 bottom-12 text-white max-w-md">
+
+              <h1 className="text-4xl font-semibold mb-4">
+                Discover the Future of Sneaker Culture
+              </h1>
+
+              <p className="text-sm opacity-90 mb-6">
+                Limited drops, rare releases and iconic silhouettes curated
+                for modern collectors.
+              </p>
+
+              <button className="bg-white text-black px-6 py-2 rounded-full text-sm font-medium">
+                Shop Collection
+              </button>
+
+            </div>
+
+          </motion.div>
+
+          {/* PROMO CARD */}
+
+          <div className="bg-neutral-100 rounded-3xl p-8 flex flex-col justify-between">
+
+            <div>
+
+              <h3 className="text-lg font-semibold mb-2">
+                Limited Drop
+              </h3>
+
+              <p className="text-sm text-neutral-500">
+                Exclusive sneakers available only for a short time.
+              </p>
+
+            </div>
+
+            <Image
+              src="/images/shoes/nike-02.jpg"
+              alt="Promo"
+              width={240}
+              height={240}
+              className="rounded-xl mt-8"
+            />
+
+          </div>
 
         </div>
 
-        <p className="
-          mt-16
-          max-w-2xl
-          text-xl
-          text-neutral-600
-          leading-relaxed
-        ">
-          KicksVault is a digital space where sneaker culture meets elevated design.
-          Every interaction is crafted with intention — blending technology,
-          editorial aesthetics, and modern craftsmanship.
-        </p>
+        {/* TRENDING SNEAKERS */}
 
-      </motion.div>
+        <section>
 
-      {/* Divider */}
-      <div className="w-full h-px bg-neutral-200 mb-40 max-w-7xl mx-auto" />
+          <div className="flex justify-between mb-8">
 
-      {/* Editorial Blocks */}
-      <div className="relative max-w-7xl mx-auto space-y-48">
+            <h2 className="text-2xl font-semibold">
+              Trending Sneakers
+            </h2>
 
-        {statements.map((item, index) => {
+            <button className="text-sm text-neutral-500 hover:text-black">
+              View All →
+            </button>
 
-          const isReversed = index % 2 !== 0
+          </div>
 
-          return (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 100 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{
-                duration: 1,
-                delay: index * 0.1,
-                ease: [0.22, 1, 0.36, 1]
-              }}
-              className={`
-                grid md:grid-cols-2 gap-24 items-center
-              `}
-            >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
-              {/* Big Title */}
-              <div className={isReversed ? "md:order-2 text-right" : ""}>
-                <h3 className="
-                  font-(--font-bebas)
-                  text-7xl md:text-8xl
-                  tracking-tight
-                  leading-[0.9]
-                  text-neutral-900
-                ">
-                  {item.title}
-                </h3>
-              </div>
+            {trending.map((shoe) => (
 
-              {/* Content */}
-              <div className={isReversed ? "md:order-1 text-left" : ""}>
+              <motion.div
+                key={shoe.name}
+                whileHover={{ y: -6 }}
+                className="bg-white rounded-2xl shadow-sm p-4"
+              >
 
-                <p className="
-                  text-xs
-                  uppercase
-                  tracking-[0.4em]
-                  text-neutral-400
-                  mb-8
-                ">
-                  {item.subtitle}
+                <Image
+                  src={shoe.image}
+                  alt={shoe.name}
+                  width={260}
+                  height={260}
+                  className="rounded-xl"
+                />
+
+                <div className="mt-4">
+
+                  <p className="text-sm font-medium">
+                    {shoe.name}
+                  </p>
+
+                  <p className="text-sm text-neutral-500">
+                    ${shoe.price}
+                  </p>
+
+                </div>
+
+              </motion.div>
+
+            ))}
+
+          </div>
+
+        </section>
+
+        {/* POPULAR BRANDS */}
+
+        <section>
+
+          <h2 className="text-2xl font-semibold mb-8">
+            Popular Brands
+          </h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+
+            {brands.map((brand) => (
+
+              <motion.div
+                key={brand.name}
+                whileHover={{ y: -4 }}
+                className="bg-white rounded-2xl p-8 text-center shadow-sm"
+              >
+
+                <Image
+                  src={brand.image}
+                  alt={brand.name}
+                  width={120}
+                  height={120}
+                  className="mx-auto mb-4"
+                />
+
+                <p className="text-sm font-medium">
+                  {brand.name}
                 </p>
 
-                <div className="w-16 h-px bg-neutral-300 mb-8" />
+              </motion.div>
 
-                <p className="
-                  text-lg
-                  text-neutral-600
-                  leading-relaxed
-                  max-w-lg
-                ">
-                  {item.description}
-                </p>
+            ))}
 
-              </div>
+          </div>
 
-            </motion.div>
-          )
-        })}
+        </section>
+
+        {/* COMMUNITY */}
+
+        <section className="bg-neutral-100 rounded-3xl p-16 text-center">
+
+          <h2 className="text-3xl font-semibold mb-4">
+            Join the KicksVault Community
+          </h2>
+
+          <p className="text-neutral-600 max-w-xl mx-auto mb-6">
+            Connect with sneaker collectors and discover rare releases,
+            exclusive collaborations and stories behind every pair.
+          </p>
+
+        </section>
 
       </div>
 
-    </section>
+    </div>
   )
 }

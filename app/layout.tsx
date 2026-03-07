@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { ibmThai, fjalla } from "./fonts"
 import { Toaster } from "sonner"
-
+import AuthProvider from "@/app/component/auth/AuthProvider"
 
 export const metadata: Metadata = {
   title: "KicksVault",
@@ -18,14 +18,15 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`
-    ${ibmThai.className}
-    ${fjalla.variable}
-    antialiased
-  `}
+          ${ibmThai.className}
+          ${fjalla.variable}
+          antialiased
+        `}
       >
+        <AuthProvider>
+          {children}
+        </AuthProvider>
 
-
-        {children}
         <Toaster
           position="top-right"
           theme="dark"
