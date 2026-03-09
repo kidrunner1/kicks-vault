@@ -34,5 +34,5 @@ export default function AuthProvider({
         loadUser()
     }, [setUser])
 
-    return <>{children}</>
+    return children
 }

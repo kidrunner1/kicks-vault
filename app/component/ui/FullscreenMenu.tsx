@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import AnimatedMenuText from "./AnimatedMenuText"
 import { useAuthStore } from "@/lib/auth-store"
 
@@ -34,6 +34,7 @@ const userMenu = [
 export default function FullscreenMenu({ onClose }: Props) {
   const router = useRouter()
 
+
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
   const logout = useAuthStore((state) => state.logout)
 
@@ -41,19 +42,18 @@ export default function FullscreenMenu({ onClose }: Props) {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const menuItems = isAuthenticated ? userMenu : guestMenu
+  const fetchUser = useAuthStore((state) => state.fetchUser)
+
+  useEffect(() => {
+    fetchUser()
+  }, [fetchUser])
 
   const handleLogout = async () => {
     if (isLoggingOut) return
 
     setIsLoggingOut(true)
 
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    })
-
-    // clear auth store
-    logout()
+    await logout()
 
     router.refresh()
     onClose()
@@ -69,7 +69,7 @@ export default function FullscreenMenu({ onClose }: Props) {
         duration: 0.9,
         ease: [0.76, 0, 0.24, 1],
       }}
-      className="fixed inset-0 z-[9999] bg-neutral-100"
+      className="fixed inset-0 z-9999 bg-neutral-100"
     >
       <div className="grid lg:grid-cols-2 h-full">
 

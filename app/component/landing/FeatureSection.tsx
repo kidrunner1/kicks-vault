@@ -37,28 +37,30 @@ const brands = [
 export default function DiscoverySection() {
 
   return (
-    <div className="bg-neutral-50 min-h-screen">
+    <div className="bg-neutral-50 min-h-screen overflow-x-hidden">
 
       {/* NAVBAR */}
 
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 space-y-24">
+      {/* MAIN CONTAINER */}
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
 
         {/* HERO SECTION */}
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
           {/* HERO BANNER */}
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            className="md:col-span-2 h-105 relative rounded-3xl overflow-hidden"
+            className="md:col-span-2 h-[420px] sm:h-[480px] relative rounded-3xl overflow-hidden"
           >
 
             <Image
-              src="/images/hero-sneaker.jpg"
+              src="/images/shoes/logo.jpg"
               alt="Hero"
               fill
               className="object-cover"
@@ -66,9 +68,9 @@ export default function DiscoverySection() {
 
             <div className="absolute inset-0 bg-black/40" />
 
-            <div className="absolute left-12 bottom-12 text-white max-w-md">
+            <div className="absolute left-6 bottom-6 md:left-12 md:bottom-12 text-white max-w-sm md:max-w-md">
 
-              <h1 className="text-4xl font-semibold mb-4">
+              <h1 className="text-2xl md:text-4xl font-semibold mb-4">
                 Discover the Future of Sneaker Culture
               </h1>
 
@@ -77,7 +79,7 @@ export default function DiscoverySection() {
                 for modern collectors.
               </p>
 
-              <button className="bg-white text-black px-6 py-2 rounded-full text-sm font-medium">
+              <button className="bg-white text-black px-6 py-2 rounded-full text-sm font-medium hover:bg-neutral-200 transition">
                 Shop Collection
               </button>
 
@@ -87,7 +89,7 @@ export default function DiscoverySection() {
 
           {/* PROMO CARD */}
 
-          <div className="bg-neutral-100 rounded-3xl p-8 flex flex-col justify-between">
+          <div className="bg-neutral-100 rounded-3xl p-6 md:p-8 flex flex-col justify-between">
 
             <div>
 
@@ -106,7 +108,7 @@ export default function DiscoverySection() {
               alt="Promo"
               width={240}
               height={240}
-              className="rounded-xl mt-8"
+              className="rounded-xl mt-8 mx-auto"
             />
 
           </div>
@@ -117,7 +119,7 @@ export default function DiscoverySection() {
 
         <section>
 
-          <div className="flex justify-between mb-8">
+          <div className="flex items-center justify-between mb-8">
 
             <h2 className="text-2xl font-semibold">
               Trending Sneakers
@@ -129,23 +131,26 @@ export default function DiscoverySection() {
 
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
 
             {trending.map((shoe) => (
 
               <motion.div
                 key={shoe.name}
                 whileHover={{ y: -6 }}
-                className="bg-white rounded-2xl shadow-sm p-4"
+                className="bg-white rounded-2xl shadow-sm p-4 transition"
               >
 
-                <Image
-                  src={shoe.image}
-                  alt={shoe.name}
-                  width={260}
-                  height={260}
-                  className="rounded-xl"
-                />
+                <div className="aspect-square relative overflow-hidden rounded-xl">
+
+                  <Image
+                    src={shoe.image}
+                    alt={shoe.name}
+                    fill
+                    className="object-cover"
+                  />
+
+                </div>
 
                 <div className="mt-4">
 
@@ -168,48 +173,27 @@ export default function DiscoverySection() {
         </section>
 
         {/* POPULAR BRANDS */}
-
         <section>
-
           <h2 className="text-2xl font-semibold mb-8">
             Popular Brands
           </h2>
-
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-
-            {brands.map((brand) => (
-
-              <motion.div
-                key={brand.name}
-                whileHover={{ y: -4 }}
-                className="bg-white rounded-2xl p-8 text-center shadow-sm"
-              >
-
-                <Image
-                  src={brand.image}
-                  alt={brand.name}
-                  width={120}
-                  height={120}
-                  className="mx-auto mb-4"
-                />
-
-                <p className="text-sm font-medium">
-                  {brand.name}
-                </p>
-
-              </motion.div>
-
-            ))}
-
+            {brands.map((brand) => (<motion.div key={brand.name} whileHover={{ y: -4 }}
+              className="bg-white rounded-2xl p-8 text-center shadow-sm" >
+              <Image src={brand.image} alt={brand.name} width={120} height={120} className="mx-auto mb-4" />
+              <p className="text-sm font-medium">
+                {brand.name}
+              </p>
+            </motion.div>))}
           </div>
 
         </section>
 
         {/* COMMUNITY */}
 
-        <section className="bg-neutral-100 rounded-3xl p-16 text-center">
+        <section className="bg-neutral-100 rounded-3xl p-8 md:p-16 text-center">
 
-          <h2 className="text-3xl font-semibold mb-4">
+          <h2 className="text-2xl md:text-3xl font-semibold mb-4">
             Join the KicksVault Community
           </h2>
 
@@ -220,7 +204,7 @@ export default function DiscoverySection() {
 
         </section>
 
-      </div>
+      </main>
 
     </div>
   )

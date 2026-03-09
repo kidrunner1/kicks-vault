@@ -117,7 +117,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4 }}
-                className="max-h-[500px] object-contain"
+                className="max-h-125 object-contain"
               />
             )}
           </div>

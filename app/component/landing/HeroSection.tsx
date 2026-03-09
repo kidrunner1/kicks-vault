@@ -36,9 +36,13 @@ export default function HeroSection() {
         className="
           absolute
           top-24
-          left-20
+          left-6
+          sm:left-10
+          lg:left-20
           z-10
-          max-w-xl
+          max-w-sm
+          sm:max-w-md
+          lg:max-w-xl
         "
       >
 
@@ -55,11 +59,15 @@ export default function HeroSection() {
 
         {/* Main Heading */}
         <h1 className="
-          text-[5.5rem]
-          leading-[0.9]
           font-bold
           tracking-tight
           text-neutral-900
+          leading-[0.9]
+
+          text-5xl
+          sm:text-6xl
+          md:text-7xl
+          lg:text-[5.5rem]
         ">
           KICKSVAULT
         </h1>
@@ -70,8 +78,9 @@ export default function HeroSection() {
         {/* Tagline */}
         <p className="
           text-neutral-600
-          text-lg
           leading-relaxed
+          text-base
+          sm:text-lg
         ">
           Discover the future of sneaker culture —
           curated silhouettes crafted for modern collectors.
@@ -79,7 +88,7 @@ export default function HeroSection() {
 
       </motion.div>
 
-      {/* 3D Model */}
+      {/* 3D Model (unchanged) */}
       <Model3D />
 
       {/* Scroll Indicator */}

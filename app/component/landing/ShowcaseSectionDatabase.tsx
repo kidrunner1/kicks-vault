@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -30,15 +30,6 @@ export default function ShowcaseSlider({ shoes }: Props) {
     setIndex((prev) => (prev - 1 + shoes.length) % shoes.length)
   }
 
-  // Auto slide
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     next()
-  //   }, 6000)
-
-  //   return () => clearInterval(interval)
-  // }, [])
-
   const shoe = shoes[index]
 
   return (
@@ -52,12 +43,12 @@ export default function ShowcaseSlider({ shoes }: Props) {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -100 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0 flex items-center justify-center px-16"
+          className="absolute inset-0 flex items-center justify-center px-6 md:px-16"
         >
 
           <Link
             href={`/product/${shoe.slug}`}
-            className="flex items-center gap-24 group"
+            className="flex flex-col md:flex-row items-center gap-10 md:gap-24 group"
           >
 
             {/* Image */}
@@ -68,7 +59,7 @@ export default function ShowcaseSlider({ shoes }: Props) {
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
-              className="w-[500px] flex justify-center"
+              className="w-[260px] sm:w-[340px] md:w-[500px] flex justify-center"
             >
               <img
                 src={shoe.images[0]?.url}
@@ -78,19 +69,19 @@ export default function ShowcaseSlider({ shoes }: Props) {
             </motion.div>
 
             {/* Text */}
-            <div className="max-w-xl">
+            <div className="max-w-md md:max-w-xl text-center md:text-left">
 
-              <p className="uppercase tracking-[0.5em] text-xs text-neutral-500 mb-6">
+              <p className="uppercase tracking-[0.4em] text-xs text-neutral-500 mb-4">
                 {shoe.brand.name}
               </p>
 
-              <h2 className="text-[6rem] leading-[0.9] font-(--font-bebas) tracking-tight mb-6">
+              <h2 className="text-4xl sm:text-5xl md:text-[6rem] leading-[0.9] font-(--font-bebas) tracking-tight mb-6">
                 {shoe.name}
               </h2>
 
-              <div className="w-16 h-px bg-neutral-700 mb-6" />
+              <div className="w-16 h-px bg-neutral-700 mb-6 mx-auto md:mx-0" />
 
-              <p className="text-neutral-400 leading-relaxed text-lg">
+              <p className="text-neutral-400 leading-relaxed text-sm md:text-lg">
                 {shoe.description}
               </p>
 
@@ -103,20 +94,20 @@ export default function ShowcaseSlider({ shoes }: Props) {
       {/* Navigation Arrows */}
       <button
         onClick={prev}
-        className="absolute left-8 top-1/2 -translate-y-1/2 z-20 p-3 border border-white/20 rounded-full hover:bg-white/10 transition"
+        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 p-3 border border-white/20 rounded-full hover:bg-white/10 transition"
       >
         <ChevronLeft size={22} />
       </button>
 
       <button
         onClick={next}
-        className="absolute right-8 top-1/2 -translate-y-1/2 z-20 p-3 border border-white/20 rounded-full hover:bg-white/10 transition"
+        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 p-3 border border-white/20 rounded-full hover:bg-white/10 transition"
       >
         <ChevronRight size={22} />
       </button>
 
       {/* Dots */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3">
+      <div className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 flex gap-3">
         {shoes.map((_, i) => (
           <button
             key={i}
