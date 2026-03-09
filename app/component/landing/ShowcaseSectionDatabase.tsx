@@ -3,8 +3,10 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Shoe, Brand, ShoeImage, ShoeSpec } from "@prisma/client"
+import { normalizeImagePath } from "@/lib/image"
 
 type ShoeWithRelations = Shoe & {
   brand: Brand
@@ -20,6 +22,7 @@ interface Props {
 }
 
 export default function ShowcaseSlider({ shoes }: Props) {
+
   const [index, setIndex] = useState(0)
 
   const next = () => {
@@ -35,14 +38,14 @@ export default function ShowcaseSlider({ shoes }: Props) {
   return (
     <section className="relative h-screen bg-black text-white overflow-hidden">
 
-      {/* Slide Content */}
       <AnimatePresence mode="wait">
+
         <motion.div
           key={shoe.id}
-          initial={{ opacity: 0, x: 100 }}
+          initial={{ opacity: 0, x: 80 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -100 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          exit={{ opacity: 0, x: -80 }}
+          transition={{ duration: 0.6 }}
           className="absolute inset-0 flex items-center justify-center px-6 md:px-16"
         >
 
@@ -51,24 +54,27 @@ export default function ShowcaseSlider({ shoes }: Props) {
             className="flex flex-col md:flex-row items-center gap-10 md:gap-24 group"
           >
 
-            {/* Image */}
+            {/* IMAGE */}
+
             <motion.div
-              animate={{ y: [0, -12, 0] }}
-              transition={{
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="w-[260px] sm:w-[340px] md:w-[500px] flex justify-center"
+              whileHover={{ y: -8 }}
+              className="w-65 sm:w-85 md:w-125 flex justify-center will-change-transform"
             >
-              <img
-                src={shoe.images[0]?.url}
+
+              <Image
+                src={normalizeImagePath(shoe.images[0]?.url)}
                 alt={shoe.name}
-                className="object-contain drop-shadow-[0_80px_120px_rgba(0,0,0,0.9)] group-hover:scale-105 transition-transform duration-700"
+                width={500}
+                height={500}
+                priority={index === 0}
+                sizes="(max-width:768px) 80vw, 500px"
+                className="object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105"
               />
+
             </motion.div>
 
-            {/* Text */}
+            {/* TEXT */}
+
             <div className="max-w-md md:max-w-xl text-center md:text-left">
 
               <p className="uppercase tracking-[0.4em] text-xs text-neutral-500 mb-4">
@@ -88,10 +94,13 @@ export default function ShowcaseSlider({ shoes }: Props) {
             </div>
 
           </Link>
+
         </motion.div>
+
       </AnimatePresence>
 
-      {/* Navigation Arrows */}
+      {/* NAVIGATION */}
+
       <button
         onClick={prev}
         className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 p-3 border border-white/20 rounded-full hover:bg-white/10 transition"
@@ -106,18 +115,21 @@ export default function ShowcaseSlider({ shoes }: Props) {
         <ChevronRight size={22} />
       </button>
 
-      {/* Dots */}
+      {/* DOTS */}
+
       <div className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 flex gap-3">
+
         {shoes.map((_, i) => (
+
           <button
             key={i}
             onClick={() => setIndex(i)}
-            className={`h-2 rounded-full transition-all ${i === index
-                ? "w-8 bg-white"
-                : "w-2 bg-white/40"
+            className={`h-2 rounded-full transition-all ${i === index ? "w-8 bg-white" : "w-2 bg-white/40"
               }`}
           />
+
         ))}
+
       </div>
 
     </section>

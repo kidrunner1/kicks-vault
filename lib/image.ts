@@ -1,18 +1,22 @@
 export function normalizeImagePath(url?: string | null) {
+
     if (!url) return "/placeholder.png"
 
     const trimmed = url.trim()
 
     // External URL
-    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    if (/^https?:\/\//i.test(trimmed)) {
         return trimmed
     }
 
-    // Replace Windows backslashes
+    // Convert Windows path
     let cleaned = trimmed.replace(/\\/g, "/")
 
-    // Remove duplicate leading slashes
+    // Remove duplicate slashes
+    cleaned = cleaned.replace(/\/+/g, "/")
+
+    // Remove leading slash
     cleaned = cleaned.replace(/^\/+/, "")
 
-    return `/${cleaned}`
+    return encodeURI(`/${cleaned}`)
 }

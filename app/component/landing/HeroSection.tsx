@@ -5,12 +5,16 @@ import { motion } from "framer-motion"
 
 const Model3D = dynamic(
   () => import("../3D/Model3D"),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => null,
+  }
 )
 
 export default function HeroSection() {
 
   return (
+
     <section
       className="
         relative
@@ -21,16 +25,31 @@ export default function HeroSection() {
     >
 
       {/* Ambient Light */}
+
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-40 left-1/3 w-[800px] h-[800px] bg-white/60 blur-[200px] rounded-full" />
+
+        <div
+          className="
+            absolute
+            -top-40
+            left-1/3
+            w-[600px]
+            h-[600px]
+            bg-white/60
+            blur-[120px]
+            rounded-full
+          "
+        />
+
       </div>
 
       {/* TEXT BLOCK */}
+
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
-          duration: 1.2,
+          duration: 0.9,
           ease: [0.22, 1, 0.36, 1]
         }}
         className="
@@ -43,59 +62,72 @@ export default function HeroSection() {
           max-w-sm
           sm:max-w-md
           lg:max-w-xl
+          will-change-transform
         "
       >
 
         {/* Small Label */}
-        <div className="
-          uppercase
-          tracking-[0.5em]
-          text-xs
-          text-neutral-500
-          mb-6
-        ">
+
+        <div
+          className="
+            uppercase
+            tracking-[0.5em]
+            text-xs
+            text-neutral-500
+            mb-6
+          "
+        >
           Premium Sneaker Archive
         </div>
 
-        {/* Main Heading */}
-        <h1 className="
-          font-bold
-          tracking-tight
-          text-neutral-900
-          leading-[0.9]
+        {/* Heading */}
 
-          text-5xl
-          sm:text-6xl
-          md:text-7xl
-          lg:text-[5.5rem]
-        ">
+        <h1
+          className="
+            font-bold
+            tracking-tight
+            text-neutral-900
+            leading-[0.9]
+
+            text-5xl
+            sm:text-6xl
+            md:text-7xl
+            lg:text-[5.5rem]
+          "
+        >
           KICKSVAULT
         </h1>
 
         {/* Divider */}
+
         <div className="w-20 h-[1px] bg-neutral-300 my-8" />
 
         {/* Tagline */}
-        <p className="
-          text-neutral-600
-          leading-relaxed
-          text-base
-          sm:text-lg
-        ">
+
+        <p
+          className="
+            text-neutral-600
+            leading-relaxed
+            text-base
+            sm:text-lg
+          "
+        >
           Discover the future of sneaker culture —
           curated silhouettes crafted for modern collectors.
         </p>
 
       </motion.div>
 
-      {/* 3D Model (unchanged) */}
+      {/* 3D MODEL */}
+
       <Model3D />
 
       {/* Scroll Indicator */}
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
+        transition={{ delay: 1 }}
         className="
           absolute
           bottom-10
@@ -109,6 +141,7 @@ export default function HeroSection() {
           tracking-widest
         "
       >
+
         Scroll
 
         <motion.div
@@ -117,10 +150,18 @@ export default function HeroSection() {
             duration: 2,
             repeat: Infinity
           }}
-          className="w-[1px] h-8 bg-neutral-400 mt-2"
+          className="
+            w-[1px]
+            h-8
+            bg-neutral-400
+            mt-2
+            will-change-transform
+          "
         />
+
       </motion.div>
 
     </section>
+
   )
 }

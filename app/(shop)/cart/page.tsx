@@ -7,6 +7,7 @@ import { createOrder } from "@/app/actions/create-order"
 import { toast } from "sonner"
 import Image from "next/image"
 import { normalizeImagePath } from "@/lib/image"
+import Link from "next/link"
 
 export default function CartPage() {
 
@@ -56,6 +57,66 @@ export default function CartPage() {
 
     return (
         <main className="min-h-screen bg-[#f3f3f1] text-black pt-24 pb-32 px-6">
+
+            <div className="absolute top-6 left-6 z-20">
+
+                <Link
+                    href="/product"
+                    className="
+      flex
+      items-center
+      gap-3
+      group
+      select-none
+    "
+                >
+
+                    {/* Logo */}
+                    <div
+                        className="
+        w-8
+        h-8
+        rounded-full
+        border
+        border-black/20
+        flex
+        items-center
+        justify-center
+        text-xs
+        font-semibold
+        tracking-widest
+        group-hover:border-black
+        transition
+      "
+                    >
+                        KV
+                    </div>
+
+                    {/* Brand Text */}
+                    <div className="flex flex-col leading-tight">
+
+                        <span className="
+        text-sm
+        font-medium
+        tracking-wide
+      ">
+                            KICKS VAULT
+                        </span>
+
+                        <span className="
+        text-xs
+        text-black/50
+        group-hover:text-black/80
+        transition
+      ">
+                            Back to Shop
+                        </span>
+
+                    </div>
+
+                </Link>
+
+            </div>
 
             <div className="max-w-7xl mx-auto">
 

@@ -2,20 +2,27 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import Image from "next/image"
 import { normalizeImagePath } from "@/lib/image"
+import { motion } from "framer-motion"
 
 export const dynamic = "force-dynamic"
 export default async function ProductsPage() {
 
   const shoes = await prisma.shoe.findMany({
-    include: {
-      brand: true,
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      price: true,
+      brand: {
+        select: { name: true }
+      },
       images: {
-        orderBy: { order: "asc" }
+        select: { url: true },
+        orderBy: { order: "asc" },
+        take: 1
       }
     },
-    orderBy: {
-      createdAt: "desc"
-    }
+    orderBy: { createdAt: "desc" }
   })
 
   const formattedShoes = shoes.map(shoe => ({
@@ -25,8 +32,69 @@ export default async function ProductsPage() {
 
   return (
     <main className="min-h-screen bg-[#f5f5f3] text-black">
-      
+
+
       <section className="px-8 md:px-16 pt-32 pb-16 max-w-7xl mx-auto">
+
+        <div className="absolute top-6 left-6 z-20">
+
+          <Link
+            href="/"
+            className="
+      flex
+      items-center
+      gap-3
+      group
+      select-none
+    "
+          >
+
+            {/* Logo */}
+            <div
+              className="
+        w-8
+        h-8
+        rounded-full
+        border
+        border-black/20
+        flex
+        items-center
+        justify-center
+        text-xs
+        font-semibold
+        tracking-widest
+        group-hover:border-black
+        transition
+      "
+            >
+              KV
+            </div>
+
+            {/* Brand Text */}
+            <div className="flex flex-col leading-tight">
+
+              <span className="
+        text-sm
+        font-medium
+        tracking-wide
+      ">
+                KICKS VAULT
+              </span>
+
+              <span className="
+        text-xs
+        text-black/50
+        group-hover:text-black/80
+        transition
+      ">
+                Back to Home
+              </span>
+
+            </div>
+
+          </Link>
+
+        </div>
 
         <h1 className="text-6xl md:text-7xl font-semibold tracking-tight">
           Get Inspired

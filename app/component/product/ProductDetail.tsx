@@ -9,6 +9,7 @@ import { normalizeImagePath } from "@/lib/image"
 import FloatingCartButton from "../cart/FloatingCartButton"
 import SizeChart from "../ui/SizeChart"
 import FavoriteButton from "../ui/FavoriteButton"
+import Link from "next/link"
 
 interface Product {
   id: string
@@ -79,6 +80,66 @@ export default function ProductDetail({ product, isFavorited }: Props) {
   return (
     <main className="min-h-screen bg-[#f3f3f1] text-black pt-24 pb-32 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
+
+        <div className="absolute top-6 left-6 z-20">
+
+          <Link
+            href="/product"
+            className="
+      flex
+      items-center
+      gap-3
+      group
+      select-none
+    "
+          >
+
+            {/* Logo */}
+            <div
+              className="
+        w-8
+        h-8
+        rounded-full
+        border
+        border-black/20
+        flex
+        items-center
+        justify-center
+        text-xs
+        font-semibold
+        tracking-widest
+        group-hover:border-black
+        transition
+      "
+            >
+              KV
+            </div>
+
+            {/* Brand Text */}
+            <div className="flex flex-col leading-tight">
+
+              <span className="
+        text-sm
+        font-medium
+        tracking-wide
+      ">
+                KICKS VAULT
+              </span>
+
+              <span className="
+        text-xs
+        text-black/50
+        group-hover:text-black/80
+        transition
+      ">
+                Back to Shop
+              </span>
+
+            </div>
+
+          </Link>
+
+        </div>
 
         {/* ================= LEFT — GALLERY ================= */}
         <div className="flex gap-6">
