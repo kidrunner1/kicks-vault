@@ -1,36 +1,225 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📘 Kicks Vault – Sneaker E-commerce Web App
 
-## Getting Started
+Kicks Vault is a **full-stack e-commerce web application** for sneakers, built to practice and demonstrate core concepts in modern web development, including authentication, product management, and order systems.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Project Overview
+
+This project focuses on building a **solid foundation of e-commerce logic**, such as:
+
+* Authentication & Authorization
+* Product & Inventory Management
+* Cart & Order Flow
+* Relational Database Design
+
+> ⚠️ This is a **prototype version** — not production-ready yet.
+
+---
+## 🎯 Features
+### ✅ Implemented
+#### 👤 Authentication
+
+* Register / Login
+* Role-based access (USER / ADMIN)
+* Cookie + Refresh Token
+
+#### 👟 Product System
+
+* Product listing & detail
+* Brand relationship
+* Images, specs, and sizes
+* Featured products
+
+#### ❤️ Favorite (Wishlist)
+
+* Add / Remove favorite items
+* Prevent duplicate using unique constraint
+
+#### 🛒 Cart (Client-side)
+
+* Built with Zustand
+* Add product with size & quantity
+
+#### 📦 Order System (Basic)
+
+* Create order from cart
+* OrderItem stores:
+
+  * price (snapshot)
+  * quantity
+  * size
+
+#### 📊 Inventory System
+
+* Stock management per size (ShoeSize)
+
+---
+
+### ❌ Not Implemented Yet
+
+* Payment System (Stripe / PromptPay)
+* Shipping Address
+* Real-time Order Tracking
+* Cart persistence (database)
+
+---
+
+## 🧭 User Flow
+
+```
+Login / Register
+      ↓
+Browse Products
+      ↓
+View Product Detail
+      ↓
+Add to Cart (Zustand)
+      ↓
+Checkout
+      ↓
+Create Order + OrderItems
+      ↓
+Order Status = PENDING
+```
+---
+
+## 🗄️ Database Design
+### 🧩 Core Entities
+
+* User
+* Brand
+* Shoe (Product)
+* ShoeImage
+* ShoeSpec
+* ShoeSize (Inventory)
+* Favorite
+* Order
+* OrderItem
+
+### 🔗 Key Relationships
+
+* User → Orders (1:M)
+* Order → OrderItems (1:M)
+* Shoe → ShoeSize (1:M)
+* User ↔ Shoe (Favorite)
+
+---
+## 🧠 Design Decisions
+
+* Use **OrderItem** to snapshot price and size at purchase time
+* Use **Decimal** for price (avoid floating-point errors)
+* Use **unique constraints** to prevent duplicate favorites
+* Use **ShoeSize** for inventory per size
+* Use **Zustand** for lightweight client-side cart
+
+---
+
+## ⚙️ Tech Stack
+### Frontend
+
+* React / Next.js
+* Zustand (state management)
+
+### Backend
+
+* Node.js / Express
+
+### Database
+
+* PostgreSQL
+* Prisma ORM
+
+---
+
+## 🔐 Authentication & Security
+
+* Access Token (short-lived)
+* Refresh Token (stored in HTTP-only cookie)
+* Password hashing (bcrypt)
+* Input validation (e.g., Zod / Joi)
+* Protected API routes
+
+---
+
+## 📦 Order Flow (Technical)
+
+```
+Client Cart (Zustand)
+        ↓
+Checkout API
+        ↓
+Create Order
+        ↓
+Create OrderItems
+        ↓
+Calculate total
+        ↓
+(Update stock - planned improvement)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ⚠️ Limitations
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* No payment integration
+* No shipping system
+* Cart is not persistent across devices
+* No real-time inventory sync
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Admin Capabilities
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* Manage products (CRUD)
+* Manage brands
+* View and update orders
+* Manage stock per size
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📖 User Guide
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 👤 User
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Register / Login
+2. Browse products
+3. Add to cart
+4. Checkout
+5. View order status
+
+### 🛠️ Admin
+
+* Add / Edit / Delete products
+* Manage inventory
+* Update order status
+
+---
+
+## 🚀 Future Improvements
+
+* 💳 Payment Integration (Stripe / PromptPay)
+* 📍 Shipping Address System
+* 🔄 Persistent Cart (database)
+* 📦 Real-time Order Tracking
+* 📊 Admin Dashboard Analytics
+
+---
+
+## 💡 Key Learning Outcomes
+
+* Full-stack architecture design
+* Relational database modeling
+* Authentication flow with tokens
+* State management (client vs server)
+* Building scalable e-commerce logic
+
+---
+
+## 📌 Author
+
+Built as a **Full Stack Development Practice Project** to demonstrate real-world system design and implementation.
+
+---
+
+⭐ If you find this project useful, feel free to star the repo!
