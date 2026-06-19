@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/lib/auth"
+import { formatAddress } from "@/lib/address"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 
@@ -7,11 +8,22 @@ export default async function AccountPage() {
   const user = await getCurrentUser()
   if (!user) return null
 
-  const orders = await prisma.order.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  })
+  const [orders, addressCount, defaultAddress] = await Promise.all([
+    prisma.order.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }),
+    prisma.userAddress.count({
+      where: { userId: user.id },
+    }),
+    prisma.userAddress.findFirst({
+      where: {
+        userId: user.id,
+        isDefault: true,
+      },
+    }),
+  ])
 
   const totalOrders = orders.length
   const totalSpent = orders.reduce((acc, o) => acc + Number(o.total), 0)
@@ -93,6 +105,44 @@ export default async function AccountPage() {
             </div>
           </div>
 
+          <div className="bg-white border border-black/10 rounded-3xl p-8">
+            <div className="flex items-center justify-between gap-4 mb-6">
+              <h3 className="text-lg font-semibold">
+                Default Address
+              </h3>
+              <Link
+                href="/account/addresses"
+                className="text-sm text-black/45 hover:text-black"
+              >
+                Manage
+              </Link>
+            </div>
+
+            {defaultAddress ? (
+              <div className="space-y-3 text-sm text-black/70">
+                <p className="font-medium text-black">
+                  {defaultAddress.recipientName}
+                </p>
+                <p>{defaultAddress.phone}</p>
+                <p className="leading-7">
+                  {formatAddress(defaultAddress)}
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-sm leading-7 text-black/55">
+                  Add a saved delivery address before checkout.
+                </p>
+                <Link
+                  href="/account/addresses"
+                  className="mt-5 inline-flex rounded-full bg-black px-4 py-2 text-sm text-white"
+                >
+                  Add address
+                </Link>
+              </div>
+            )}
+          </div>
+
         </div>
 
         {/* RIGHT COLUMN */}
@@ -143,6 +193,10 @@ export default async function AccountPage() {
 
         </div>
 
+      </div>
+
+      <div className="text-sm text-black/45">
+        {addressCount} saved {addressCount === 1 ? "address" : "addresses"}
       </div>
 
     </div>

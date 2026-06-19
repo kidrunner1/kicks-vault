@@ -5,6 +5,9 @@ export async function proxy(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value
   const refreshToken = request.cookies.get("refreshToken")?.value
   const { pathname } = request.nextUrl
+  const requestHeaders = new Headers(request.headers)
+
+  requestHeaders.set("x-next-pathname", pathname)
 
   const protectedRoutes = ["/account", "/cart", "/admin"]
 
@@ -26,5 +29,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url))
   }
 
-  return NextResponse.next()
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  })
 }

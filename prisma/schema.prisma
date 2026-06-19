@@ -15,6 +15,7 @@ model User {
   refreshToken String?
 
   favorites Favorite[]
+  addresses UserAddress[]
   orders    Order[] // ✅ เพิ่มบรรทัดนี้
 
   createdAt DateTime @default(now())
@@ -97,11 +98,49 @@ model Favorite {
   @@unique([userId, shoeId], name: "userId_shoeId") 
 }
 
+model UserAddress {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  label         String  @default("Home")
+  recipientName String
+  phone         String
+  addressLine1  String
+  addressLine2  String?
+  subdistrict   String
+  district      String
+  province      String
+  postalCode    String
+  isDefault     Boolean @default(false)
+
+  orders Order[] @relation("OrderShippingAddress")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
 model Order {
   id String @id @default(uuid())
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
+
+  shippingAddressId String?
+  shippingAddress   UserAddress? @relation("OrderShippingAddress", fields: [shippingAddressId], references: [id], onDelete: SetNull)
+
+  shippingLabel         String?
+  shippingRecipientName String?
+  shippingPhone         String?
+  shippingAddressLine1  String?
+  shippingAddressLine2  String?
+  shippingSubdistrict   String?
+  shippingDistrict      String?
+  shippingProvince      String?
+  shippingPostalCode    String?
 
   total  Decimal     @db.Decimal(10, 2)
   status OrderStatus @default(PENDING)
@@ -110,6 +149,8 @@ model Order {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([shippingAddressId])
 }
 
 model OrderItem {

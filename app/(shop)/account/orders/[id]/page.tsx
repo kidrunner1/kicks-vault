@@ -5,12 +5,14 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
+  MapPin,
   PackageCheck,
   ReceiptText,
   Truck,
   type LucideIcon,
 } from "lucide-react"
 import { getCurrentUser } from "@/lib/auth"
+import { formatAddress } from "@/lib/address"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
 import { prisma } from "@/lib/prisma"
@@ -68,6 +70,16 @@ export default async function OrderDetailPage({ params }: Props) {
     (sum, item) => sum + Number(item.price) * item.quantity,
     0
   )
+  const shippingAddress = order.shippingAddressLine1
+    ? formatAddress({
+        addressLine1: order.shippingAddressLine1,
+        addressLine2: order.shippingAddressLine2,
+        subdistrict: order.shippingSubdistrict ?? "",
+        district: order.shippingDistrict ?? "",
+        province: order.shippingProvince ?? "",
+        postalCode: order.shippingPostalCode ?? "",
+      })
+    : null
 
   return (
     <div className="space-y-8">
@@ -194,6 +206,26 @@ export default async function OrderDetailPage({ params }: Props) {
               </div>
             </div>
           </div>
+
+          {shippingAddress && (
+            <div className="rounded-lg border border-black/10 bg-white p-5">
+              <div className="mb-5 flex items-center gap-2">
+                <MapPin size={18} />
+                <h2 className="text-lg font-semibold">
+                  Shipping address
+                </h2>
+              </div>
+              <p className="font-medium">
+                {order.shippingRecipientName}
+              </p>
+              <p className="mt-1 text-sm text-black/50">
+                {order.shippingPhone}
+              </p>
+              <p className="mt-3 text-sm leading-7 text-black/60">
+                {shippingAddress}
+              </p>
+            </div>
+          )}
 
           <div className="rounded-lg border border-black/10 bg-white p-5">
             <div className="mb-5 flex items-center gap-2">

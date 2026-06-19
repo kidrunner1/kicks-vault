@@ -4,8 +4,10 @@ import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { getCurrentUser } from "@/lib/auth"
 import { Prisma } from "@prisma/client"
+import { toOrderShippingSnapshot } from "@/lib/address"
 
 interface CreateOrderInput {
+  addressId: string
   items: {
     shoeId: string
     size: string
@@ -14,6 +16,7 @@ interface CreateOrderInput {
 }
 
 const orderSchema = z.object({
+  addressId: z.string().uuid(),
   items: z.array(
     z.object({
       shoeId: z.string().uuid(),
@@ -57,6 +60,18 @@ export async function createOrder(data: CreateOrderInput) {
   const items = normalizeOrderItems(parsed.data.items)
 
   const orderId = await prisma.$transaction(async (tx) => {
+    const shippingAddress = await tx.userAddress.findFirst({
+      where: {
+        id: parsed.data.addressId,
+        userId: user.id,
+      },
+    })
+
+    if (!shippingAddress) {
+      throw new Error("Select a valid shipping address")
+    }
+
+    const shippingSnapshot = toOrderShippingSnapshot(shippingAddress)
     let total = new Prisma.Decimal(0)
 
     const orderItems: {
@@ -116,6 +131,7 @@ export async function createOrder(data: CreateOrderInput) {
     const order = await tx.order.create({
       data: {
         userId: user.id,
+        ...shippingSnapshot,
         total,
         items: {
           create: orderItems,
