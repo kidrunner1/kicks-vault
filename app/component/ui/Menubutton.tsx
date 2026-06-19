@@ -10,28 +10,45 @@ interface Props {
 export default function MenuButton({ open, toggle }: Props) {
   return (
     <motion.button
+      type="button"
       onClick={toggle}
-      whileHover={{ scale: 1.08 }}
-      whileTap={{ scale: 0.95 }}
+      aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+      aria-expanded={open}
+      whileHover={{ scale: 1.04 }}
+      whileTap={{ scale: 0.96 }}
       className="
-        fixed
-        top-6
-        right-6
-        w-14
-        h-14
-        rounded-2xl    
-        bg-neutral-900
+        group
+        relative
         flex
+        h-11
+        w-11
+        shrink-0
         items-center
         justify-center
-        transition-colors
-        duration-300
+        rounded-full
+        border
+        border-black
+        bg-black
+        text-white
+        shadow-sm
+        transition
+        duration-200
         hover:bg-white
-        group
+        hover:text-black
+        focus:outline-none
+        focus-visible:ring-2
+        focus-visible:ring-black
+        focus-visible:ring-offset-2
+        focus-visible:ring-offset-white
       "
     >
-      <svg width="26" height="26" viewBox="0 0 24 24" className="relative">
-
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        className="relative"
+        aria-hidden="true"
+      >
         <motion.line
           x1="6"
           y1="8"
@@ -39,24 +56,24 @@ export default function MenuButton({ open, toggle }: Props) {
           y2="8"
           stroke="currentColor"
           strokeWidth="2"
+          strokeLinecap="round"
           initial={false}
           animate={open ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.25 }}
           style={{ transformOrigin: "12px 12px" }}
-          className="text-white group-hover:text-black"
         />
 
         <motion.line
-          x1="9"
+          x1="8"
           y1="12"
-          x2="15"
+          x2="16"
           y2="12"
           stroke="currentColor"
           strokeWidth="2"
+          strokeLinecap="round"
           initial={false}
           animate={open ? { opacity: 0 } : { opacity: 1 }}
-          transition={{ duration: 0.2 }}
-          className="text-white group-hover:text-black"
+          transition={{ duration: 0.18 }}
         />
 
         <motion.line
@@ -66,13 +83,12 @@ export default function MenuButton({ open, toggle }: Props) {
           y2="16"
           stroke="currentColor"
           strokeWidth="2"
+          strokeLinecap="round"
           initial={false}
           animate={open ? { rotate: -45, y: -4 } : { rotate: 0, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.25 }}
           style={{ transformOrigin: "12px 12px" }}
-          className="text-white group-hover:text-black"
         />
-
       </svg>
     </motion.button>
   )
