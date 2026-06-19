@@ -43,9 +43,15 @@ const categoryOptions = [
 
 const sortOptions = [
   { value: "newest", label: "Newest arrivals" },
-  { value: "price-desc", label: "Price: high to low" },
-  { value: "price-asc", label: "Price: low to high" },
   { value: "stock-desc", label: "Most available" },
+]
+
+const priceRangeOptions = [
+  { value: "all", label: "All", shortLabel: "All", min: null, max: null },
+  { value: "0-5000", label: "Under 5,000", shortLabel: "<5k", min: 0, max: 5000 },
+  { value: "5000-9000", label: "5,000 to 9,000", shortLabel: "5-9k", min: 5000, max: 9000 },
+  { value: "9000-13000", label: "9,000 to 13,000", shortLabel: "9-13k", min: 9000, max: 13000 },
+  { value: "13000-up", label: "13,000 and up", shortLabel: "13k+", min: 13000, max: null },
 ]
 
 const availabilityOptions = [
@@ -103,6 +109,19 @@ function priceOf(price: string | null) {
   return price == null ? 0 : Number(price)
 }
 
+function priceInRange(price: string | null, rangeValue: string) {
+  const range = priceRangeOptions.find((option) => option.value === rangeValue)
+
+  if (!range || range.value === "all") return true
+
+  const value = priceOf(price)
+
+  if (range.min != null && value < range.min) return false
+  if (range.max != null && value > range.max) return false
+
+  return true
+}
+
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = (await searchParams) ?? {}
   const activeAudience = readParam(params, "audience") ?? "all"
@@ -111,6 +130,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const activeSize = readParam(params, "size")
   const activeAvailability = readParam(params, "availability") ?? "all"
   const activeSort = readParam(params, "sort") ?? "newest"
+  const activePriceRangeParam = readParam(params, "price") ?? "all"
+  const activePriceRange = priceRangeOptions.some(
+    (option) => option.value === activePriceRangeParam
+  )
+    ? activePriceRangeParam
+    : "all"
 
   const createHref = (updates: Record<string, string | null>) => {
     const nextParams = new URLSearchParams()
@@ -180,6 +205,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     .filter((shoe) => !activeCategory || shoe.meta.category === activeCategory)
     .filter((shoe) => !activeBrand || shoe.brand.name === activeBrand)
     .filter((shoe) => !activeSize || shoe.sizes.some((size) => size.size === activeSize && size.stock > 0))
+    .filter((shoe) => priceInRange(shoe.price, activePriceRange))
     .filter((shoe) => {
       const stock = totalStock(shoe.sizes)
 
@@ -190,8 +216,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       return true
     })
     .sort((a, b) => {
-      if (activeSort === "price-desc") return priceOf(b.price) - priceOf(a.price)
-      if (activeSort === "price-asc") return priceOf(a.price) - priceOf(b.price)
       if (activeSort === "stock-desc") return totalStock(b.sizes) - totalStock(a.sizes)
 
       return a.originalIndex - b.originalIndex
@@ -207,6 +231,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     Boolean(activeBrand),
     Boolean(activeSize),
     activeAvailability !== "all",
+    activePriceRange !== "all",
     activeSort !== "newest",
   ].filter(Boolean).length
   const heroImage = normalizeImagePath(heroShoe?.images[0]?.url)
@@ -371,6 +396,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             </div>
 
             <div className="space-y-7">
+              <FilterGroup title="Price range">
+                <PriceRangeFilter
+                  activePriceRange={activePriceRange}
+                  createHref={(value) => createHref({ price: value })}
+                />
+              </FilterGroup>
+
               <FilterGroup title="Sort">
                 {sortOptions.map((option) => (
                   <FilterLink
@@ -561,6 +593,73 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </div>
       </section>
     </main>
+  )
+}
+
+function PriceRangeFilter({
+  activePriceRange,
+  createHref,
+}: {
+  activePriceRange: string
+  createHref: (value: string) => string
+}) {
+  const activeIndex = Math.max(
+    0,
+    priceRangeOptions.findIndex((option) => option.value === activePriceRange)
+  )
+  const activeOption = priceRangeOptions[activeIndex]
+
+  return (
+    <div>
+      <div className="mb-3 flex items-center justify-between text-xs text-black/45">
+        <span>Low</span>
+        <span>High</span>
+      </div>
+      <div className="relative px-1 pb-8 pt-3">
+        <div className="absolute left-3 right-3 top-5 h-1 rounded-full bg-black/10" />
+        <div
+          className="absolute left-3 top-5 h-1 rounded-full bg-black"
+          style={{
+            right: `${100 - (activeIndex / (priceRangeOptions.length - 1)) * 100}%`,
+          }}
+        />
+        <div className="relative flex items-start justify-between">
+          {priceRangeOptions.map((option) => {
+            const optionIndex = priceRangeOptions.findIndex(
+              (range) => range.value === option.value
+            )
+            const isActive = option.value === activeOption.value
+
+            return (
+              <Link
+                key={option.value}
+                href={createHref(option.value)}
+                className="group flex w-10 flex-col items-center gap-2 text-center"
+                aria-label={`Filter price ${option.label}`}
+              >
+                <span
+                  className={`relative z-10 h-5 w-5 rounded-full border-2 transition ${
+                    optionIndex <= activeIndex
+                      ? "border-black bg-black"
+                      : "border-black/20 bg-white group-hover:border-black/45"
+                  }`}
+                />
+                <span
+                  className={`text-[11px] leading-tight ${
+                    isActive ? "font-semibold text-black" : "text-black/45"
+                  }`}
+                >
+                  {option.shortLabel}
+                </span>
+              </Link>
+            )
+          })}
+        </div>
+      </div>
+      <p className="rounded-lg bg-[#f4f3ef] px-3 py-2 text-sm text-black/60">
+        {activeOption.value === "all" ? "All prices" : activeOption.label}
+      </p>
+    </div>
   )
 }
 

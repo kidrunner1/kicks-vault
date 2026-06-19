@@ -45,7 +45,16 @@ const brands: {
   { name: "Vans", slug: "vans" },
 ]
 
-const imagePool = [
+const mockImagePool = [
+  "/images/shoes/mock-white-runner.svg",
+  "/images/shoes/mock-white-court.svg",
+  "/images/shoes/mock-white-high.svg",
+  "/images/shoes/mock-white-kids.svg",
+  "/images/shoes/mock-white-skate.svg",
+  "/images/shoes/mock-white-slide.svg",
+]
+
+const detailImagePool = [
   "/images/shoes/nike-01.jpg",
   "/images/shoes/nike-02.jpg",
   "/images/shoes/nike-03.jpg",
@@ -107,8 +116,8 @@ function specs(style: string, cushion: string, upper: string, fit: string) {
 
 function images(startIndex: number) {
   return [
-    imagePool[startIndex % imagePool.length],
-    imagePool[(startIndex + 3) % imagePool.length],
+    mockImagePool[startIndex % mockImagePool.length],
+    detailImagePool[(startIndex + 3) % detailImagePool.length],
   ]
 }
 
