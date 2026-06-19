@@ -389,7 +389,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 <h2 className="font-semibold">Shop filters</h2>
               </div>
               {activeFiltersCount > 0 && (
-                <Link href="/product" className="text-sm text-black/45 hover:text-black">
+                <Link href="/product" className="text-sm text-black/60 transition hover:text-black">
                   Reset
                 </Link>
               )}
@@ -537,7 +537,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                       <div className="mt-5 space-y-3">
                         <div className="flex items-start justify-between gap-4">
                           <div>
-                            <p className="text-sm text-black/45">
+                            <p className="text-sm text-black/60">
                               {shoe.brand.name}
                             </p>
                             <h3 className="mt-1 text-lg font-semibold leading-tight">
@@ -611,7 +611,7 @@ function PriceRangeFilter({
 
   return (
     <div>
-      <div className="mb-3 flex items-center justify-between text-xs text-black/45">
+      <div className="mb-3 flex items-center justify-between text-xs text-black/60">
         <span>Low</span>
         <span>High</span>
       </div>
@@ -646,7 +646,7 @@ function PriceRangeFilter({
                 />
                 <span
                   className={`text-[11px] leading-tight ${
-                    isActive ? "font-semibold text-black" : "text-black/45"
+                    isActive ? "font-semibold text-black" : "text-black/60"
                   }`}
                 >
                   {option.shortLabel}

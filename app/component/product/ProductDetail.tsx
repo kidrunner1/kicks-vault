@@ -279,7 +279,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
 
             <div className="mt-6 flex items-end justify-between gap-4 border-y border-black/10 py-5">
               <div>
-                <p className="text-sm text-black/45">Price</p>
+                <p className="text-sm text-black/60">Price</p>
                 <p className="mt-1 text-3xl font-semibold">
                   {formattedPrice ?? "Price unavailable"}
                 </p>
@@ -288,7 +288,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                 <p className={hasAvailableStock ? "text-black/60" : "text-red-600"}>
                   {availabilityLabel(product.sizes)}
                 </p>
-                <p className="mt-1 text-black/40">
+                <p className="mt-1 text-black/60">
                   {availablePairs} total pairs
                 </p>
               </div>
@@ -303,7 +303,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                 <p className="text-sm font-semibold">Select size</p>
                 <button
                   onClick={() => setIsSizeGuideOpen(true)}
-                  className="inline-flex items-center gap-1 text-sm text-black/45 transition hover:text-black"
+                  className="inline-flex items-center gap-1 text-sm text-black/60 transition hover:text-black"
                 >
                   <Ruler size={15} />
                   Size guide
@@ -350,7 +350,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity === 1}
-                  className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-black/10 disabled:opacity-30"
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-black transition hover:bg-black/10 disabled:cursor-not-allowed disabled:text-black/45"
                 >
                   -
                 </button>
@@ -360,7 +360,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                 <button
                   onClick={() => setQuantity(Math.min(maxStock, quantity + 1))}
                   disabled={!selectedSizeObj || quantity >= maxStock}
-                  className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-black/10 disabled:opacity-30"
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-black transition hover:bg-black/10 disabled:cursor-not-allowed disabled:text-black/45"
                 >
                   +
                 </button>
@@ -372,7 +372,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                 className={`h-12 flex-1 rounded-full bg-black px-6 text-sm font-medium text-white transition ${
                   canRequestAddToCart
                     ? "hover:bg-neutral-800"
-                    : "cursor-not-allowed opacity-40"
+                    : "cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-700 disabled:opacity-100"
                 }`}
               >
                 {hasAvailableStock ? "Add to cart" : "Out of stock"}
@@ -380,7 +380,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
             </div>
 
             {selectedSizeObj && (
-              <p className="mt-3 text-xs text-black/45">
+              <p className="mt-3 text-xs text-black/60">
                 Max {selectedSizeObj.stock} pairs available for size {selectedSizeObj.size}.
               </p>
             )}
@@ -413,7 +413,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
               {displaySpecs.map((spec) => (
                 <div key={spec.id} className="rounded-lg bg-[#f4f3ef] p-4">
-                  <p className="text-xs text-black/45">
+                  <p className="text-xs text-black/60">
                     {spec.label}
                   </p>
                   <p className="mt-2 font-medium">
@@ -480,7 +480,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
 
                   <button
                     onClick={() => setIsSizeGuideOpen(false)}
-                    className="text-sm text-black/45 transition hover:text-black"
+                    className="text-sm text-black/60 transition hover:text-black"
                   >
                     Close
                   </button>

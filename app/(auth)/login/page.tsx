@@ -175,7 +175,10 @@ export default function LoginPage() {
               font-medium
               transition
               hover:bg-black/80
-              disabled:opacity-50
+              disabled:cursor-not-allowed
+              disabled:bg-neutral-300
+              disabled:text-neutral-700
+              disabled:opacity-100
               flex items-center justify-center
             "
           >

@@ -112,7 +112,7 @@ export default async function AccountPage() {
               </h3>
               <Link
                 href="/account/addresses"
-                className="text-sm text-black/45 hover:text-black"
+                className="text-sm text-black/60 transition hover:text-black"
               >
                 Manage
               </Link>
@@ -135,7 +135,7 @@ export default async function AccountPage() {
                 </p>
                 <Link
                   href="/account/addresses"
-                  className="mt-5 inline-flex rounded-full bg-black px-4 py-2 text-sm text-white"
+                  className="mt-5 inline-flex rounded-full bg-black px-4 py-2 text-sm text-white transition hover:bg-neutral-800"
                 >
                   Add address
                 </Link>
@@ -154,7 +154,7 @@ export default async function AccountPage() {
             </h3>
 
             {orders.length === 0 && (
-              <p className="text-black/50 text-sm">
+              <p className="text-black/60 text-sm">
                 No orders yet.
               </p>
             )}
@@ -171,7 +171,7 @@ export default async function AccountPage() {
                     <p className="font-medium">
                       Order #{order.id.slice(0, 8)}
                     </p>
-                    <p className="text-sm text-black/50">
+                    <p className="text-sm text-black/60">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -180,7 +180,7 @@ export default async function AccountPage() {
                     <p className="font-medium">
                       ${Number(order.total).toFixed(2)}
                     </p>
-                    <p className="text-sm text-black/50">
+                    <p className="text-sm text-black/60">
                       {order.status}
                     </p>
                   </div>
@@ -195,7 +195,7 @@ export default async function AccountPage() {
 
       </div>
 
-      <div className="text-sm text-black/45">
+      <div className="text-sm text-black/60">
         {addressCount} saved {addressCount === 1 ? "address" : "addresses"}
       </div>
 

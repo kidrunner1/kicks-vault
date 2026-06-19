@@ -31,10 +31,14 @@ export default function FavoriteRemoveButton({ shoeId }: Props) {
         bg-black/60
         backdrop-blur-md
         border border-white/20
+        text-white
         p-3
         rounded-full
+        hover:bg-black/75
         hover:border-red-500
         transition
+        disabled:cursor-not-allowed
+        disabled:opacity-70
       "
         >
             <Heart size={18} className="fill-red-500 text-red-500" />

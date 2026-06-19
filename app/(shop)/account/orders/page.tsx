@@ -171,7 +171,7 @@ export default async function OrdersPage() {
                         {previewNames}
                         {remainingNames > 0 ? `, +${remainingNames} more` : ""}
                       </p>
-                      <p className="mt-1 text-sm text-black/45">
+                      <p className="mt-1 text-sm text-black/60">
                         {formatOrderDate(order.createdAt)} / {pairCount} {pairCount === 1 ? "pair" : "pairs"}
                       </p>
                     </div>
@@ -184,12 +184,12 @@ export default async function OrdersPage() {
 
                   <div className="flex items-center justify-between gap-3 lg:justify-end">
                     <div className="lg:text-right">
-                      <p className="text-xs text-black/45">Total</p>
+                      <p className="text-xs text-black/60">Total</p>
                       <p className="mt-1 font-semibold">
                         {formatCurrency(order.total.toString())}
                       </p>
                     </div>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-black/45 transition group-hover:bg-black group-hover:text-white">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-black/60 transition group-hover:bg-black group-hover:text-white">
                       <ArrowRight size={15} />
                     </span>
                   </div>

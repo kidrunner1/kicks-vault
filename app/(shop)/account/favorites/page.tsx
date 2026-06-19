@@ -86,7 +86,7 @@ export default async function FavoritesPage() {
                                 {/* Content */}
                                 <div className="p-6 space-y-2">
 
-                                    <p className="text-[10px] uppercase tracking-wider text-black/40">
+                                    <p className="text-[10px] uppercase tracking-wider text-black/60">
                                         {shoe.brand.name}
                                     </p>
 

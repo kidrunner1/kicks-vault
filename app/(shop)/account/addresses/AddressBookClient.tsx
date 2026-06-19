@@ -313,7 +313,7 @@ export default function AddressBookClient({
             type="button"
             onClick={submitForm}
             disabled={isPending}
-            className="mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-full bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-full bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-700 disabled:opacity-100"
           >
             {isPending && <Loader2 size={16} className="animate-spin" />}
             {editingAddress ? "Save address" : "Create address"}
@@ -381,7 +381,7 @@ export default function AddressBookClient({
                       type="button"
                       onClick={() => handleSetDefault(address.id)}
                       disabled={isPending}
-                      className="inline-flex h-10 items-center gap-2 rounded-full border border-black/10 px-4 text-sm text-black/60 transition hover:border-black/25 hover:text-black disabled:opacity-50"
+                      className="inline-flex h-10 items-center gap-2 rounded-full border border-black/10 px-4 text-sm text-black/70 transition hover:border-black/25 hover:text-black disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-black/45 disabled:opacity-100"
                     >
                       <Star size={15} />
                       Set default
@@ -390,7 +390,7 @@ export default function AddressBookClient({
                   <button
                     type="button"
                     onClick={() => openEditForm(address)}
-                    className="inline-flex h-10 items-center gap-2 rounded-full border border-black/10 px-4 text-sm text-black/60 transition hover:border-black/25 hover:text-black"
+                    className="inline-flex h-10 items-center gap-2 rounded-full border border-black/10 px-4 text-sm text-black/70 transition hover:border-black/25 hover:text-black"
                   >
                     <Pencil size={15} />
                     Edit
@@ -399,7 +399,7 @@ export default function AddressBookClient({
                     type="button"
                     onClick={() => handleDelete(address.id)}
                     disabled={isPending}
-                    className="inline-flex h-10 items-center gap-2 rounded-full px-4 text-sm text-red-600 transition hover:bg-red-50 disabled:opacity-50"
+                    className="inline-flex h-10 items-center gap-2 rounded-full px-4 text-sm text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:text-red-400 disabled:opacity-100"
                   >
                     <Trash2 size={15} />
                     Delete
@@ -433,14 +433,14 @@ function AddressInputField({
 }) {
   return (
     <label className={wide ? "block md:col-span-2" : "block"}>
-      <span className="flex items-center gap-1 text-sm text-black/55">
+      <span className="flex items-center gap-1 text-sm text-black/70">
         {label}
         {required ? (
           <span className="text-red-600" aria-label="required">
             *
           </span>
         ) : (
-          <span className="text-xs text-black/35">
+          <span className="text-xs text-black/50">
             Optional
           </span>
         )}
@@ -450,7 +450,7 @@ function AddressInputField({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         aria-invalid={Boolean(error)}
-        className={`mt-2 h-11 w-full rounded-lg border bg-white px-3 text-sm outline-none transition placeholder:text-black/35 ${
+        className={`mt-2 h-11 w-full rounded-lg border bg-white px-3 text-sm text-black outline-none transition placeholder:text-black/45 ${
           error
             ? "border-red-400 focus:border-red-500"
             : "border-black/10 focus:border-black/35"

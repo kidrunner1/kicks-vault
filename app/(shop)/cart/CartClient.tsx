@@ -269,7 +269,7 @@ export default function CartClient({
                                 }
                                 disabled={item.quantity <= 1}
                                 aria-label={`Decrease quantity for ${item.name}`}
-                                className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-black/10 disabled:cursor-not-allowed disabled:opacity-30"
+                                className="flex h-9 w-9 items-center justify-center rounded-full text-black transition hover:bg-black/10 disabled:cursor-not-allowed disabled:text-black/45"
                               >
                                 <Minus size={15} />
                               </button>
@@ -289,7 +289,7 @@ export default function CartClient({
                                 }
                                 disabled={item.quantity >= item.maxStock}
                                 aria-label={`Increase quantity for ${item.name}`}
-                                className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-black/10 disabled:cursor-not-allowed disabled:opacity-30"
+                                className="flex h-9 w-9 items-center justify-center rounded-full text-black transition hover:bg-black/10 disabled:cursor-not-allowed disabled:text-black/45"
                               >
                                 <Plus size={15} />
                               </button>
@@ -298,7 +298,7 @@ export default function CartClient({
                             <button
                               type="button"
                               onClick={() => removeItem(item.shoeId, item.size)}
-                              className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm text-black/45 transition hover:bg-red-50 hover:text-red-600"
+                              className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm text-black/60 transition hover:bg-red-50 hover:text-red-600"
                             >
                               <Trash2 size={15} />
                               Remove
@@ -307,11 +307,11 @@ export default function CartClient({
                         </div>
 
                         <div className="min-w-36 text-left md:text-right">
-                          <p className="text-sm text-black/45">Unit price</p>
+                          <p className="text-sm text-black/60">Unit price</p>
                           <p className="mt-1 font-medium">
                             {formatCurrency(item.price)}
                           </p>
-                          <p className="mt-4 text-sm text-black/45">Line total</p>
+                          <p className="mt-4 text-sm text-black/60">Line total</p>
                           <p className="mt-1 text-lg font-semibold">
                             {formatCurrency(item.price * item.quantity)}
                           </p>
@@ -350,7 +350,7 @@ export default function CartClient({
                   </div>
                   <Link
                     href="/account/addresses"
-                    className="text-sm text-black/45 transition hover:text-black"
+                    className="text-sm text-black/60 transition hover:text-black"
                   >
                     Manage
                   </Link>
@@ -472,13 +472,13 @@ export default function CartClient({
                   type="button"
                   onClick={handleCheckout}
                   disabled={isCheckoutDisabled}
-                  className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-black px-6 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-black px-6 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-700 disabled:opacity-100"
                 >
                   {loading ? "Creating order..." : "Confirm order"}
                 </button>
 
                 {!checkoutReady && isSignedIn && (
-                  <p className="mt-3 text-xs leading-5 text-black/45">
+                  <p className="mt-3 text-xs leading-5 text-black/60">
                     Select or add a shipping address to continue.
                   </p>
                 )}
@@ -508,10 +508,10 @@ function AddressEmptyState({
         <MapPin size={20} />
       </div>
       <p className="mt-4 font-medium">{title}</p>
-      <p className="mt-2 text-sm leading-6 text-black/55">{description}</p>
+      <p className="mt-2 text-sm leading-6 text-black/65">{description}</p>
       <Link
         href={href}
-        className="mt-4 inline-flex rounded-full bg-black px-4 py-2 text-sm font-medium text-white"
+        className="mt-4 inline-flex rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
       >
         {action}
       </Link>

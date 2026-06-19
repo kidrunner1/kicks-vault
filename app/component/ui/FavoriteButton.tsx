@@ -89,8 +89,8 @@ export default function FavoriteButton({
         transition
         group
         ${isFavorited
-                    ? "bg-black border-black"
-                    : "bg-white border-black/10 hover:border-black/30"}
+                    ? "bg-black border-black text-white"
+                    : "bg-white border-black/10 text-black hover:border-black/30"}
         ${isPending ? "opacity-60 pointer-events-none" : ""}
       `}
         >

@@ -94,7 +94,7 @@ export default function SizeChart({ brand }: SizeChartProps) {
       </div>
 
       {/* Disclaimer */}
-      <div className="mt-12 border-t border-black/10 pt-6 text-xs text-black/40">
+      <div className="mt-12 border-t border-black/10 pt-6 text-xs text-black/60">
         Please note that sizing may vary slightly depending on model and
         collection.
       </div>

@@ -153,7 +153,7 @@ export default async function OrderDetailPage({ params }: Props) {
                   </div>
 
                   <div className="min-w-0">
-                    <p className="text-sm text-black/45">
+                    <p className="text-sm text-black/60">
                       {item.shoe.brand.name}
                     </p>
                     <h3 className="mt-1 text-lg font-semibold leading-tight">
@@ -173,7 +173,7 @@ export default async function OrderDetailPage({ params }: Props) {
                   </div>
 
                   <div className="md:text-right">
-                    <p className="text-sm text-black/45">Line total</p>
+                    <p className="text-sm text-black/60">Line total</p>
                     <p className="mt-1 text-lg font-semibold">
                       {formatCurrency(lineTotal)}
                     </p>
@@ -312,13 +312,13 @@ function TrailItem({
     <div className="flex gap-3">
       <span
         className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-          active ? "bg-black text-white" : "bg-[#f4f3ef] text-black/35"
+          active ? "bg-black text-white" : "bg-[#f4f3ef] text-black/55"
         }`}
       >
         <Icon size={16} />
       </span>
       <div>
-        <p className={active ? "text-sm font-medium" : "text-sm font-medium text-black/40"}>
+        <p className={active ? "text-sm font-medium" : "text-sm font-medium text-black/60"}>
           {title}
         </p>
         <p className="mt-1 text-sm leading-6 text-black/50">
