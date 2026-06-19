@@ -1,211 +1,136 @@
 "use client"
 
-import Navbar from "../ui/Navbar"
 import { motion } from "framer-motion"
 import Image from "next/image"
+import Link from "next/link"
+import {
+  BadgeCheck,
+  Boxes,
+  PackageCheck,
+  ShieldCheck,
+} from "lucide-react"
 
-const trending = [
+const features = [
   {
-    name: "Nike Dunk Low Orange",
-    price: 320,
-    image: "/images/shoes/nike-02.jpg",
+    title: "Curated drops",
+    description: "New pairs are presented like an archive, with the product story and primary image up front.",
+    icon: BadgeCheck,
   },
   {
-    name: "Nike SB Retro",
-    price: 280,
-    image: "/images/shoes/nike-02.jpg",
+    title: "Size stock shown",
+    description: "Availability is tied to real size rows, so shoppers know what can actually be added to cart.",
+    icon: Boxes,
   },
   {
-    name: "Air Jordan Vintage",
-    price: 450,
-    image: "/images/shoes/nike-03.jpg",
+    title: "Checkout guarded",
+    description: "Order totals come from database prices and stock is deducted inside the order transaction.",
+    icon: ShieldCheck,
   },
   {
-    name: "Nike Dunk Premium",
-    price: 390,
-    image: "/images/shoes/nike-04.jpg",
+    title: "Orders stay reviewable",
+    description: "Each order keeps the size, quantity, and price snapshot for a clean purchase history.",
+    icon: PackageCheck,
   },
 ]
 
-const brands = [
-  { name: "Nike", image: "/images/shoes/nike.png" },
-  { name: "Jordan", image: "/images/shoes/Puma-icon.jpg" },
-  { name: "Adidas", image: "/images/shoes/adidas.png" },
-  { name: "Converse", image: "/images/shoes/convers-icon.jpg" },
+const productImages = [
+  {
+    src: "/images/shoes/nike-02.jpg",
+    alt: "Orange Nike sneaker shown as a featured archive pair",
+  },
+  {
+    src: "/images/shoes/nike-03.jpg",
+    alt: "Vintage Nike sneaker from the KicksVault collection",
+  },
+  {
+    src: "/images/shoes/nike-04.jpg",
+    alt: "Premium Nike sneaker photographed for product discovery",
+  },
 ]
 
-export default function DiscoverySection() {
-
+export default function FeatureSection() {
   return (
-    <div className="bg-neutral-50 min-h-screen overflow-x-hidden">
-
-      {/* NAVBAR */}
-
-      <Navbar />
-
-      {/* MAIN CONTAINER */}
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
-
-        {/* HERO SECTION */}
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-          {/* HERO BANNER */}
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:col-span-2 h-[420px] sm:h-[480px] relative rounded-3xl overflow-hidden"
-          >
-
-            <Image
-              src="/images/shoes/logo.jpg"
-              alt="Hero"
-              fill
-              className="object-cover"
-            />
-
-            <div className="absolute inset-0 bg-black/40" />
-
-            <div className="absolute left-6 bottom-6 md:left-12 md:bottom-12 text-white max-w-sm md:max-w-md">
-
-              <h1 className="text-2xl md:text-4xl font-semibold mb-4">
-                Discover the Future of Sneaker Culture
-              </h1>
-
-              <p className="text-sm opacity-90 mb-6">
-                Limited drops, rare releases and iconic silhouettes curated
-                for modern collectors.
-              </p>
-
-              <button className="bg-white text-black px-6 py-2 rounded-full text-sm font-medium hover:bg-neutral-200 transition">
-                Shop Collection
-              </button>
-
-            </div>
-
-          </motion.div>
-
-          {/* PROMO CARD */}
-
-          <div className="bg-neutral-100 rounded-3xl p-6 md:p-8 flex flex-col justify-between">
-
-            <div>
-
-              <h3 className="text-lg font-semibold mb-2">
-                Limited Drop
-              </h3>
-
-              <p className="text-sm text-neutral-500">
-                Exclusive sneakers available only for a short time.
-              </p>
-
-            </div>
-
-            <Image
-              src="/images/shoes/nike-02.jpg"
-              alt="Promo"
-              width={240}
-              height={240}
-              className="rounded-xl mt-8 mx-auto"
-            />
-
-          </div>
-
-        </div>
-
-        {/* TRENDING SNEAKERS */}
-
-        <section>
-
-          <div className="flex items-center justify-between mb-8">
-
-            <h2 className="text-2xl font-semibold">
-              Trending Sneakers
-            </h2>
-
-            <button className="text-sm text-neutral-500 hover:text-black">
-              View All →
-            </button>
-
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-
-            {trending.map((shoe) => (
-
-              <motion.div
-                key={shoe.name}
-                whileHover={{ y: -6 }}
-                className="bg-white rounded-2xl shadow-sm p-4 transition"
-              >
-
-                <div className="aspect-square relative overflow-hidden rounded-xl">
-
-                  <Image
-                    src={shoe.image}
-                    alt={shoe.name}
-                    fill
-                    className="object-cover"
-                  />
-
-                </div>
-
-                <div className="mt-4">
-
-                  <p className="text-sm font-medium">
-                    {shoe.name}
-                  </p>
-
-                  <p className="text-sm text-neutral-500">
-                    ${shoe.price}
-                  </p>
-
-                </div>
-
-              </motion.div>
-
-            ))}
-
-          </div>
-
-        </section>
-
-        {/* POPULAR BRANDS */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-8">
-            Popular Brands
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {brands.map((brand) => (<motion.div key={brand.name} whileHover={{ y: -4 }}
-              className="bg-white rounded-2xl p-8 text-center shadow-sm" >
-              <Image src={brand.image} alt={brand.name} width={120} height={120} className="mx-auto mb-4" />
-              <p className="text-sm font-medium">
-                {brand.name}
-              </p>
-            </motion.div>))}
-          </div>
-
-        </section>
-
-        {/* COMMUNITY */}
-
-        <section className="bg-neutral-100 rounded-3xl p-8 md:p-16 text-center">
-
-          <h2 className="text-2xl md:text-3xl font-semibold mb-4">
-            Join the KicksVault Community
-          </h2>
-
-          <p className="text-neutral-600 max-w-xl mx-auto mb-6">
-            Connect with sneaker collectors and discover rare releases,
-            exclusive collaborations and stories behind every pair.
+    <section className="bg-[#f4f3ef] px-6 py-24 text-neutral-950 md:px-12 lg:px-20">
+      <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+        <div>
+          <p className="mb-5 text-sm font-medium text-neutral-500">
+            Built for real checkout flow
           </p>
 
-        </section>
+          <h2 className="max-w-2xl text-4xl font-semibold leading-[0.95] text-wrap-balance md:text-6xl">
+            A sneaker archive that is ready to sell, not just impress.
+          </h2>
 
-      </main>
+          <p className="mt-7 max-w-xl text-base leading-8 text-neutral-600 md:text-lg">
+            KicksVault now connects product presentation with the practical pieces that make a shop usable: size stock, protected checkout, and readable order history.
+          </p>
 
-    </div>
+          <div className="mt-9 flex flex-wrap items-center gap-4">
+            <Link
+              href="/product"
+              className="inline-flex rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+            >
+              Browse products
+            </Link>
+            <Link
+              href="/account/orders"
+              className="inline-flex rounded-full border border-black/15 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:border-black/35 hover:text-black"
+            >
+              View orders
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid gap-4">
+          <div className="grid grid-cols-3 gap-3">
+            {productImages.map((image, index) => (
+              <motion.div
+                key={image.src}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ delay: index * 0.08, duration: 0.45 }}
+                className="relative aspect-[3/4] overflow-hidden rounded-lg bg-white"
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes="(max-width: 768px) 30vw, 220px"
+                  className="object-cover"
+                />
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-2">
+            {features.map((feature) => {
+              const Icon = feature.icon
+
+              return (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.4 }}
+                  className="rounded-lg border border-black/10 bg-white p-5"
+                >
+                  <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-full bg-black text-white">
+                    <Icon size={18} />
+                  </div>
+                  <h3 className="text-lg font-semibold">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-neutral-600">
+                    {feature.description}
+                  </p>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
