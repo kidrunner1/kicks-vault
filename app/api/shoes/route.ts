@@ -22,7 +22,8 @@ export async function GET(request: Request) {
           images: {
             orderBy: { order: "asc" }
           },
-          specs: true
+          specs: true,
+          sizes: true
         },
         orderBy: {
           createdAt: "desc"
@@ -36,7 +37,13 @@ export async function GET(request: Request) {
     // 🔥 FIX: Convert Decimal → string
     const formattedShoes = shoes.map((shoe) => ({
       ...shoe,
-      price: shoe.price ? shoe.price.toString() : null
+      price: shoe.price ? shoe.price.toString() : null,
+      sizes: [...shoe.sizes].sort((a, b) =>
+        a.size.localeCompare(b.size, undefined, {
+          numeric: true,
+          sensitivity: "base",
+        })
+      ),
     }))
 
     return NextResponse.json({

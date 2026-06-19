@@ -3,10 +3,16 @@ import { requireAdmin } from "@/lib/auth"
 import { NextResponse } from "next/server"
 import { Prisma } from "@prisma/client"
 import { z } from "zod"
+import { normalizeStockRows } from "@/lib/commerce"
 
 const shoeSpecSchema = z.object({
   label: z.string().min(1),
   value: z.string().min(1),
+})
+
+const shoeSizeSchema = z.object({
+  size: z.string().trim().min(1),
+  stock: z.coerce.number().int().min(0),
 })
 
 const createShoeSchema = z.object({
@@ -27,6 +33,7 @@ const createShoeSchema = z.object({
   ),
   images: z.array(z.string().min(1)).optional().default([]),
   specs: z.array(shoeSpecSchema).optional().default([]),
+  sizes: z.array(shoeSizeSchema).optional().default([]),
 })
 
 export async function POST(req: Request) {
@@ -53,7 +60,10 @@ export async function POST(req: Request) {
       price,
       images,
       specs,
+      sizes,
     } = parsed.data
+
+    const normalizedSizes = normalizeStockRows(sizes)
 
     // check brand exists
     const brand = await prisma.brand.findUnique({
@@ -79,10 +89,10 @@ export async function POST(req: Request) {
         price: new Prisma.Decimal(price),
 
         images: {
-          create: images?.map((url: string, index: number) => ({
+          create: images.map((url, index) => ({
             url,
             order: index
-          })) || []
+          }))
         },
 
         specs: {
@@ -90,6 +100,13 @@ export async function POST(req: Request) {
             label: spec.label,
             value: spec.value
           }))
+        },
+
+        sizes: {
+          create: normalizedSizes.map((size) => ({
+            size: size.size,
+            stock: size.stock,
+          })),
         }
 
       },
@@ -99,7 +116,8 @@ export async function POST(req: Request) {
         images: {
           orderBy: { order: "asc" }
         },
-        specs: true
+        specs: true,
+        sizes: true
       }
 
     })
