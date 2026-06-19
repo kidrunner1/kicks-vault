@@ -1,7 +1,14 @@
-import PriceTag from "./PriceTag";
+import PriceTag from "./PriceTag"
+
+interface ProductInfoProduct {
+  brand: string
+  name: string
+  price: number
+  description: string
+}
 
 interface Props {
-  product: any;
+  product: ProductInfoProduct
 }
 
 export default function ProductInfo({ product }: Props) {
@@ -23,5 +30,5 @@ export default function ProductInfo({ product }: Props) {
         {product.description}
       </p>
     </div>
-  );
+  )
 }

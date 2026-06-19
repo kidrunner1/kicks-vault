@@ -61,6 +61,7 @@ export default function FormInput({
         placeholder=" "
         value={value}
         onChange={(e) => handleChange(e.target.value)}
+        disabled={disabled}
         aria-invalid={!!localError}
         className={`
           peer w-full

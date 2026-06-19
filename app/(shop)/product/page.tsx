@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import Image from "next/image"
 import { normalizeImagePath } from "@/lib/image"
-import { motion } from "framer-motion"
 
 export const dynamic = "force-dynamic"
 export default async function ProductsPage() {

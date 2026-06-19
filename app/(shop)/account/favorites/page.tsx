@@ -33,7 +33,7 @@ export default async function FavoritesPage() {
                     Your Collection
                 </h1>
                 <p className="text-sm text-black/50 mt-2">
-                    Sneakers you've saved for later.
+                    Sneakers you have saved for later.
                 </p>
             </div>
 

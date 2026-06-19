@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useMemo } from "react"
-import { useFrame } from "@react-three/fiber"
+import { type ThreeElements, useFrame } from "@react-three/fiber"
 import { useGLTF } from "@react-three/drei"
 import * as THREE from "three"
 
@@ -14,7 +14,9 @@ type GLTFResult = {
   }
 }
 
-export default function Shoe(props: any) {
+type ShoeProps = ThreeElements["mesh"]
+
+export default function Shoe(props: ShoeProps) {
 
   const ref = useRef<THREE.Group>(null!)
 

@@ -3,8 +3,7 @@
 import {
     motion,
     useScroll,
-    useTransform,
-    useMotionTemplate
+    useTransform
 } from "framer-motion"
 
 import { useRef } from "react"
@@ -23,9 +22,6 @@ export default function CinematicSection(): JSX.Element {
     /* SCROLL TRANSFORMS */
 
     const bgY = useTransform(scrollYProgress, [0, 1], [-150, 150])
-
-    const blurValue = useTransform(scrollYProgress, [0, 0.5, 1], [8, 0, 8])
-    const blurFilter = useMotionTemplate`blur(${blurValue}px)`
 
     const leftTextX = useTransform(scrollYProgress, [0, 1], [-200, 0])
     const rightTextX = useTransform(scrollYProgress, [0, 1], [200, 0])
