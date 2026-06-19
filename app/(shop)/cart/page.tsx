@@ -48,8 +48,13 @@ export default function CartPage() {
             clearCart()
             router.push(`/account/orders/${orderId}`)
 
-        } catch (error: any) {
-            toast.error(error?.message || "Unable to process order.")
+        } catch (error) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : "Unable to process order."
+
+            toast.error(message)
         } finally {
             setLoading(false)
         }

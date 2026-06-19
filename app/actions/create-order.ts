@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { getCurrentUser } from "@/lib/auth"
-import { Decimal } from "@prisma/client/runtime/library"
+import { Prisma } from "@prisma/client"
 
 interface CreateOrderInput {
   items: {
@@ -13,108 +13,96 @@ interface CreateOrderInput {
   }[]
 }
 
+const orderSchema = z.object({
+  items: z.array(
+    z.object({
+      shoeId: z.string().uuid(),
+      size: z.string().min(1),
+      quantity: z.number().int().min(1),
+    })
+  ).min(1),
+})
+
 export async function createOrder(data: CreateOrderInput) {
-
-  // -----------------------------
-  // 1️⃣ Validate Input
-  // -----------------------------
-
-  const OrderSchema = z.object({
-    items: z.array(
-      z.object({
-        shoeId: z.string().uuid(),
-        size: z.string().min(1),
-        quantity: z.number().min(1)
-      })
-    ).min(1)
-  })
-
-  const parsed = OrderSchema.safeParse(data)
+  const parsed = orderSchema.safeParse(data)
 
   if (!parsed.success) {
-    throw new Error("ข้อมูลคำสั่งซื้อไม่ถูกต้อง")
+    throw new Error("Invalid order data")
   }
-
-  const { items } = parsed.data
-
-  // -----------------------------
-  // 2️⃣ Auth Check
-  // -----------------------------
 
   const user = await getCurrentUser()
 
   if (!user) {
-    throw new Error("กรุณาเข้าสู่ระบบเพื่อทำการสั่งซื้อ")
+    throw new Error("Please sign in before checking out")
   }
 
-  // -----------------------------
-  // 3️⃣ Transaction
-  // -----------------------------
+  const { items } = parsed.data
 
   const orderId = await prisma.$transaction(async (tx) => {
+    let total = new Prisma.Decimal(0)
 
-    let total = 0
-
-    const orderItems = []
+    const orderItems: {
+      shoeId: string
+      quantity: number
+      size: string
+      price: Prisma.Decimal
+    }[] = []
 
     for (const item of items) {
-
-      // fetch size
-      const sizeRecord = await tx.shoeSize.findUnique({
-        where: {
-          shoeId_size: {
-            shoeId: item.shoeId,
-            size: item.size
-          }
-        }
-      })
-
-      if (!sizeRecord) {
-        throw new Error("ไม่พบไซส์ที่เลือก")
-      }
-
-      if (sizeRecord.stock < item.quantity) {
-        throw new Error("สินค้าในสต็อกไม่เพียงพอ")
-      }
-
-      // fetch shoe price
       const shoe = await tx.shoe.findUnique({
         where: { id: item.shoeId },
-        select: { price: true }
+        select: {
+          price: true,
+          sizes: {
+            where: { size: item.size },
+            select: { id: true },
+            take: 1,
+          },
+        },
       })
 
       if (!shoe || shoe.price === null) {
-        throw new Error("ไม่พบราคาสินค้า")
+        throw new Error("Product price was not found")
       }
 
-      const itemTotal = Number(shoe.price) * item.quantity
+      if (shoe.sizes.length === 0) {
+        throw new Error("Selected size was not found")
+      }
 
-      total += itemTotal
-
-      orderItems.push({
-        shoeId: item.shoeId,
-        quantity: item.quantity,
-        size: item.size,
-        price: new Decimal(shoe.price)
+      const stockUpdate = await tx.shoeSize.updateMany({
+        where: {
+          shoeId: item.shoeId,
+          size: item.size,
+          stock: { gte: item.quantity },
+        },
+        data: {
+          stock: { decrement: item.quantity },
+        },
       })
 
+      if (stockUpdate.count !== 1) {
+        throw new Error("Insufficient stock for selected size")
+      }
+
+      const price = new Prisma.Decimal(shoe.price)
+      total = total.add(price.mul(item.quantity))
+
       orderItems.push({
         shoeId: item.shoeId,
         quantity: item.quantity,
         size: item.size,
-        price: new Decimal(shoe.price)
+        price,
       })
     }
 
-    // create order
     const order = await tx.order.create({
       data: {
         userId: user.id,
-        total: new Decimal(total),
+        total,
         items: {
-          create: orderItems
-        }
-      }
+          create: orderItems,
+        },
+      },
     })
 
     return order.id
