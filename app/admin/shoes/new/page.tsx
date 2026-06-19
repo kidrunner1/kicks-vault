@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
+interface BrandOption {
+    id: string
+    name: string
+}
+
 export default function AddShoePage() {
 
     const router = useRouter()
@@ -11,7 +16,7 @@ export default function AddShoePage() {
     const [description, setDescription] = useState("")
     const [image, setImage] = useState("")
     const [brandId, setBrandId] = useState("")
-    const [brands, setBrands] = useState<any[]>([])
+    const [brands, setBrands] = useState<BrandOption[]>([])
     const [loading, setLoading] = useState(false)
     const [price, setPrice] = useState("")
 
@@ -36,8 +41,10 @@ export default function AddShoePage() {
 
     async function handleSubmit() {
 
-        if (!name || !brandId) {
-            alert("Name and Brand ID are required")
+        const numericPrice = Number(price)
+
+        if (!name.trim() || !brandId || !Number.isFinite(numericPrice) || numericPrice < 0) {
+            alert("Name, brand and valid price are required")
             return
         }
 
@@ -63,6 +70,7 @@ export default function AddShoePage() {
                     featured: true,
 
                     brandId,
+                    price: numericPrice,
 
                     images: image ? [image] : [],
                     specs: []
@@ -78,14 +86,6 @@ export default function AddShoePage() {
                 return
 
             }
-
-            const numericPrice = parseFloat(price)
-
-            if (!name || !brandId || isNaN(numericPrice)) {
-                alert("Name, Brand and valid Price are required")
-                return
-            }
-
 
             router.push("/admin/shoes")
 

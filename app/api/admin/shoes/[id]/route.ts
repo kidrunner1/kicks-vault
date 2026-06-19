@@ -93,9 +93,19 @@ export async function PUT(
 
     return NextResponse.json(updated)
 
-  } catch (error: any) {
+  } catch (error) {
 
     console.error("UPDATE SHOE ERROR:", error)
+
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return NextResponse.json(
+        { error: "Slug already exists" },
+        { status: 400 }
+      )
+    }
 
     return NextResponse.json(
       { error: "Update failed" },
@@ -150,7 +160,7 @@ export async function DELETE(
       success: true
     })
 
-  } catch (error: any) {
+  } catch (error) {
 
     console.error("DELETE SHOE ERROR:", error)
 
