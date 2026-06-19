@@ -2,25 +2,31 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
+import { availabilityLabel, formatCurrency, type StockRow } from "@/lib/commerce"
+import { normalizeImagePath } from "@/lib/image"
 
 interface Shoe {
     id: string
     name: string
-    price: string | number
+    price: string | number | null
     brand: { name: string }
     images: { url: string }[]
+    sizes: StockRow[]
 }
 
 export default function AdminShoesPage() {
 
     const [shoes, setShoes] = useState<Shoe[]>([])
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     async function fetchShoes() {
 
         try {
 
             setLoading(true)
+            setError(null)
 
             const res = await fetch("/api/shoes", {
                 credentials: "include"
@@ -33,6 +39,7 @@ export default function AdminShoesPage() {
         } catch (err) {
 
             console.error(err)
+            setError("Unable to load products.")
 
         } finally {
 
@@ -82,6 +89,13 @@ export default function AdminShoesPage() {
             </div>
         )
 
+    if (error)
+        return (
+            <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 text-red-200">
+                {error}
+            </div>
+        )
+
 
     return (
 
@@ -128,12 +142,21 @@ export default function AdminShoesPage() {
                             <th className="p-4 text-left text-gray-300">Name</th>
                             <th className="p-4 text-left text-gray-300">Brand</th>
                             <th className="p-4 text-left text-gray-300">Price</th>
+                            <th className="p-4 text-left text-gray-300">Stock</th>
                             <th className="p-4 text-left text-gray-300">Actions</th>
                         </tr>
                     </thead>
 
                     {/* BODY */}
                     <tbody>
+                        {shoes.length === 0 && (
+                            <tr>
+                                <td colSpan={6} className="p-8 text-center text-gray-500">
+                                    No products yet.
+                                </td>
+                            </tr>
+                        )}
+
                         {shoes.map(shoe => (
                             <tr
                                 key={shoe.id}
@@ -146,17 +169,15 @@ export default function AdminShoesPage() {
                                 {/* IMAGE */}
                                 <td className="p-4">
 
-                                    <img
-                                        src={
+                                    <Image
+                                        src={normalizeImagePath(
                                             shoe.images?.[0]?.url ||
                                             "/placeholder.png"
-                                        }
-                                        className="
-                                            w-16 h-16
-                                            object-cover
-                                            rounded-lg
-                                            border border-gray-700
-                                        "
+                                        )}
+                                        alt={shoe.name}
+                                        width={64}
+                                        height={64}
+                                        className="w-16 h-16 object-contain rounded-lg border border-gray-700 bg-white"
                                     />
 
                                 </td>
@@ -172,12 +193,11 @@ export default function AdminShoesPage() {
                                 </td>
                                 {/* PRICE */}
                                 <td className="p-4 text-gray-300 font-medium">
-                                    {shoe.price != null
-                                        ? new Intl.NumberFormat("en-US", {
-                                            style: "currency",
-                                            currency: "USD",
-                                        }).format(Number(shoe.price))
-                                        : "-"}
+                                    {formatCurrency(shoe.price)}
+                                </td>
+
+                                <td className="p-4 text-gray-300">
+                                    {availabilityLabel(shoe.sizes ?? [])}
                                 </td>
 
                                 {/* ACTIONS */}

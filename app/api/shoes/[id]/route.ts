@@ -26,7 +26,8 @@ export async function GET(
         images: {
           orderBy: { order: "asc" }
         },
-        specs: true
+        specs: true,
+        sizes: true
       }
 
     })
@@ -38,7 +39,16 @@ export async function GET(
       )
     }
 
-    return NextResponse.json(shoe)
+    return NextResponse.json({
+      ...shoe,
+      price: shoe.price ? shoe.price.toString() : null,
+      sizes: [...shoe.sizes].sort((a, b) =>
+        a.size.localeCompare(b.size, undefined, {
+          numeric: true,
+          sensitivity: "base",
+        })
+      ),
+    })
 
   } catch (error) {
 

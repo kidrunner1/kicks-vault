@@ -2,7 +2,9 @@ import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Image from "next/image"
+import Link from "next/link"
 import { normalizeImagePath } from "@/lib/image"
+import { formatCurrency } from "@/lib/commerce"
 
 interface Props {
   params: Promise<{ id: string }>
@@ -21,7 +23,12 @@ export default async function OrderDetailPage({ params }: Props) {
       items: {
         include: {
           shoe: {
-            include: { images: true }
+            include: {
+              images: {
+                orderBy: { order: "asc" },
+                take: 1,
+              },
+            }
           }
         }
       }
@@ -94,13 +101,16 @@ export default async function OrderDetailPage({ params }: Props) {
                   <p className="text-sm text-black/50">
                     Quantity: {item.quantity}
                   </p>
+                  <p className="text-sm text-black/50">
+                    Unit price: {formatCurrency(item.price.toString())}
+                  </p>
                 </div>
 
               </div>
 
               {/* Price */}
               <p className="font-medium text-lg">
-                ${(Number(item.price) * item.quantity).toFixed(2)}
+                {formatCurrency(Number(item.price) * item.quantity)}
               </p>
 
             </div>
@@ -116,7 +126,7 @@ export default async function OrderDetailPage({ params }: Props) {
 
           <div className="flex justify-between">
             <span className="text-black/60">Subtotal</span>
-            <span>${Number(order.total).toFixed(2)}</span>
+            <span>{formatCurrency(order.total.toString())}</span>
           </div>
 
           <div className="flex justify-between">
@@ -126,12 +136,19 @@ export default async function OrderDetailPage({ params }: Props) {
 
           <div className="border-t border-black/10 pt-4 flex justify-between font-semibold text-lg">
             <span>Total</span>
-            <span>${Number(order.total).toFixed(2)}</span>
+            <span>{formatCurrency(order.total.toString())}</span>
           </div>
 
         </div>
 
       </div>
+
+      <Link
+        href="/product"
+        className="inline-flex rounded-full bg-black px-5 py-3 text-sm text-white hover:bg-black/80"
+      >
+        Continue Shopping
+      </Link>
 
     </div>
   )

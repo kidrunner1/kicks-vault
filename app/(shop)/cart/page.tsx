@@ -7,6 +7,7 @@ import { createOrder } from "@/app/actions/create-order"
 import { toast } from "sonner"
 import Image from "next/image"
 import { normalizeImagePath } from "@/lib/image"
+import { formatCurrency } from "@/lib/commerce"
 import Link from "next/link"
 
 export default function CartPage() {
@@ -28,6 +29,7 @@ export default function CartPage() {
 
     const shipping = subtotal > 0 ? 0 : 0
     const total = subtotal + shipping
+    const isCheckoutDisabled = loading || items.length === 0
 
     const handleCheckout = async () => {
         if (loading) return
@@ -41,7 +43,6 @@ export default function CartPage() {
                     shoeId: i.shoeId,
                     size: i.size,
                     quantity: i.quantity,
-                    price: i.price
                 }))
             })
 
@@ -179,7 +180,7 @@ export default function CartPage() {
                                             </p>
 
                                             <p className="mt-2 text-black/70">
-                                                ${item.price}
+                                                {formatCurrency(item.price)}
                                             </p>
                                         </div>
 
@@ -199,6 +200,7 @@ export default function CartPage() {
                                                                 Math.max(1, item.quantity - 1)
                                                             )
                                                         }
+                                                        disabled={item.quantity <= 1}
                                                         className="
           w-8 h-8
           flex items-center justify-center
@@ -207,6 +209,8 @@ export default function CartPage() {
           transition
           hover:bg-black/10
           active:scale-90
+          disabled:opacity-30
+          disabled:cursor-not-allowed
         "
                                                     >
                                                         −
@@ -224,6 +228,7 @@ export default function CartPage() {
                                                                 item.quantity + 1
                                                             )
                                                         }
+                                                        disabled={item.quantity >= item.maxStock}
                                                         className="
           w-8 h-8
           flex items-center justify-center
@@ -232,6 +237,8 @@ export default function CartPage() {
           transition
           hover:bg-black/10
           active:scale-90
+          disabled:opacity-30
+          disabled:cursor-not-allowed
         "
                                                     >
                                                         +
@@ -239,6 +246,17 @@ export default function CartPage() {
 
                                                 </div>
 
+                                            </div>
+
+                                            <div className="text-sm text-black/50">
+                                                <p>
+                                                    Line total: {formatCurrency(item.price * item.quantity)}
+                                                </p>
+                                                {item.quantity >= item.maxStock && (
+                                                    <p className="mt-1 text-xs text-black/40">
+                                                        {item.maxStock} available
+                                                    </p>
+                                                )}
                                             </div>
 
                                             {/* Remove */}
@@ -278,7 +296,7 @@ export default function CartPage() {
                                         Subtotal
                                     </span>
                                     <span>
-                                        ${subtotal.toFixed(2)}
+                                        {formatCurrency(subtotal)}
                                     </span>
                                 </div>
 
@@ -287,20 +305,20 @@ export default function CartPage() {
                                         Shipping
                                     </span>
                                     <span>
-                                        {shipping === 0 ? "Free" : `$${shipping}`}
+                                        {shipping === 0 ? "Free" : formatCurrency(shipping)}
                                     </span>
                                 </div>
 
                                 <div className="border-t border-black/10 pt-4 flex justify-between font-medium">
                                     <span>Total</span>
-                                    <span>${total.toFixed(2)}</span>
+                                    <span>{formatCurrency(total)}</span>
                                 </div>
 
                             </div>
 
                             <button
                                 onClick={handleCheckout}
-                                disabled={loading}
+                                disabled={isCheckoutDisabled}
                                 className="
                   mt-8
                   w-full

@@ -6,6 +6,7 @@ import { useCartStore } from "@/app/store/cart-store"
 import { toast } from "sonner"
 import Image from "next/image"
 import { normalizeImagePath } from "@/lib/image"
+import { formatCurrency } from "@/lib/commerce"
 import FloatingCartButton from "../cart/FloatingCartButton"
 import SizeChart from "../ui/SizeChart"
 import FavoriteButton from "../ui/FavoriteButton"
@@ -42,25 +43,39 @@ export default function ProductDetail({ product, isFavorited }: Props) {
     return product.sizes.find((s) => s.size === selectedSize)
   }, [selectedSize, product.sizes])
 
-  const maxStock = selectedSizeObj?.stock ?? 1
+  const maxStock = selectedSizeObj?.stock ?? 0
+  const hasAvailableStock = product.sizes.some((size) => size.stock > 0)
+  const priceValue = product.price == null ? null : Number(product.price)
+  const hasPrice = priceValue != null && Number.isFinite(priceValue)
+  const canRequestAddToCart = Boolean(
+    selectedSizeObj && selectedSizeObj.stock > 0 && quantity <= maxStock
+  )
 
-  const formattedPrice =
-    product.price != null
-      ? new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(Number(product.price))
-      : null
+  const stockMessage = !hasAvailableStock
+    ? "Out of stock"
+    : selectedSizeObj
+      ? `${selectedSizeObj.stock} available in size ${selectedSizeObj.size}`
+      : "Select an available size."
+
+  const formattedPrice = hasPrice ? formatCurrency(product.price) : null
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
+    if (!selectedSize || !selectedSizeObj) {
       toast.error("Select size first")
       return
     }
 
-    if (!product.price) return
+    if (selectedSizeObj.stock <= 0) {
+      toast.error("Selected size is out of stock")
+      return
+    }
 
-    if (quantity > maxStock) {
+    if (!hasPrice || priceValue == null) {
+      toast.error("Price is unavailable")
+      return
+    }
+
+    if (quantity > selectedSizeObj.stock) {
       toast.error("Not enough stock")
       return
     }
@@ -68,10 +83,11 @@ export default function ProductDetail({ product, isFavorited }: Props) {
     addItem({
       shoeId: product.id,
       name: product.name,
-      price: Number(product.price),
+      price: priceValue,
       image: product.images[0]?.url ?? "",
       size: selectedSize,
       quantity,
+      maxStock: selectedSizeObj.stock,
     })
 
     toast.success("Added to cart")
@@ -220,7 +236,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
             <div className="flex gap-3 flex-wrap">
               {product.sizes.map((size) => {
                 const isActive = selectedSize === size.size
-                const isOutOfStock = size.stock === 0
+                const isOutOfStock = size.stock <= 0
 
                 return (
                   <button
@@ -231,7 +247,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                       setQuantity(1)
                     }}
                     className={`
-                      px-6 py-2 rounded-full border text-sm transition
+                      inline-flex items-center gap-2 px-5 py-2 rounded-full border text-sm transition
                       ${isActive
                         ? "bg-black text-white border-black"
                         : "bg-white border-black/20 hover:border-black"
@@ -239,11 +255,20 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                       ${isOutOfStock ? "opacity-30 cursor-not-allowed" : ""}
                     `}
                   >
-                    {size.size}
+                    <span>{size.size}</span>
+                    {isOutOfStock && (
+                      <span className="text-[10px] uppercase tracking-widest">
+                        Sold out
+                      </span>
+                    )}
                   </button>
                 )
               })}
             </div>
+
+            <p className={`mt-3 text-xs ${hasAvailableStock ? "text-black/50" : "text-red-600"}`}>
+              {stockMessage}
+            </p>
           </div>
 
           <button
@@ -275,7 +300,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                 onClick={() =>
                   setQuantity(Math.min(maxStock, quantity + 1))
                 }
-                disabled={quantity >= maxStock}
+                disabled={!selectedSizeObj || quantity >= maxStock}
                 className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-black/10 active:scale-90 disabled:opacity-30"
               >
                 +
@@ -284,9 +309,14 @@ export default function ProductDetail({ product, isFavorited }: Props) {
 
             <button
               onClick={handleAddToCart}
-              className="flex-1 bg-black text-white py-3 rounded-full text-sm uppercase tracking-widest hover:bg-black/80 transition"
+              disabled={!canRequestAddToCart}
+              className={`flex-1 bg-black text-white py-3 rounded-full text-sm uppercase tracking-widest transition ${
+                canRequestAddToCart
+                  ? "hover:bg-black/80"
+                  : "cursor-not-allowed opacity-40"
+              }`}
             >
-              Add to Cart
+              {hasAvailableStock ? "Add to Cart" : "Out of Stock"}
             </button>
           </div>
 

@@ -2,6 +2,11 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import Image from "next/image"
 import { normalizeImagePath } from "@/lib/image"
+import {
+  availabilityLabel,
+  formatCurrency,
+  normalizeStockRows,
+} from "@/lib/commerce"
 
 export const dynamic = "force-dynamic"
 export default async function ProductsPage() {
@@ -19,6 +24,12 @@ export default async function ProductsPage() {
         select: { url: true },
         orderBy: { order: "asc" },
         take: 1
+      },
+      sizes: {
+        select: {
+          size: true,
+          stock: true
+        }
       }
     },
     orderBy: { createdAt: "desc" }
@@ -26,7 +37,8 @@ export default async function ProductsPage() {
 
   const formattedShoes = shoes.map(shoe => ({
     ...shoe,
-    price: shoe.price ? shoe.price.toString() : null
+    price: shoe.price == null ? null : shoe.price.toString(),
+    sizes: normalizeStockRows(shoe.sizes)
   }))
 
   return (
@@ -108,62 +120,35 @@ export default async function ProductsPage() {
 
       <div className="px-8 md:px-16 max-w-7xl mx-auto mb-14">
 
-        <div className="flex flex-wrap gap-4 items-center justify-between">
-
-          <div className="flex flex-wrap gap-4">
-
-            {["All Categories", "All Brands", "All Prices"].map((item) => (
-              <button
-                key={item}
-                className="
-            px-6 py-3
-            rounded-full
-            bg-white
-            border
-            border-black/10
-            text-sm
-            hover:border-black
-            transition
-          "
-              >
-                {item}
-              </button>
-            ))}
-
-          </div>
-
-          <button className="
-      px-6 py-3
-      rounded-full
-      bg-white
-      border
-      border-black/10
-      text-sm
-    ">
-            Sort: New In
-          </button>
-
+        <div className="flex flex-wrap gap-4 items-center justify-between border-y border-black/10 py-5 text-sm text-black/60">
+          <p>
+            Showing {formattedShoes.length} products
+          </p>
+          <p>
+            Sorted by newest arrivals
+          </p>
         </div>
 
       </div>
 
       <section className="px-8 md:px-16 pb-32 max-w-7xl mx-auto">
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12">
+        {formattedShoes.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12">
 
-          {formattedShoes.map((shoe) => {
-            const imageUrl = normalizeImagePath(shoe.images[0]?.url)
+            {formattedShoes.map((shoe) => {
+              const imageUrl = normalizeImagePath(shoe.images[0]?.url)
 
-            return (
-              <Link
-                key={shoe.id}
-                href={`/product/${shoe.slug}`}
-                className="group"
-              >
-                <div>
+              return (
+                <Link
+                  key={shoe.id}
+                  href={`/product/${shoe.slug}`}
+                  className="group"
+                >
+                  <div>
 
-                  {/* IMAGE */}
-                  <div className="
+                    {/* IMAGE */}
+                    <div className="
               relative
               aspect-[4/5]
               bg-white
@@ -171,49 +156,58 @@ export default async function ProductsPage() {
               overflow-hidden
             ">
 
-                    <Image
-                      src={imageUrl}
-                      alt={shoe.name}
-                      fill
-                      className="
+                      <Image
+                        src={imageUrl}
+                        alt={shoe.name}
+                        fill
+                        className="
                   object-contain
                   p-8
                   transition-transform
                   duration-500
                   group-hover:scale-105
                 "
-                    />
+                      />
 
-                  </div>
+                    </div>
 
-                  {/* INFO */}
-                  <div className="mt-6 space-y-2">
+                    {/* INFO */}
+                    <div className="mt-6 space-y-2">
 
-                    <h2 className="text-base font-medium">
-                      {shoe.name}
-                    </h2>
+                      <h2 className="text-base font-medium">
+                        {shoe.name}
+                      </h2>
 
-                    <p className="text-sm text-black/60">
-                      {shoe.brand.name}
-                    </p>
+                      <p className="text-sm text-black/60">
+                        {shoe.brand.name}
+                      </p>
 
-                    {shoe.price && (
+                      <p className="text-xs uppercase tracking-widest text-black/40">
+                        {availabilityLabel(shoe.sizes)}
+                      </p>
+
                       <div className="text-sm font-medium">
-                        {new Intl.NumberFormat("en-US", {
-                          style: "currency",
-                          currency: "USD",
-                        }).format(Number(shoe.price))}
+                        {formatCurrency(shoe.price)}
                       </div>
-                    )}
+
+                    </div>
 
                   </div>
+                </Link>
+              )
+            })}
 
-                </div>
-              </Link>
-            )
-          })}
-
-        </div>
+          </div>
+        ) : (
+          <div className="border border-black/10 bg-white px-8 py-12 text-center">
+            <h2 className="text-lg font-medium">
+              No products available
+            </h2>
+            <p className="mt-2 text-sm text-black/50">
+              Add products and size stock from the admin dashboard.
+            </p>
+          </div>
+        )}
 
       </section>
 

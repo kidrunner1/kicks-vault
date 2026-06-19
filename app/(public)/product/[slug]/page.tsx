@@ -46,18 +46,25 @@ export default async function ProductPage({ params }: Props) {
     isFavorited = !!favorite
   }
 
-  const safeSizes = product.sizes.map(size => ({
-    id: size.id,
-    size: size.size,
-    stock: size.stock
-  }))
+  const safeSizes = product.sizes
+    .map(size => ({
+      id: size.id,
+      size: size.size,
+      stock: size.stock
+    }))
+    .sort((a, b) =>
+      a.size.localeCompare(b.size, undefined, {
+        numeric: true,
+        sensitivity: "base",
+      })
+    )
 
   const formattedProduct = {
     id: product.id,
     name: product.name,
     slug: product.slug,
     description: product.description,
-    price: product.price ? product.price.toString() : null,
+    price: product.price == null ? null : product.price.toString(),
     images: product.images,
     brand: product.brand,
     specs: product.specs,

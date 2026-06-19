@@ -7,6 +7,7 @@ export interface CartItem {
     image: string
     size: string
     quantity: number
+    maxStock: number
 }
 
 interface CartState {
@@ -19,11 +20,36 @@ interface CartState {
     getTotal: () => number
 }
 
+function toPositiveInteger(value: number, fallback = 1) {
+    const nextValue = Math.floor(value)
+
+    return Number.isFinite(nextValue) && nextValue > 0 ? nextValue : fallback
+}
+
+function toNonNegativeInteger(value: number) {
+    const nextValue = Math.floor(value)
+
+    return Number.isFinite(nextValue) && nextValue > 0 ? nextValue : 0
+}
+
 export const useCartStore = create<CartState>((set, get) => ({
     items: [],
 
     addItem: (item) =>
         set((state) => {
+            const maxStock = toNonNegativeInteger(item.maxStock)
+            const quantity = toPositiveInteger(item.quantity)
+
+            if (maxStock === 0) {
+                return state
+            }
+
+            const safeItem = {
+                ...item,
+                maxStock,
+                quantity: Math.min(quantity, maxStock),
+            }
+
             const existing = state.items.find(
                 i => i.shoeId === item.shoeId && i.size === item.size
             )
@@ -33,13 +59,22 @@ export const useCartStore = create<CartState>((set, get) => ({
                 return {
                     items: state.items.map(i =>
                         i.shoeId === item.shoeId && i.size === item.size
-                            ? { ...i, quantity: i.quantity + 1 }
+                            ? {
+                                ...i,
+                                image: safeItem.image,
+                                price: safeItem.price,
+                                maxStock: safeItem.maxStock,
+                                quantity: Math.min(
+                                    i.quantity + safeItem.quantity,
+                                    safeItem.maxStock
+                                ),
+                            }
                             : i
                     )
                 }
             }
 
-            return { items: [...state.items, item] }
+            return { items: [...state.items, safeItem] }
         }),
 
     removeItem: (shoeId, size) =>
@@ -54,7 +89,10 @@ export const useCartStore = create<CartState>((set, get) => ({
         set((state) => ({
             items: state.items.map(i =>
                 i.shoeId === shoeId && i.size === size
-                    ? { ...i, quantity }
+                    ? {
+                        ...i,
+                        quantity: Math.min(toPositiveInteger(quantity), i.maxStock),
+                    }
                     : i
             )
         })),
