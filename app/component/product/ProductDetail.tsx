@@ -87,6 +87,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
       image: product.images[0]?.url ?? "",
       size: selectedSize,
       quantity,
+      maxStock: selectedSizeObj.stock,
     })
 
     toast.success("Added to cart")

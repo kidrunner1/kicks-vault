@@ -17,11 +17,29 @@ const orderSchema = z.object({
   items: z.array(
     z.object({
       shoeId: z.string().uuid(),
-      size: z.string().min(1),
-      quantity: z.number().int().min(1),
+      size: z.string().trim().min(1),
+      quantity: z.coerce.number().int().min(1),
     })
   ).min(1),
 })
+
+function normalizeOrderItems(items: CreateOrderInput["items"]) {
+  const normalizedItems = new Map<string, CreateOrderInput["items"][number]>()
+
+  for (const item of items) {
+    const key = `${item.shoeId}:${item.size.toLowerCase()}`
+    const existing = normalizedItems.get(key)
+
+    if (existing) {
+      existing.quantity += item.quantity
+      continue
+    }
+
+    normalizedItems.set(key, { ...item })
+  }
+
+  return Array.from(normalizedItems.values())
+}
 
 export async function createOrder(data: CreateOrderInput) {
   const parsed = orderSchema.safeParse(data)
@@ -36,7 +54,7 @@ export async function createOrder(data: CreateOrderInput) {
     throw new Error("Please sign in before checking out")
   }
 
-  const { items } = parsed.data
+  const items = normalizeOrderItems(parsed.data.items)
 
   const orderId = await prisma.$transaction(async (tx) => {
     let total = new Prisma.Decimal(0)
