@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import {
-  addressInputSchema,
   normalizeAddressInput,
   type AddressInput,
 } from "@/lib/address"
@@ -62,7 +61,7 @@ export async function createAddress(input: AddressInput) {
 export async function updateAddress(id: string, input: AddressInput) {
   const userId = await requireCurrentUserId()
   const addressId = addressIdSchema.parse(id)
-  const address = addressInputSchema.parse(input)
+  const address = normalizeAddressInput(input)
 
   await prisma.$transaction(async (tx) => {
     const existing = await tx.userAddress.findFirst({

@@ -14,6 +14,20 @@ export const addressInputSchema = z.object({
 })
 
 export type AddressInput = z.infer<typeof addressInputSchema>
+export type AddressFieldErrors = Partial<Record<keyof AddressInput, string>>
+
+const addressFieldLabels: Record<keyof AddressInput, string> = {
+  label: "Label",
+  recipientName: "Recipient name",
+  phone: "Phone",
+  addressLine1: "Address",
+  addressLine2: "Address line 2",
+  subdistrict: "Subdistrict",
+  district: "District",
+  province: "Province",
+  postalCode: "Postal code",
+  isDefault: "Default address",
+}
 
 export interface AddressRecord {
   id: string
@@ -42,12 +56,43 @@ export interface OrderShippingSnapshot {
 }
 
 export function normalizeAddressInput(input: unknown): AddressInput {
-  const parsed = addressInputSchema.parse(input)
+  const parsed = parseAddressInput(input)
 
   return {
     ...parsed,
     addressLine2: parsed.addressLine2?.trim() || "",
   }
+}
+
+export function getAddressValidationErrors(input: unknown): AddressFieldErrors {
+  const parsed = addressInputSchema.safeParse(input)
+
+  if (parsed.success) return {}
+
+  return parsed.error.issues.reduce<AddressFieldErrors>((errors, issue) => {
+    const field = issue.path[0] as keyof AddressInput | undefined
+
+    if (!field || field === "isDefault") return errors
+    if (!errors[field]) errors[field] = issue.message
+
+    return errors
+  }, {})
+}
+
+export function parseAddressInput(input: unknown): AddressInput {
+  const parsed = addressInputSchema.safeParse(input)
+
+  if (parsed.success) return parsed.data
+
+  const fieldNames = Object.keys(getAddressValidationErrors(input))
+    .map((field) => addressFieldLabels[field as keyof AddressInput])
+    .join(", ")
+
+  throw new Error(
+    fieldNames
+      ? `Please complete: ${fieldNames}`
+      : "Please check the address details"
+  )
 }
 
 export function formatAddress(address: {

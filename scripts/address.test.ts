@@ -2,6 +2,8 @@ import assert from "node:assert/strict"
 import {
   addressInputSchema,
   formatAddress,
+  getAddressValidationErrors,
+  parseAddressInput,
   toOrderShippingSnapshot,
 } from "../lib/address"
 
@@ -40,6 +42,27 @@ assert.throws(() =>
     ...validAddress,
     postalCode: "ABC",
   })
+)
+
+const fieldErrors = getAddressValidationErrors({
+  ...validAddress,
+  recipientName: "",
+  postalCode: "ABC",
+})
+
+assert.deepEqual(fieldErrors, {
+  recipientName: "Recipient name is required",
+  postalCode: "Postal code must be 5 digits",
+})
+
+assert.throws(
+  () =>
+    parseAddressInput({
+      ...validAddress,
+      recipientName: "",
+      postalCode: "ABC",
+    }),
+  /Please complete: Recipient name, Postal code/
 )
 
 assert.deepEqual(toOrderShippingSnapshot({ id: "address-1", ...parsed }), {

@@ -21,7 +21,12 @@ import {
   setDefaultAddress,
   updateAddress,
 } from "@/app/actions/addresses"
-import { formatAddress, type AddressInput } from "@/lib/address"
+import {
+  formatAddress,
+  getAddressValidationErrors,
+  type AddressFieldErrors,
+  type AddressInput,
+} from "@/lib/address"
 
 export interface AddressView extends AddressInput {
   id: string
@@ -54,6 +59,7 @@ export default function AddressBookClient({
     ...emptyForm,
     isDefault: addresses.length === 0,
   })
+  const [fieldErrors, setFieldErrors] = useState<AddressFieldErrors>({})
 
   const editingAddress = useMemo(
     () => addresses.find((address) => address.id === editingId),
@@ -68,6 +74,14 @@ export default function AddressBookClient({
       ...current,
       [field]: value,
     }))
+    setFieldErrors((current) => {
+      if (!current[field]) return current
+
+      const nextErrors = { ...current }
+      delete nextErrors[field]
+
+      return nextErrors
+    })
   }
 
   function openCreateForm() {
@@ -76,6 +90,7 @@ export default function AddressBookClient({
       ...emptyForm,
       isDefault: addresses.length === 0,
     })
+    setFieldErrors({})
     setIsFormOpen(true)
   }
 
@@ -93,6 +108,7 @@ export default function AddressBookClient({
       postalCode: address.postalCode,
       isDefault: address.isDefault,
     })
+    setFieldErrors({})
     setIsFormOpen(true)
   }
 
@@ -103,9 +119,18 @@ export default function AddressBookClient({
       ...emptyForm,
       isDefault: addresses.length === 0,
     })
+    setFieldErrors({})
   }
 
   function submitForm() {
+    const nextFieldErrors = getAddressValidationErrors(form)
+
+    if (Object.keys(nextFieldErrors).length > 0) {
+      setFieldErrors(nextFieldErrors)
+      toast.error("Please complete the required address fields")
+      return
+    }
+
     startTransition(async () => {
       try {
         if (editingId) {
@@ -205,30 +230,40 @@ export default function AddressBookClient({
               value={form.label}
               onChange={(value) => updateField("label", value)}
               placeholder="Home, Work, Studio"
+              error={fieldErrors.label}
+              required
             />
             <AddressInputField
               label="Recipient name"
               value={form.recipientName}
               onChange={(value) => updateField("recipientName", value)}
               placeholder="Full name"
+              error={fieldErrors.recipientName}
+              required
             />
             <AddressInputField
               label="Phone"
               value={form.phone}
               onChange={(value) => updateField("phone", value)}
               placeholder="080-000-0000"
+              error={fieldErrors.phone}
+              required
             />
             <AddressInputField
               label="Postal code"
               value={form.postalCode}
               onChange={(value) => updateField("postalCode", value)}
               placeholder="10330"
+              error={fieldErrors.postalCode}
+              required
             />
             <AddressInputField
               label="Address line 1"
               value={form.addressLine1}
               onChange={(value) => updateField("addressLine1", value)}
               placeholder="House number, building, street"
+              error={fieldErrors.addressLine1}
+              required
               wide
             />
             <AddressInputField
@@ -236,6 +271,7 @@ export default function AddressBookClient({
               value={form.addressLine2 ?? ""}
               onChange={(value) => updateField("addressLine2", value)}
               placeholder="Room, floor, landmark"
+              error={fieldErrors.addressLine2}
               wide
             />
             <AddressInputField
@@ -243,18 +279,24 @@ export default function AddressBookClient({
               value={form.subdistrict}
               onChange={(value) => updateField("subdistrict", value)}
               placeholder="Subdistrict"
+              error={fieldErrors.subdistrict}
+              required
             />
             <AddressInputField
               label="District"
               value={form.district}
               onChange={(value) => updateField("district", value)}
               placeholder="District"
+              error={fieldErrors.district}
+              required
             />
             <AddressInputField
               label="Province"
               value={form.province}
               onChange={(value) => updateField("province", value)}
               placeholder="Province"
+              error={fieldErrors.province}
+              required
             />
             <label className="flex items-center gap-3 rounded-lg border border-black/10 bg-white px-4 py-3 text-sm text-black/65">
               <input
@@ -377,25 +419,48 @@ function AddressInputField({
   value,
   onChange,
   placeholder,
+  error,
+  required = false,
   wide = false,
 }: {
   label: string
   value: string
   onChange: (value: string) => void
   placeholder: string
+  error?: string
+  required?: boolean
   wide?: boolean
 }) {
   return (
     <label className={wide ? "block md:col-span-2" : "block"}>
-      <span className="text-sm text-black/55">
+      <span className="flex items-center gap-1 text-sm text-black/55">
         {label}
+        {required ? (
+          <span className="text-red-600" aria-label="required">
+            *
+          </span>
+        ) : (
+          <span className="text-xs text-black/35">
+            Optional
+          </span>
+        )}
       </span>
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="mt-2 h-11 w-full rounded-lg border border-black/10 bg-white px-3 text-sm outline-none transition placeholder:text-black/35 focus:border-black/35"
+        aria-invalid={Boolean(error)}
+        className={`mt-2 h-11 w-full rounded-lg border bg-white px-3 text-sm outline-none transition placeholder:text-black/35 ${
+          error
+            ? "border-red-400 focus:border-red-500"
+            : "border-black/10 focus:border-black/35"
+        }`}
       />
+      {error && (
+        <p className="mt-2 text-xs text-red-600">
+          {error}
+        </p>
+      )}
     </label>
   )
 }
