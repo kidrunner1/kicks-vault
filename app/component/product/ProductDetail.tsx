@@ -9,7 +9,6 @@ import Link from "next/link"
 import {
   Check,
   PackageCheck,
-  RotateCcw,
   Ruler,
   ShieldCheck,
   Star,
