@@ -34,18 +34,20 @@ export const useAuthStore = create<AuthState>((set) => ({
                 credentials: "include",
             })
 
-            if (!res.ok) throw new Error()
+            if (!res.ok) throw new Error("Unable to fetch user")
 
-            const data = await res.json()
+            const data: { user: User | null } = await res.json()
 
             set({
                 user: data.user,
-                isAuthenticated: true,
+                isAuthenticated: !!data.user,
+                isLoading: false,
             })
         } catch {
             set({
                 user: null,
                 isAuthenticated: false,
+                isLoading: false,
             })
         }
     },

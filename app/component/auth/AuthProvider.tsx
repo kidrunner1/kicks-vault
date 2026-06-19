@@ -23,7 +23,8 @@ export default function AuthProvider({
                     return
                 }
 
-                const data = await res.json()
+                const data: { user: Parameters<typeof setUser>[0] } =
+                    await res.json()
 
                 setUser(data.user)
             } catch {

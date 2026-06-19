@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import { verifyRefreshToken } from "@/lib/jwt"
+import bcrypt from "bcrypt"
 
 export async function POST() {
   const cookieStore = await cookies()
@@ -17,11 +18,18 @@ export async function POST() {
         select: { refreshToken: true },
       })
 
-      if (user?.refreshToken === refreshToken) {
-        await prisma.user.update({
-          where: { id: payload.userId },
-          data: { refreshToken: null },
-        })
+      if (user?.refreshToken) {
+        const isCurrentRefreshToken = await bcrypt.compare(
+          refreshToken,
+          user.refreshToken
+        )
+
+        if (isCurrentRefreshToken) {
+          await prisma.user.update({
+            where: { id: payload.userId },
+            data: { refreshToken: null },
+          })
+        }
       }
 
     } catch {
