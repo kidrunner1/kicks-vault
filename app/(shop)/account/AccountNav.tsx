@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation"
 import { uiAction } from "@/lib/ui-interactions"
 
 const navItems = [
-  { name: "Overview", href: "/account" },
-  { name: "Orders", href: "/account/orders" },
-  { name: "Addresses", href: "/account/addresses" },
-  { name: "Favorites", href: "/account/favorites" },
+  { name: "ภาพรวม", href: "/account" },
+  { name: "ออเดอร์", href: "/account/orders" },
+  { name: "ที่อยู่", href: "/account/addresses" },
+  { name: "รายการโปรด", href: "/account/favorites" },
 ]
 
 function isActiveAccountPath(pathname: string | null, href: string) {

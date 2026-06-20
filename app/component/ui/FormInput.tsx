@@ -100,7 +100,7 @@ export default function FormInput({
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
             disabled={disabled}
-            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
             className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-black/45 transition hover:bg-[#f8f7f3] hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-black disabled:cursor-not-allowed disabled:text-black/30"
           >
             {showPassword

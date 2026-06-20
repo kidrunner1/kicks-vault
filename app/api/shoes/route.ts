@@ -61,7 +61,7 @@ export async function GET(request: Request) {
     console.error(error)
 
     return NextResponse.json(
-      { error: "Failed to fetch shoes" },
+      { error: "ไม่สามารถโหลดสินค้าได้" },
       { status: 500 }
     )
 

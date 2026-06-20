@@ -16,27 +16,27 @@ import { uiAction } from "@/lib/ui-interactions"
 
 const flowSteps = [
   {
-    title: "Stock is part of the story",
+    title: "Stock คือส่วนหนึ่งของการตัดสินใจ",
     description:
-      "Product pages show available sizes before the shopper commits to cart.",
+      "หน้ารายละเอียดสินค้าแสดงไซซ์ที่มีจริงก่อนลูกค้าเพิ่มลงตะกร้า",
     icon: PackageCheck,
   },
   {
-    title: "Checkout stays guarded",
+    title: "Checkout ถูกป้องกันด้วยบัญชีผู้ใช้",
     description:
-      "Protected routes keep account, address, and order flows behind login.",
+      "เส้นทางบัญชี ที่อยู่ และออเดอร์อยู่หลังระบบ login เพื่อให้ข้อมูลไม่หลุด",
     icon: ShieldCheck,
   },
   {
-    title: "Addresses are reusable",
+    title: "ที่อยู่เลือกใช้ซ้ำได้",
     description:
-      "Saved delivery profiles make the next order faster without hiding required fields.",
+      "บันทึกข้อมูลจัดส่งไว้ใช้กับออเดอร์ถัดไป โดยยังเห็นช่องที่จำเป็นชัดเจน",
     icon: MapPin,
   },
   {
-    title: "Orders remain traceable",
+    title: "ออเดอร์ติดตามย้อนหลังได้",
     description:
-      "History keeps item snapshots, quantities, sizes, and shipping details available after checkout.",
+      "ประวัติออเดอร์เก็บสินค้า จำนวน ไซซ์ และข้อมูลจัดส่งหลัง Checkout",
     icon: ClipboardCheck,
   },
 ]
@@ -65,13 +65,13 @@ export default function CinematicSection(): JSX.Element {
         >
           <Image
             src="/images/shoes/nike-02.jpg"
-            alt="White and black sneaker featured in the Kicks Vault archive"
+            alt="รองเท้า sneaker สีขาวดำใน archive ของ Kicks Vault"
             fill
             sizes="(max-width: 1024px) 100vw, 56vw"
             className="object-contain p-8 md:p-12"
           />
           <div className="absolute left-4 top-4 rounded-full border border-white/15 bg-black px-4 py-2 text-sm font-medium text-white/72">
-            Featured archive pair
+            คู่แนะนำจาก archive
           </div>
         </motion.div>
 
@@ -86,13 +86,12 @@ export default function CinematicSection(): JSX.Element {
           className="lg:pl-6"
         >
           <h2 className="max-w-xl text-4xl font-semibold leading-[0.95] md:text-6xl">
-            A cleaner path from pair to delivery.
+            จากคู่ที่เลือก ไปถึงหน้าประตูบ้าน
           </h2>
 
           <p className="mt-6 max-w-xl text-base leading-8 text-white/68 md:text-lg">
-            The landing page now points shoppers toward the real store flow:
-            browse the drop, inspect stock, choose an address, and keep the
-            order visible after checkout.
+            หน้าหลักพาลูกค้าไปยัง flow ซื้อจริง: เลือก drop, เช็ก Stock,
+            เลือกที่อยู่ และกลับมาดูออเดอร์หลัง Checkout ได้เสมอ
           </p>
 
           <div className="mt-8 divide-y divide-white/12 border-y border-white/12">
@@ -133,14 +132,14 @@ export default function CinematicSection(): JSX.Element {
               href="/product"
               className={`px-6 py-3 text-sm font-semibold ${uiAction.accent}`}
             >
-              Shop the rotation
+              เลือกคู่ใน Store
               <ArrowRight size={16} />
             </Link>
             <Link
               href="/account/addresses"
               className="inline-flex items-center justify-center gap-2 rounded-full border border-white/18 bg-white/8 px-6 py-3 text-sm font-medium text-white transition hover:border-white/35 hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-              Manage addresses
+              จัดการที่อยู่
             </Link>
           </div>
         </motion.div>

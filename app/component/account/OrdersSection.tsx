@@ -9,14 +9,27 @@ interface Props {
   orders: OrderType[]
 }
 
+function orderStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    PENDING: "รอตรวจสอบ",
+    PAID: "ชำระแล้ว",
+    PROCESSING: "กำลังจัดเตรียม",
+    SHIPPED: "จัดส่งแล้ว",
+    COMPLETED: "สำเร็จ",
+    CANCELLED: "ยกเลิก",
+  }
+
+  return labels[status] ?? status
+}
+
 export default function OrdersSection({ orders }: Props) {
 
   return (
     <div className="space-y-10">
-      <h1 className="text-4xl font-light">Orders</h1>
+      <h1 className="text-4xl font-light">ออเดอร์ของฉัน</h1>
 
       {orders.length === 0 && (
-        <p className="text-neutral-500">No orders yet.</p>
+        <p className="text-neutral-500">ยังไม่มีออเดอร์</p>
       )}
 
       {orders.map(order => (
@@ -26,13 +39,13 @@ export default function OrdersSection({ orders }: Props) {
         >
           <div>
             <p className="text-neutral-500 text-sm">
-              {new Date(order.createdAt).toLocaleDateString()}
+              {new Date(order.createdAt).toLocaleDateString("th-TH")}
             </p>
-            <p className="text-xl">${order.total}</p>
+            <p className="text-xl">฿{order.total}</p>
           </div>
 
           <span className="uppercase text-sm tracking-wide text-neutral-400">
-            {order.status}
+            {orderStatusLabel(order.status)}
           </span>
         </div>
       ))}

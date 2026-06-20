@@ -1,22 +1,22 @@
 import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
 import bcrypt from "bcrypt"
 import { signAccessToken, signRefreshToken } from "@/lib/jwt"
+import { prisma } from "@/lib/prisma"
+
+const invalidCredentialsMessage = "Email หรือรหัสผ่านไม่ถูกต้อง"
 
 export async function POST(req: Request) {
   try {
     const body = await req.json()
     const { email, password } = body
 
-    // 1️⃣ Validate input
     if (!email || !password) {
       return NextResponse.json(
-        { error: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" },
-        { status: 400 }
+        { error: invalidCredentialsMessage },
+        { status: 400 },
       )
     }
 
-    // 2️⃣ Find user (select only required fields)
     const user = await prisma.user.findUnique({
       where: { email },
       select: {
@@ -26,28 +26,22 @@ export async function POST(req: Request) {
       },
     })
 
-    // 3️⃣ Prevent user enumeration
     if (!user) {
       return NextResponse.json(
-        { error: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" },
-        { status: 401 }
+        { error: invalidCredentialsMessage },
+        { status: 401 },
       )
     }
 
-    // 4️⃣ Compare password
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      user.password
-    )
+    const isPasswordValid = await bcrypt.compare(password, user.password)
 
     if (!isPasswordValid) {
       return NextResponse.json(
-        { error: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" },
-        { status: 401 }
+        { error: invalidCredentialsMessage },
+        { status: 401 },
       )
     }
 
-    // 5️⃣ Sign tokens
     const accessToken = await signAccessToken({
       userId: user.id,
       role: user.role,
@@ -57,8 +51,6 @@ export async function POST(req: Request) {
       userId: user.id,
       role: user.role,
     })
-
-    // 6️⃣ Hash refresh token before saving (IMPORTANT)
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10)
 
     await prisma.user.update({
@@ -72,15 +64,12 @@ export async function POST(req: Request) {
         user: {
           id: user.id,
           role: user.role,
-          email: email
+          email,
         },
       },
-      { status: 200 }
+      { status: 200 },
     )
 
-    // 7️⃣ Set secure cookies
-
-    // Access Token (15 นาที)
     response.cookies.set({
       name: "accessToken",
       value: accessToken,
@@ -91,7 +80,6 @@ export async function POST(req: Request) {
       maxAge: 60 * 15,
     })
 
-    // Refresh Token (7 วัน)
     response.cookies.set({
       name: "refreshToken",
       value: refreshToken,
@@ -108,7 +96,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       { error: "เกิดข้อผิดพลาดภายในระบบ" },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }

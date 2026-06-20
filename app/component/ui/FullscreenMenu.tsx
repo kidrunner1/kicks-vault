@@ -59,65 +59,65 @@ const images = [
 
 const guestMenu: MenuItem[] = [
   {
-    name: "Home",
+    name: "หน้าแรก",
     href: "/",
-    description: "Return to the Kicks Vault entrance.",
+    description: "กลับสู่หน้าแรกของ Kicks Vault",
     icon: Home,
   },
   {
-    name: "Shop",
+    name: "Store",
     href: "/product",
-    description: "Browse drops, sizes, prices, and live stock.",
+    description: "เลือกดู drop, ไซซ์, ราคา และ Stock ล่าสุด",
     icon: ShoppingBag,
   },
   {
-    name: "Login",
+    name: "เข้าสู่ระบบ",
     href: "/login",
-    description: "Access saved addresses and order history.",
+    description: "เข้าถึงที่อยู่ที่บันทึกไว้และประวัติออเดอร์",
     icon: LogIn,
   },
   {
-    name: "Register",
+    name: "สมัครสมาชิก",
     href: "/register",
-    description: "Create a member account for checkout.",
+    description: "สร้างบัญชีสมาชิกเพื่อ Checkout ได้ครบ",
     icon: UserPlus,
   },
 ]
 
 const userMenu: MenuItem[] = [
   {
-    name: "Home",
+    name: "หน้าแรก",
     href: "/",
-    description: "Return to the Kicks Vault entrance.",
+    description: "กลับสู่หน้าแรกของ Kicks Vault",
     icon: Home,
   },
   {
-    name: "Shop",
+    name: "Store",
     href: "/product",
-    description: "Browse drops, sizes, prices, and live stock.",
+    description: "เลือกดู drop, ไซซ์, ราคา และ Stock ล่าสุด",
     icon: ShoppingBag,
   },
   {
-    name: "Profile",
+    name: "โปรไฟล์",
     href: "/account",
-    description: "Review your member space and saved details.",
+    description: "ดูพื้นที่สมาชิกและข้อมูลที่บันทึกไว้",
     icon: UserRound,
   },
 ]
 
 const accountLinks = [
   {
-    label: "Orders",
+    label: "ออเดอร์",
     href: "/account/orders",
     icon: PackageCheck,
   },
   {
-    label: "Addresses",
+    label: "ที่อยู่",
     href: "/account/addresses",
     icon: MapPin,
   },
   {
-    label: "Favorites",
+    label: "รายการโปรด",
     href: "/account/favorites",
     icon: Heart,
   },
@@ -209,7 +209,7 @@ export default function FullscreenMenu({ onClose }: Props) {
               >
                 <Image
                   src={img}
-                  alt="Curated sneaker product"
+                  alt="สินค้า sneaker ที่คัดไว้"
                   fill
                   priority={index === 0}
                   sizes="(min-width: 1024px) 28vw, 1px"
@@ -225,19 +225,19 @@ export default function FullscreenMenu({ onClose }: Props) {
               <Sparkles size={18} />
             </div>
             <p className="text-3xl font-semibold leading-tight">
-              Curated drops, clearer paths.
+              Drop ที่คัดมา พร้อมเส้นทางที่ชัดขึ้น
             </p>
             <p className="mt-3 max-w-lg text-sm leading-6 text-white/70">
-              Move between shopping, checkout, and your archive without losing the premium storefront feel.
+              สลับระหว่างการเลือกซื้อ Checkout และ archive ส่วนตัว โดยยังคงความรู้สึกของร้านระดับพรีเมียม
             </p>
           </div>
         </div>
 
         <div className="flex min-h-screen flex-col px-5 pb-8 pt-24 md:px-10 lg:px-12 lg:pb-12">
           <div className="mb-8 max-w-xl">
-            <AppLogo subLabel="Navigation" />
+            <AppLogo subLabel="เมนูนำทาง" />
             <p className="mt-4 text-sm leading-7 text-black/65">
-              Go straight to the store, manage your member archive, or sign in before checkout.
+              ไปที่ Store จัดการข้อมูลสมาชิก หรือเข้าสู่ระบบก่อน Checkout ได้จากที่นี่
             </p>
           </div>
 
@@ -257,7 +257,7 @@ export default function FullscreenMenu({ onClose }: Props) {
             {isLoading ? (
               <div className="flex items-center gap-3 text-sm text-black/60">
                 <span className="h-10 w-10 rounded-full bg-[#f4f3ef]" />
-                Checking account status...
+                กำลังตรวจสอบสถานะบัญชี...
               </div>
             ) : isAuthenticated ? (
               <div className="space-y-5">
@@ -267,7 +267,7 @@ export default function FullscreenMenu({ onClose }: Props) {
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">
-                      {user?.email ?? "Member"}
+                      {user?.email ?? "สมาชิก"}
                     </p>
                     <p className="text-xs text-black/55">
                       {user?.role ?? "USER"}
@@ -304,15 +304,15 @@ export default function FullscreenMenu({ onClose }: Props) {
                   className={`h-11 w-full px-4 text-sm font-medium ${uiAction.danger}`}
                 >
                   <LogOut size={16} />
-                  {isLoggingOut ? "Logging out..." : "Logout"}
+                  {isLoggingOut ? "กำลังออกจากระบบ..." : "ออกจากระบบ"}
                 </button>
               </div>
             ) : (
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="font-medium">Guest mode</p>
+                  <p className="font-medium">โหมดผู้เยี่ยมชม</p>
                   <p className="mt-1 text-sm text-black/60">
-                    Sign in to use saved addresses, favorites, and order history.
+                    เข้าสู่ระบบเพื่อใช้ที่อยู่ รายการโปรด และประวัติออเดอร์
                   </p>
                 </div>
                 <Link
@@ -321,7 +321,7 @@ export default function FullscreenMenu({ onClose }: Props) {
                   className={`h-11 px-5 text-sm font-semibold ${uiAction.accent}`}
                 >
                   <LogIn size={16} />
-                  Login
+                  เข้าสู่ระบบ
                 </Link>
               </div>
             )}

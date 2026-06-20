@@ -54,17 +54,16 @@ export default function ShowcaseSlider({ shoes }: Props) {
         <div className="mx-auto max-w-7xl rounded-lg border border-black/10 bg-white p-8 md:p-12">
           <PackageCheck size={28} />
           <h2 className="mt-6 max-w-2xl text-4xl font-semibold leading-tight md:text-5xl">
-            The featured rotation is being prepared.
+            กำลังเตรียม featured rotation
           </h2>
           <p className="mt-4 max-w-xl text-base leading-7 text-black/62">
-            Add shoes from the admin area and they will appear here with images,
-            prices, and size availability.
+            เพิ่มรองเท้าจากหน้า Admin แล้วสินค้าจะแสดงที่นี่พร้อมรูป ราคา และ Stock ตามไซซ์
           </p>
           <Link
             href="/admin/shoes"
             className={`mt-8 px-6 py-3 text-sm font-semibold ${uiAction.accent}`}
           >
-            Manage products
+            จัดการสินค้า
             <ArrowRight size={16} />
           </Link>
         </div>
@@ -93,11 +92,10 @@ export default function ShowcaseSlider({ shoes }: Props) {
         <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="max-w-3xl text-4xl font-semibold leading-[0.95] md:text-6xl">
-              Store rotation, ready to inspect.
+              Store rotation พร้อมให้เลือกดู
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-8 text-black/62">
-              Featured pairs now carry the same product signals as the shop:
-              brand, price, size stock, and a direct path to detail.
+              คู่แนะนำใช้ข้อมูลชุดเดียวกับหน้าร้าน: แบรนด์ ราคา Stock ตามไซซ์ และลิงก์ไปหน้ารายละเอียด
             </p>
           </div>
 
@@ -105,7 +103,7 @@ export default function ShowcaseSlider({ shoes }: Props) {
             href="/product"
             className={`shrink-0 px-6 py-3 text-sm font-semibold ${uiAction.surface}`}
           >
-            View all products
+            ดูสินค้าทั้งหมด
             <ArrowRight size={16} />
           </Link>
         </div>
@@ -160,17 +158,17 @@ export default function ShowcaseSlider({ shoes }: Props) {
 
               <div className="mt-7 grid gap-3 sm:grid-cols-2">
                 <div className="rounded-lg border border-white/12 bg-white/8 p-4">
-                  <p className="text-sm text-white/55">Availability</p>
+                  <p className="text-sm text-white/55">สถานะสินค้า</p>
                   <p className="mt-2 text-lg font-semibold text-white">
                     {availabilityLabel(stockRows)}
                   </p>
                   <p className="mt-1 text-sm text-white/55">
-                    {stockTotal === 0 ? "No size available" : `${stockTotal} pairs across sizes`}
+                    {stockTotal === 0 ? "ไม่มีไซซ์พร้อมขาย" : `${stockTotal} คู่รวมทุกไซซ์`}
                   </p>
                 </div>
 
                 <div className="rounded-lg border border-white/12 bg-white/8 p-4">
-                  <p className="text-sm text-white/55">Sizes ready</p>
+                  <p className="text-sm text-white/55">ไซซ์ที่พร้อมขาย</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {availableSizes.length > 0 ? (
                       availableSizes.map((row) => (
@@ -183,7 +181,7 @@ export default function ShowcaseSlider({ shoes }: Props) {
                       ))
                     ) : (
                       <span className="text-sm text-white/65">
-                        Restock needed
+                        ต้องเติม Stock
                       </span>
                     )}
                   </div>
@@ -211,14 +209,14 @@ export default function ShowcaseSlider({ shoes }: Props) {
                   href={`/product/${shoe.slug}`}
                   className={`px-6 py-3 text-sm font-semibold ${uiAction.accent}`}
                 >
-                  View featured pair
+                  ดูคู่แนะนำ
                   <ArrowRight size={16} />
                 </Link>
                 <Link
                   href="/product"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-white/18 bg-white/8 px-6 py-3 text-sm font-medium text-white transition hover:border-white/35 hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 >
-                  Compare more
+                  เปรียบเทียบเพิ่มเติม
                 </Link>
               </div>
             </div>
@@ -230,7 +228,7 @@ export default function ShowcaseSlider({ shoes }: Props) {
             <button
               type="button"
               onClick={prev}
-              aria-label="Previous featured product"
+              aria-label="สินค้าก่อนหน้า"
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-white/8 text-white transition hover:border-white/35 hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               <ChevronLeft size={20} />
@@ -239,7 +237,7 @@ export default function ShowcaseSlider({ shoes }: Props) {
             <button
               type="button"
               onClick={next}
-              aria-label="Next featured product"
+              aria-label="สินค้าถัดไป"
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-white/8 text-white transition hover:border-white/35 hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               <ChevronRight size={20} />
@@ -252,7 +250,7 @@ export default function ShowcaseSlider({ shoes }: Props) {
                 key={item.id}
                 type="button"
                 onClick={() => setIndex(itemIndex)}
-                aria-label={`Show ${item.name}`}
+                aria-label={`แสดง ${item.name}`}
                 aria-current={itemIndex === safeIndex}
                 className={`h-2 rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
                   itemIndex === safeIndex

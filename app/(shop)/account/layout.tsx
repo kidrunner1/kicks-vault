@@ -45,7 +45,7 @@ export default async function AccountLayout({
 
           {/* EXTRA PANEL (Optional future use) */}
           <div className="bg-white border border-black/10 rounded-3xl p-6 text-sm text-black/60">
-            Premium perks and member benefits will appear here.
+            สิทธิพิเศษและประโยชน์สำหรับสมาชิกจะแสดงที่นี่ในอนาคต
           </div>
 
         </aside>

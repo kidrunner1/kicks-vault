@@ -46,22 +46,20 @@ export default function MegaMenu({ category }: MegaMenuProps) {
 
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-10">
 
-                    {/* FEATURED */}
-
                     <div>
 
                         <h4 className="font-semibold mb-4 text-sm">
-                            Featured
+                            แนะนำ
                         </h4>
 
                         <ul className="space-y-3 text-sm text-neutral-500">
 
                             <li className="hover:text-black cursor-pointer">
-                                New Arrivals
+                                สินค้าเข้าใหม่
                             </li>
 
                             <li className="hover:text-black cursor-pointer">
-                                Best Sellers
+                                ขายดี
                             </li>
 
                             <li className="hover:text-black cursor-pointer">
@@ -69,19 +67,17 @@ export default function MegaMenu({ category }: MegaMenuProps) {
                             </li>
 
                             <li className="hover:text-black cursor-pointer">
-                                Member Exclusives
+                                สิทธิ์เฉพาะสมาชิก
                             </li>
 
                         </ul>
 
                     </div>
 
-                    {/* SHOES */}
-
                     <div>
 
                         <h4 className="font-semibold mb-4 text-sm">
-                            Shoes
+                            รองเท้า
                         </h4>
 
                         <ul className="space-y-3 text-sm text-neutral-500">
@@ -96,26 +92,22 @@ export default function MegaMenu({ category }: MegaMenuProps) {
 
                     </div>
 
-                    {/* APPAREL */}
-
                     <div>
 
                         <h4 className="font-semibold mb-4 text-sm">
-                            Apparel
+                            เสื้อผ้า
                         </h4>
 
                         <ul className="space-y-3 text-sm text-neutral-500">
 
                             <li>Hoodies</li>
-                            <li>T-Shirts</li>
-                            <li>Jackets</li>
-                            <li>Shorts</li>
+                            <li>เสื้อยืด</li>
+                            <li>แจ็กเก็ต</li>
+                            <li>กางเกงขาสั้น</li>
 
                         </ul>
 
                     </div>
-
-                    {/* ACCESSORIES */}
 
                     <div>
 
@@ -125,16 +117,14 @@ export default function MegaMenu({ category }: MegaMenuProps) {
 
                         <ul className="space-y-3 text-sm text-neutral-500">
 
-                            <li>Bags</li>
-                            <li>Socks</li>
-                            <li>Caps</li>
+                            <li>กระเป๋า</li>
+                            <li>ถุงเท้า</li>
+                            <li>หมวก</li>
                             <li>Backpacks</li>
 
                         </ul>
 
                     </div>
-
-                    {/* COLLECTIONS */}
 
                     <div>
 
@@ -153,15 +143,13 @@ export default function MegaMenu({ category }: MegaMenuProps) {
 
                     </div>
 
-                    {/* PROMO */}
-
                     <div className="space-y-3">
 
                         <div className="relative h-40 rounded-xl overflow-hidden">
 
                             <Image
                                 src="/images/shoes/nike-01.jpg"
-                                alt="promo"
+                                alt="รองเท้า sneaker คู่แนะนำในโปรโมชัน"
                                 fill
                                 className="object-cover"
                             />
@@ -173,7 +161,7 @@ export default function MegaMenu({ category }: MegaMenuProps) {
                         </p>
 
                         <p className="text-xs text-red-500">
-                            Up to 50% off selected sneakers
+                            ลดสูงสุด 50% สำหรับ sneaker ที่ร่วมรายการ
                         </p>
 
                     </div>

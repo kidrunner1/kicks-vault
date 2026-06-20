@@ -9,18 +9,31 @@ interface Props {
   orders: OrderType[]
 }
 
+function orderStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    PENDING: "รอตรวจสอบ",
+    PAID: "ชำระแล้ว",
+    PROCESSING: "กำลังจัดเตรียม",
+    SHIPPED: "จัดส่งแล้ว",
+    COMPLETED: "สำเร็จ",
+    CANCELLED: "ยกเลิก",
+  }
+
+  return labels[status] ?? status
+}
+
 export default function OrdersList({ orders }: Props) {
 
   return (
     <div className="space-y-10">
 
       <h2 className="text-2xl font-light">
-        Order History
+        ประวัติออเดอร์
       </h2>
 
       {orders.length === 0 && (
         <p className="text-neutral-500">
-          No orders yet.
+          ยังไม่มีออเดอร์
         </p>
       )}
 
@@ -32,16 +45,16 @@ export default function OrdersList({ orders }: Props) {
           >
             <div>
               <p className="text-neutral-500 text-sm">
-                {new Date(order.createdAt).toLocaleDateString()}
+                {new Date(order.createdAt).toLocaleDateString("th-TH")}
               </p>
 
               <p className="text-lg mt-1">
-                ${order.total}
+                ฿{order.total}
               </p>
             </div>
 
             <span className="text-xs uppercase tracking-widest text-neutral-400">
-              {order.status}
+              {orderStatusLabel(order.status)}
             </span>
           </div>
         ))}

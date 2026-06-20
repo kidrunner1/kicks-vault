@@ -3,6 +3,16 @@ import { formatAddress } from "@/lib/address"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { uiAction } from "@/lib/ui-interactions"
+import { formatCurrency } from "@/lib/commerce"
+
+function orderStatusLabel(status: string) {
+  if (status === "DELIVERED") return "ส่งสำเร็จ"
+  if (status === "CANCELLED") return "ยกเลิกแล้ว"
+  if (status === "SHIPPED") return "จัดส่งแล้ว"
+  if (status === "PROCESSING") return "กำลังเตรียมสินค้า"
+
+  return "รอดำเนินการ"
+}
 
 export default async function AccountPage() {
 
@@ -58,7 +68,7 @@ export default async function AccountPage() {
 
             <div>
               <p className="text-white/50 uppercase tracking-wider text-xs mb-2">
-                Orders
+                ออเดอร์
               </p>
               <p className="text-xl font-medium">
                 {totalOrders}
@@ -67,19 +77,19 @@ export default async function AccountPage() {
 
             <div>
               <p className="text-white/50 uppercase tracking-wider text-xs mb-2">
-                Total Spent
+                ยอดซื้อรวม
               </p>
               <p className="text-xl font-medium">
-                ${totalSpent.toFixed(2)}
+                {formatCurrency(totalSpent)}
               </p>
             </div>
 
             <div>
               <p className="text-white/50 uppercase tracking-wider text-xs mb-2">
-                Status
+                สถานะ
               </p>
               <p className="text-xl font-medium text-green-400">
-                Active
+                ใช้งานอยู่
               </p>
             </div>
 
@@ -97,25 +107,25 @@ export default async function AccountPage() {
 
           <div className="bg-white border border-black/10 rounded-3xl p-8">
             <h3 className="text-lg font-semibold mb-6">
-              Account Details
+              รายละเอียดบัญชี
             </h3>
 
             <div className="space-y-4 text-sm text-black/70">
               <p><span className="font-medium">Email:</span> {user.email}</p>
-              <p><span className="font-medium">Member Since:</span> 2026</p>
+              <p><span className="font-medium">สมาชิกตั้งแต่:</span> 2026</p>
             </div>
           </div>
 
           <div className="bg-white border border-black/10 rounded-3xl p-8">
             <div className="flex items-center justify-between gap-4 mb-6">
               <h3 className="text-lg font-semibold">
-                Default Address
+                ที่อยู่เริ่มต้น
               </h3>
               <Link
                 href="/account/addresses"
                 className={`text-sm ${uiAction.ghost}`}
               >
-                Manage
+                จัดการ
               </Link>
             </div>
 
@@ -132,13 +142,13 @@ export default async function AccountPage() {
             ) : (
               <div>
                 <p className="text-sm leading-7 text-black/55">
-                  Add a saved delivery address before checkout.
+                  เพิ่มที่อยู่จัดส่งก่อน Checkout
                 </p>
                 <Link
                   href="/account/addresses"
                   className={`mt-5 px-4 py-2 text-sm font-semibold ${uiAction.accent}`}
                 >
-                  Add address
+                  เพิ่มที่อยู่
                 </Link>
               </div>
             )}
@@ -151,12 +161,12 @@ export default async function AccountPage() {
 
           <div className="bg-white border border-black/10 rounded-3xl p-8">
             <h3 className="text-lg font-semibold mb-8">
-              Recent Orders
+              ออเดอร์ล่าสุด
             </h3>
 
             {orders.length === 0 && (
               <p className="text-black/60 text-sm">
-                No orders yet.
+                ยังไม่มีออเดอร์
               </p>
             )}
 
@@ -179,10 +189,10 @@ export default async function AccountPage() {
 
                   <div className="text-right">
                     <p className="font-medium">
-                      ${Number(order.total).toFixed(2)}
+                      {formatCurrency(order.total.toString())}
                     </p>
                     <p className="text-sm text-black/60">
-                      {order.status}
+                      {orderStatusLabel(order.status)}
                     </p>
                   </div>
                 </Link>
@@ -197,7 +207,7 @@ export default async function AccountPage() {
       </div>
 
       <div className="text-sm text-black/60">
-        {addressCount} saved {addressCount === 1 ? "address" : "addresses"}
+        บันทึกที่อยู่ไว้ {addressCount} รายการ
       </div>
 
     </div>

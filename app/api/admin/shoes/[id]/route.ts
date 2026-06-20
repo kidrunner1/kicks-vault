@@ -47,7 +47,7 @@ export async function PUT(
 
     if (!id) {
       return NextResponse.json(
-        { error: "Missing id" },
+        { error: "ไม่พบรหัสสินค้า" },
         { status: 400 }
       )
     }
@@ -56,7 +56,7 @@ export async function PUT(
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Invalid shoe data" },
+        { error: "ข้อมูลสินค้าไม่ถูกต้อง" },
         { status: 400 }
       )
     }
@@ -83,7 +83,7 @@ export async function PUT(
 
       if (!brand) {
         return NextResponse.json(
-          { error: "Invalid brandId" },
+          { error: "แบรนด์ไม่ถูกต้อง" },
           { status: 400 }
         )
       }
@@ -134,13 +134,13 @@ export async function PUT(
       error.code === "P2002"
     ) {
       return NextResponse.json(
-        { error: "Slug already exists" },
+        { error: "Slug นี้ถูกใช้งานแล้ว" },
         { status: 400 }
       )
     }
 
     return NextResponse.json(
-      { error: "Update failed" },
+      { error: "อัปเดตสินค้าไม่สำเร็จ" },
       { status: 500 }
     )
   }
@@ -165,7 +165,7 @@ export async function DELETE(
     if (!id) {
 
       return NextResponse.json(
-        { error: "Missing id" },
+        { error: "ไม่พบรหัสสินค้า" },
         { status: 400 }
       )
 
@@ -178,7 +178,7 @@ export async function DELETE(
     if (!shoe) {
 
       return NextResponse.json(
-        { error: "Shoe not found" },
+        { error: "ไม่พบสินค้านี้" },
         { status: 404 }
       )
 
@@ -197,7 +197,7 @@ export async function DELETE(
     console.error("DELETE SHOE ERROR:", error)
 
     return NextResponse.json(
-      { error: "Delete failed" },
+      { error: "ลบสินค้าไม่สำเร็จ" },
       { status: 500 }
     )
 

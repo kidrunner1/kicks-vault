@@ -23,7 +23,7 @@ export async function GET() {
   } catch {
 
     return NextResponse.json(
-      { error: "Failed to fetch brands" },
+      { error: "ไม่สามารถโหลดข้อมูลแบรนด์ได้" },
       { status: 500 }
     )
 

@@ -14,36 +14,36 @@ import { uiAction } from "@/lib/ui-interactions"
 
 const features = [
   {
-    title: "Curated product paths",
+    title: "เส้นทางเลือกสินค้าที่ชัดเจน",
     description:
-      "Shoppers can move from store filters to product detail without losing price, size, and stock context.",
+      "ลูกค้าสามารถไล่จากตัวกรอง Store ไปยังหน้ารายละเอียดสินค้า โดยยังเห็นราคา ไซซ์ และ Stock ครบ",
     icon: BadgeCheck,
   },
   {
-    title: "Size stock is visible",
+    title: "เห็น Stock ตามไซซ์",
     description:
-      "Availability is tied to real size rows, so every add-to-cart choice has a clear stock signal.",
+      "สถานะพร้อมขายผูกกับข้อมูลไซซ์จริง ทุกครั้งที่เพิ่มลงตะกร้าจะเห็น Stock ชัดเจน",
     icon: Boxes,
   },
   {
-    title: "Checkout uses database truth",
+    title: "Checkout ใช้ข้อมูลจริงจาก Database",
     description:
-      "Order totals come from saved product prices, with stock decrement handled inside the order transaction.",
+      "ยอดรวมออเดอร์มาจากราคาสินค้าที่บันทึกไว้ และตัด Stock ภายใน transaction เดียวกัน",
     icon: ShieldCheck,
   },
   {
-    title: "Orders stay reviewable",
+    title: "ออเดอร์ย้อนดูได้เสมอ",
     description:
-      "Each order keeps size, quantity, price snapshot, and address details for a cleaner member history.",
+      "แต่ละออเดอร์เก็บไซซ์ จำนวน ราคา และที่อยู่จัดส่งไว้ในประวัติสมาชิกอย่างเป็นระบบ",
     icon: PackageCheck,
   },
 ]
 
 const proofPoints = [
-  "Audience filters",
-  "Saved addresses",
-  "Protected checkout",
-  "Order history",
+  "ตัวกรองกลุ่มผู้ใส่",
+  "ที่อยู่ที่บันทึกไว้",
+  "Checkout ปลอดภัย",
+  "ประวัติออเดอร์",
 ]
 
 export default function FeatureSection() {
@@ -67,11 +67,11 @@ export default function FeatureSection() {
             <AppLogo subLabel="Commerce system" />
 
             <h2 className="mt-8 max-w-2xl text-4xl font-semibold leading-[0.95] md:text-6xl">
-              Built like a vault. Ready like a shop.
+              แข็งแรงเหมือน vault พร้อมขายเหมือนร้านจริง
             </h2>
 
             <p className="mt-6 max-w-xl text-base leading-8 text-black/65 md:text-lg">
-              Kicks Vault now connects the front-of-store experience with the working parts shoppers expect: filters, size stock, protected checkout, saved addresses, and order history.
+              Kicks Vault เชื่อมหน้าร้านกับระบบที่ลูกค้าคาดหวัง ทั้ง filter, Stock ตามไซซ์, Checkout, ที่อยู่บันทึกไว้ และประวัติออเดอร์
             </p>
 
             <div className="mt-8 flex flex-wrap gap-2">
@@ -90,14 +90,14 @@ export default function FeatureSection() {
                 href="/product"
                 className={`px-6 py-3 text-sm font-semibold ${uiAction.accent}`}
               >
-                Browse products
+                เลือกซื้อสินค้า
                 <ArrowRight size={16} />
               </Link>
               <Link
                 href="/account/orders"
                 className={`px-6 py-3 text-sm font-medium ${uiAction.surface}`}
               >
-                View orders
+                ดูออเดอร์
               </Link>
             </div>
           </motion.div>
@@ -105,12 +105,12 @@ export default function FeatureSection() {
           <div className="space-y-4">
             <div className="rounded-lg bg-black p-5 text-white md:p-7">
               <p className="text-sm font-medium text-white/65">
-                Store readiness
+                ความพร้อมของ Store
               </p>
               <div className="mt-5 grid border-t border-white/12 sm:grid-cols-3 sm:divide-x sm:divide-white/12">
                 <SystemStat label="Stock" value="Live" />
-                <SystemStat label="Checkout" value="Guarded" />
-                <SystemStat label="Orders" value="Saved" />
+                <SystemStat label="Checkout" value="ป้องกันแล้ว" />
+                <SystemStat label="ออเดอร์" value="บันทึกแล้ว" />
               </div>
             </div>
 

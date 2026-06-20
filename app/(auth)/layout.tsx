@@ -40,7 +40,7 @@ export default function AuthLayout({
           <div className="relative z-10 flex min-h-screen flex-col justify-between p-10 pt-28 xl:p-14 xl:pt-32">
             <AppLogo
               inverse
-              subLabel="Member vault"
+              subLabel="พื้นที่สมาชิก"
               className="self-start"
             />
 
@@ -52,17 +52,17 @@ export default function AuthLayout({
             >
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white px-4 py-2 text-sm font-semibold text-black shadow-sm">
                 <ShieldCheck size={16} />
-                Protected member access
+                พื้นที่สมาชิกที่ปลอดภัย
               </div>
 
               <h1 className="text-6xl font-semibold leading-none tracking-tight xl:text-7xl">
-                Your vault
+                vault ของคุณ
                 <br />
-                stays ready.
+                พร้อมเสมอ
               </h1>
 
               <p className="mt-6 max-w-md text-base leading-7 text-white/78">
-                Keep saved addresses, favorites, order history, and checkout access in one clean member space.
+                เก็บที่อยู่ รายการโปรด ประวัติออเดอร์ และ Checkout ไว้ในพื้นที่สมาชิกเดียว
               </p>
 
               <div className="mt-8 grid gap-3 text-sm text-white/82 sm:grid-cols-2">
@@ -70,13 +70,13 @@ export default function AuthLayout({
                   <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-white text-black">
                     <ShoppingBag size={16} />
                   </span>
-                  Stock-backed checkout tied to your account.
+                  Checkout ที่อิง Stock จริงและผูกกับบัญชีของคุณ
                 </div>
                 <div className="rounded-lg border border-white/12 bg-white/8 p-4">
                   <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-white text-black">
                     <PackageCheck size={16} />
                   </span>
-                  Order history kept in your member archive.
+                  ประวัติออเดอร์ถูกเก็บไว้ใน member archive
                 </div>
               </div>
             </motion.div>
@@ -91,7 +91,7 @@ export default function AuthLayout({
             className="w-full max-w-md rounded-lg border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.08)] md:p-8"
           >
             <div className="mb-7 flex items-center justify-between gap-4 lg:hidden">
-              <AppLogo subLabel="Member access" />
+              <AppLogo subLabel="เข้าสู่ระบบสมาชิก" />
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black bg-[#d8ff6a] text-black">
                 <ShieldCheck size={18} />
               </span>

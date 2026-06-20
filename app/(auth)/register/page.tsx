@@ -16,16 +16,16 @@ const registerSchema = z
     email: z
       .string()
       .trim()
-      .min(1, "Email is required.")
-      .email("Enter a valid email address."),
+      .min(1, "กรุณากรอก Email")
+      .email("กรุณากรอก Email ให้ถูกต้อง"),
     password: z
       .string()
-      .min(1, "Password is required.")
-      .min(6, "Password must be at least 6 characters."),
-    confirmPassword: z.string().min(1, "Confirm your password."),
+      .min(1, "กรุณากรอกรหัสผ่าน")
+      .min(6, "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"),
+    confirmPassword: z.string().min(1, "กรุณายืนยันรหัสผ่าน"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match.",
+    message: "รหัสผ่านไม่ตรงกัน",
     path: ["confirmPassword"],
   })
 
@@ -94,14 +94,14 @@ export default function RegisterPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        setFormError(data.error || "Unable to create this account.")
+        setFormError(data.error || "ไม่สามารถสร้างบัญชีนี้ได้")
         return
       }
 
-      toast.success("Account created successfully")
+      toast.success("สร้างบัญชีสำเร็จ")
       router.replace("/login")
     } catch {
-      setFormError("Unable to connect. Please try again.")
+      setFormError("ไม่สามารถเชื่อมต่อได้ กรุณาลองอีกครั้ง")
     } finally {
       setLoading(false)
     }
@@ -140,10 +140,10 @@ export default function RegisterPage() {
         </div>
 
         <h1 className="text-4xl font-semibold leading-tight tracking-tight">
-          Create your vault
+          สร้าง vault ของคุณ
         </h1>
         <p className="mt-3 text-sm leading-6 text-black/65">
-          Save addresses, collect favorites, and keep checkout ready for every drop.
+          บันทึกที่อยู่ เก็บรายการโปรด และเตรียม Checkout ให้พร้อมสำหรับทุก drop
         </p>
       </div>
 
@@ -176,7 +176,7 @@ export default function RegisterPage() {
         <FormInput
           type="password"
           name="new-password"
-          label="Password"
+          label="รหัสผ่าน"
           icon={<Lock size={18} />}
           value={password}
           onChange={handlePasswordChange}
@@ -189,7 +189,7 @@ export default function RegisterPage() {
         <FormInput
           type="password"
           name="confirm-password"
-          label="Confirm password"
+          label="ยืนยันรหัสผ่าน"
           icon={<Lock size={18} />}
           value={confirmPassword}
           onChange={handleConfirmChange}
@@ -205,19 +205,19 @@ export default function RegisterPage() {
           className={`h-12 w-full px-5 text-sm font-semibold ${uiAction.accent}`}
         >
           <UserPlus size={16} />
-          {loading ? "Creating account..." : "Create account"}
+          {loading ? "กำลังสร้างบัญชี..." : "สร้างบัญชี"}
         </button>
       </form>
 
       <div className="mt-7 border-t border-black/10 pt-5">
         <p className="mb-3 text-sm text-black/60">
-          Already have an account?
+          มีบัญชีอยู่แล้ว?
         </p>
         <Link
           href="/login"
           className={`h-11 w-full px-4 text-sm font-medium ${uiAction.surface}`}
         >
-          Sign in
+          เข้าสู่ระบบ
           <ArrowRight size={15} />
         </Link>
       </div>

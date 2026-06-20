@@ -16,9 +16,9 @@ export default function AdminShell({
 
   const navItems = [
     { name: "Dashboard", href: "/admin" },
-    { name: "Orders", href: "/admin/orders" },
-    { name: "Shoes", href: "/admin/shoes" },
-    { name: "Add Shoe", href: "/admin/shoes/new" },
+    { name: "ออเดอร์", href: "/admin/orders" },
+    { name: "สินค้า", href: "/admin/shoes" },
+    { name: "เพิ่มสินค้า", href: "/admin/shoes/new" },
   ]
 
   const activeHref = navItems.reduce<string | undefined>((current, item) => {
@@ -89,13 +89,13 @@ export default function AdminShell({
           <div className="text-sm text-gray-400">Admin Dashboard</div>
 
           <div className="flex items-center gap-4">
-            <div className="text-sm text-gray-400">Logged in as Admin</div>
+            <div className="text-sm text-gray-400">เข้าสู่ระบบในฐานะ Admin</div>
             <button
               onClick={handleLogout}
               disabled={loggingOut}
               className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 rounded-lg transition disabled:opacity-50"
             >
-              {loggingOut ? "Logging out..." : "Logout"}
+              {loggingOut ? "กำลังออกจากระบบ..." : "ออกจากระบบ"}
             </button>
           </div>
         </header>

@@ -33,18 +33,18 @@ interface Props {
 
 const nextSteps = [
   {
-    label: "Order saved",
-    detail: "Your order is now available in account history.",
+    label: "บันทึกออเดอร์แล้ว",
+    detail: "ออเดอร์นี้ดูย้อนหลังได้ในประวัติการสั่งซื้อ",
     icon: ReceiptText,
   },
   {
-    label: "Stock reserved",
-    detail: "Selected sizes were decremented during order creation.",
+    label: "ตัด Stock แล้ว",
+    detail: "ระบบหักจำนวนไซซ์ที่เลือกตอนสร้างออเดอร์",
     icon: PackageCheck,
   },
   {
-    label: "Session verified",
-    detail: "Only your account can view this confirmation.",
+    label: "ยืนยัน Session แล้ว",
+    detail: "เฉพาะบัญชีของคุณเท่านั้นที่ดูหน้านี้ยืนยันนี้ได้",
     icon: ShieldCheck,
   },
 ]
@@ -104,12 +104,12 @@ export default async function OrderSuccessPage({ params }: Props) {
             href="/product"
             className={`text-sm ${uiAction.ghost}`}
           >
-            <AppLogo compact subLabel="Continue shopping" />
+            <AppLogo compact subLabel="เลือกซื้อต่อ" />
           </Link>
 
           <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm text-[#1f6a3a]">
             <CheckCircle2 size={16} />
-            Order confirmed
+            ยืนยันออเดอร์แล้ว
           </span>
         </div>
 
@@ -124,30 +124,30 @@ export default async function OrderSuccessPage({ params }: Props) {
                   Order #{order.id.slice(0, 8)}
                 </p>
                 <h1 className="mt-4 max-w-2xl text-5xl font-semibold leading-[0.92] md:text-7xl">
-                  Your order is in the vault.
+                  ออเดอร์ของคุณเข้าระบบแล้ว
                 </h1>
                 <p className="mt-6 max-w-xl text-sm leading-7 text-white/65 md:text-base">
-                  We created the order from live product prices and available size stock. You can review the full receipt from your account.
+                  ระบบสร้างออเดอร์จากราคาจริงใน Database และ Stock ไซซ์ที่พร้อมขาย คุณสามารถดูใบสรุปเต็มได้จากบัญชีของคุณ
                 </p>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-4">
                 <div className="rounded-lg border border-white/10 p-4">
-                  <p className="text-sm text-white/45">Placed</p>
+                  <p className="text-sm text-white/45">วันที่สั่งซื้อ</p>
                   <p className="mt-2 text-sm font-medium">{placedAt}</p>
                 </div>
                 <div className="rounded-lg border border-white/10 p-4">
-                  <p className="text-sm text-white/45">Pairs</p>
+                  <p className="text-sm text-white/45">จำนวนคู่</p>
                   <p className="mt-2 text-sm font-medium">{itemCount}</p>
                 </div>
                 <div className="rounded-lg border border-white/10 p-4">
-                  <p className="text-sm text-white/45">Total</p>
+                  <p className="text-sm text-white/45">รวมทั้งหมด</p>
                   <p className="mt-2 text-sm font-medium">
                     {formatCurrency(order.total.toString())}
                   </p>
                 </div>
                 <div className="rounded-lg border border-white/10 p-4">
-                  <p className="text-sm text-white/45">Payment</p>
+                  <p className="text-sm text-white/45">ชำระเงิน</p>
                   <p className="mt-2 text-sm font-medium">
                     {paymentStatusLabel}
                   </p>
@@ -160,9 +160,9 @@ export default async function OrderSuccessPage({ params }: Props) {
             <div className="rounded-lg border border-black/10 bg-white p-5">
               <div className="mb-5 flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm text-black/50">Receipt</p>
+                  <p className="text-sm text-black/50">ใบสรุปออเดอร์</p>
                   <h2 className="mt-1 text-xl font-semibold">
-                    {itemCount} {itemCount === 1 ? "pair" : "pairs"}
+                    ทั้งหมด {itemCount} คู่
                   </h2>
                 </div>
                 <span className="rounded-full bg-[#eef7f0] px-3 py-1.5 text-xs text-[#1f6a3a]">
@@ -190,7 +190,7 @@ export default async function OrderSuccessPage({ params }: Props) {
                           {item.shoe.name}
                         </p>
                         <p className="mt-1 text-sm text-black/50">
-                          Size {item.size} x {item.quantity}
+                          ไซซ์ {item.size} x {item.quantity}
                         </p>
                       </div>
                       <p className="text-sm font-medium">
@@ -203,7 +203,7 @@ export default async function OrderSuccessPage({ params }: Props) {
 
               <div className="mt-5 border-t border-black/10 pt-5">
                 <div className="flex items-center justify-between font-semibold">
-                  <span>Total</span>
+                  <span>รวมทั้งหมด</span>
                   <span>{formatCurrency(order.total.toString())}</span>
                 </div>
               </div>
@@ -227,7 +227,7 @@ export default async function OrderSuccessPage({ params }: Props) {
                     </p>
                     {order.paidAt && (
                       <p className="mt-2 text-xs text-black/45">
-                        Mock paid at{" "}
+                        Mock paid เมื่อ{" "}
                         {new Intl.DateTimeFormat("en-US", {
                           dateStyle: "medium",
                           timeStyle: "short",
@@ -242,7 +242,7 @@ export default async function OrderSuccessPage({ params }: Props) {
                 href={`/account/orders/${order.id}`}
                 className={`mt-6 h-12 w-full px-6 text-sm font-semibold ${uiAction.accent}`}
               >
-                View order detail
+                ดูรายละเอียดออเดอร์
                 <ArrowRight size={15} />
               </Link>
             </div>
@@ -252,7 +252,7 @@ export default async function OrderSuccessPage({ params }: Props) {
                 <div className="mb-4 flex items-center gap-2">
                   <MapPin size={18} />
                   <h2 className="text-lg font-semibold">
-                    Shipping address
+                    ที่อยู่จัดส่ง
                   </h2>
                 </div>
                 <p className="font-medium">
@@ -271,7 +271,7 @@ export default async function OrderSuccessPage({ params }: Props) {
               <div className="mb-5 flex items-center gap-2">
                 <Truck size={18} />
                 <h2 className="text-lg font-semibold">
-                  Next steps
+                  ขั้นตอนถัดไป
                 </h2>
               </div>
 

@@ -39,7 +39,7 @@ export default function AdminShoesPage() {
         } catch (err) {
 
             console.error(err)
-            setError("Unable to load products.")
+            setError("ไม่สามารถโหลดสินค้าได้")
 
         } finally {
 
@@ -52,7 +52,7 @@ export default function AdminShoesPage() {
 
     async function deleteShoe(id: string) {
 
-        if (!confirm("Delete this shoe?")) return
+        if (!confirm("ต้องการลบสินค้านี้ใช่หรือไม่?")) return
 
         try {
 
@@ -71,7 +71,7 @@ export default function AdminShoesPage() {
 
         } catch {
 
-            alert("Delete failed")
+            alert("ลบสินค้าไม่สำเร็จ")
 
         }
 
@@ -85,7 +85,7 @@ export default function AdminShoesPage() {
     if (loading)
         return (
             <div className="text-gray-400">
-                Loading shoes...
+                กำลังโหลดสินค้า...
             </div>
         )
 
@@ -105,7 +105,7 @@ export default function AdminShoesPage() {
             <div className="flex justify-between items-center mb-8">
 
                 <h1 className="text-3xl font-semibold">
-                    Shoes Management
+                    จัดการสินค้า
                 </h1>
 
                 <Link
@@ -119,7 +119,7 @@ export default function AdminShoesPage() {
                         transition
                     "
                 >
-                    + Add Shoe
+                    + เพิ่มสินค้า
                 </Link>
 
             </div>
@@ -138,12 +138,12 @@ export default function AdminShoesPage() {
                     {/* HEAD */}
                     <thead className="bg-gray-800">
                         <tr>
-                            <th className="p-4 text-left text-gray-300">Image</th>
-                            <th className="p-4 text-left text-gray-300">Name</th>
-                            <th className="p-4 text-left text-gray-300">Brand</th>
-                            <th className="p-4 text-left text-gray-300">Price</th>
+                            <th className="p-4 text-left text-gray-300">รูป</th>
+                            <th className="p-4 text-left text-gray-300">ชื่อสินค้า</th>
+                            <th className="p-4 text-left text-gray-300">แบรนด์</th>
+                            <th className="p-4 text-left text-gray-300">ราคา</th>
                             <th className="p-4 text-left text-gray-300">Stock</th>
-                            <th className="p-4 text-left text-gray-300">Actions</th>
+                            <th className="p-4 text-left text-gray-300">จัดการ</th>
                         </tr>
                     </thead>
 
@@ -152,7 +152,7 @@ export default function AdminShoesPage() {
                         {shoes.length === 0 && (
                             <tr>
                                 <td colSpan={6} className="p-8 text-center text-gray-500">
-                                    No products yet.
+                                    ยังไม่มีสินค้า
                                 </td>
                             </tr>
                         )}
@@ -210,7 +210,7 @@ export default function AdminShoesPage() {
                                             hover:text-blue-300
                                         "
                                     >
-                                        Edit
+                                        แก้ไข
                                     </Link>
 
                                     <button
@@ -222,7 +222,7 @@ export default function AdminShoesPage() {
                                             hover:text-red-300
                                         "
                                     >
-                                        Delete
+                                        ลบ
                                     </button>
                                 </td>
                             </tr>

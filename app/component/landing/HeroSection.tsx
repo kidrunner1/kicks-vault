@@ -38,8 +38,8 @@ export default function HeroSection() {
         <div className="my-8 h-px w-20 bg-neutral-300" />
 
         <p className="max-w-md text-base leading-8 text-neutral-600 sm:text-lg">
-          Curated silhouettes for collectors, built around real product detail,
-          size stock, and a calmer path into the store.
+          คัด sneaker สำหรับนักสะสม พร้อมรายละเอียดสินค้า Stock ตามไซซ์
+          และเส้นทางเข้าสู่ Store ที่ใช้งานง่ายขึ้น
         </p>
       </motion.div>
 
@@ -52,7 +52,7 @@ export default function HeroSection() {
         }}
         className="pointer-events-none absolute bottom-10 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center text-xs font-medium tracking-widest text-neutral-500"
       >
-        Scroll
+        เลื่อนลง
 
         <motion.div
           animate={prefersReducedMotion ? undefined : { y: [0, 10, 0] }}

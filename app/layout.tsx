@@ -6,7 +6,7 @@ import AuthProvider from "@/app/component/auth/AuthProvider"
 
 export const metadata: Metadata = {
   title: "Kicks Vault",
-  description: "Your trusted destination for premium sneakers.",
+  description: "ร้าน sneaker premium พร้อม Store, Stock, Checkout และระบบสมาชิก",
 }
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="th">
       <body
         className={`
           ${ibmThai.className}

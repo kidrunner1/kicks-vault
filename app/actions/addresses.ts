@@ -15,7 +15,7 @@ async function requireCurrentUserId() {
   const user = await getCurrentUser()
 
   if (!user) {
-    throw new Error("Please sign in before managing addresses")
+    throw new Error("กรุณาเข้าสู่ระบบก่อนจัดการที่อยู่")
   }
 
   return user.id
@@ -72,7 +72,7 @@ export async function updateAddress(id: string, input: AddressInput) {
     })
 
     if (!existing) {
-      throw new Error("Address was not found")
+      throw new Error("ไม่พบที่อยู่นี้")
     }
 
     const shouldBeDefault = existing.isDefault || address.isDefault
@@ -114,7 +114,7 @@ export async function deleteAddress(id: string) {
     })
 
     if (!existing) {
-      throw new Error("Address was not found")
+      throw new Error("ไม่พบที่อยู่นี้")
     }
 
     await tx.userAddress.delete({
@@ -152,7 +152,7 @@ export async function setDefaultAddress(id: string) {
     })
 
     if (!existing) {
-      throw new Error("Address was not found")
+      throw new Error("ไม่พบที่อยู่นี้")
     }
 
     await tx.userAddress.updateMany({

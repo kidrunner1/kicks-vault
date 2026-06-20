@@ -46,7 +46,7 @@ export async function POST(req: Request) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Invalid shoe data" },
+        { error: "ข้อมูลสินค้าไม่ถูกต้อง" },
         { status: 400 }
       )
     }
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
 
     if (!brand) {
       return NextResponse.json(
-        { error: "Brand not found" },
+        { error: "ไม่พบแบรนด์นี้" },
         { status: 400 }
       )
     }
@@ -134,13 +134,13 @@ export async function POST(req: Request) {
       error.code === "P2002"
     ) {
       return NextResponse.json(
-        { error: "Slug already exists" },
+        { error: "Slug นี้ถูกใช้งานแล้ว" },
         { status: 400 }
       )
     }
 
     return NextResponse.json(
-      { error: "Failed to create shoe" },
+      { error: "ไม่สามารถสร้างสินค้าได้" },
       { status: 500 }
     )
 

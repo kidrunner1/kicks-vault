@@ -39,7 +39,7 @@ const orderStatusGraphTone: Record<keyof typeof ORDER_STATUS_LABELS, string> = {
 }
 
 function formatDashboardDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("th-TH", {
     month: "short",
     day: "numeric",
     hour: "2-digit",
@@ -62,9 +62,7 @@ export default async function AdminPage() {
             Operations Dashboard
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-400">
-            Store health across orders, stock, and catalog readiness. This
-            dashboard now includes order management signals, mock payment state,
-            and product stock attention points.
+            ภาพรวมสุขภาพร้าน ทั้งออเดอร์ Stock ความพร้อมของ catalog และสถานะ Mock payment
           </p>
         </div>
 
@@ -73,14 +71,14 @@ export default async function AdminPage() {
             href="/admin/orders"
             className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 text-sm font-medium text-gray-100 transition hover:border-gray-500 hover:bg-gray-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
           >
-            View orders
+            ดูออเดอร์
             <ArrowRight size={16} />
           </Link>
           <Link
             href="/admin/shoes"
             className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 text-sm font-medium text-gray-100 transition hover:border-gray-500 hover:bg-gray-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
           >
-            Manage products
+            จัดการสินค้า
             <ArrowRight size={16} />
           </Link>
           <Link
@@ -88,14 +86,14 @@ export default async function AdminPage() {
             className="inline-flex items-center justify-center gap-2 rounded-lg border border-black bg-[#d8ff6a] px-4 py-2 text-sm font-semibold text-black transition hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
           >
             <PackagePlus size={16} />
-            Add shoe
+            เพิ่มสินค้า
           </Link>
         </div>
       </header>
 
       <section aria-labelledby="admin-metrics">
         <h2 id="admin-metrics" className="sr-only">
-          Store metrics
+          ตัวชี้วัดร้าน
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {dashboard.metrics.map((metric) => (
@@ -106,14 +104,14 @@ export default async function AdminPage() {
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(420px,1.1fr)]">
         <SectionPanel
-          title="Order pipeline"
-          description="Status count across all orders."
+          title="สถานะออเดอร์"
+          description="จำนวนออเดอร์แยกตามสถานะ"
           icon={<ClipboardList size={18} />}
         >
           {dashboard.pipeline.every((item) => item.count === 0) ? (
             <EmptyState
-              title="No order status data"
-              description="Checkout orders will populate this pipeline."
+              title="ยังไม่มีข้อมูลสถานะออเดอร์"
+              description="เมื่อมี Checkout ออเดอร์จะเริ่มแสดงในกราฟนี้"
             />
           ) : (
             <div className="space-y-5">
@@ -121,7 +119,7 @@ export default async function AdminPage() {
               <GraphBar
                 key={item.status}
                 label={item.label}
-                value={`${item.count} order${item.count === 1 ? "" : "s"}`}
+                value={`${item.count} ออเดอร์`}
                 percent={
                   highestPipelineCount > 0
                     ? Math.round((item.count / highestPipelineCount) * 100)
@@ -135,14 +133,14 @@ export default async function AdminPage() {
         </SectionPanel>
 
         <SectionPanel
-          title="Recent orders"
-          description="Latest order records, ready for B2 order management."
+          title="ออเดอร์ล่าสุด"
+          description="รายการออเดอร์ล่าสุดที่พร้อมให้ตรวจสอบ"
           icon={<ClipboardList size={18} />}
         >
           {dashboard.recentOrders.length === 0 ? (
             <EmptyState
-              title="No orders yet"
-              description="New checkout orders will appear here once customers start buying."
+              title="ยังไม่มีออเดอร์"
+              description="ออเดอร์ใหม่จะแสดงที่นี่หลังลูกค้า Checkout"
             />
           ) : (
             <div className="divide-y divide-gray-800">
@@ -162,7 +160,7 @@ export default async function AdminPage() {
                       {order.customerEmail}
                     </p>
                     <p className="mt-1 text-xs text-gray-500">
-                      {formatDashboardDate(order.createdAt)} - {order.itemCount} item{order.itemCount === 1 ? "" : "s"}
+                      {formatDashboardDate(order.createdAt)} - {order.itemCount} รายการ
                     </p>
                   </div>
                   <div className="text-left md:text-right">
@@ -179,14 +177,14 @@ export default async function AdminPage() {
 
       <div className="grid gap-6 xl:grid-cols-2">
         <SectionPanel
-          title="Payment summary"
-          description="Mock payment count and revenue by state."
+          title="สรุป Payment"
+          description="จำนวน Mock payment และรายได้แยกตามสถานะ"
           icon={<CreditCard size={18} />}
         >
           {dashboard.paymentSummary.length === 0 ? (
             <EmptyState
-              title="No payment data"
-              description="Orders created at checkout will start as unpaid manual payments."
+              title="ยังไม่มีข้อมูล Payment"
+              description="ออเดอร์จาก Checkout จะเริ่มแสดงสถานะ payment ที่นี่"
             />
           ) : (
             <div className="space-y-5">
@@ -194,8 +192,8 @@ export default async function AdminPage() {
                 <GraphBar
                   key={item.status}
                   label={item.label}
-                  value={`${item.count} order${item.count === 1 ? "" : "s"}`}
-                  helper={`${item.revenue} revenue`}
+                  value={`${item.count} ออเดอร์`}
+                  helper={`รายได้ ${item.revenue}`}
                   percent={item.percent}
                   tone={graphToneClass[item.tone]}
                 />
@@ -205,14 +203,14 @@ export default async function AdminPage() {
         </SectionPanel>
 
         <SectionPanel
-          title="Top products"
-          description="Best-selling pairs by quantity sold."
+          title="สินค้าขายดี"
+          description="จัดอันดับจากจำนวนคู่ที่ขายได้"
           icon={<TrendingUp size={18} />}
         >
           {dashboard.topProducts.length === 0 ? (
             <EmptyState
-              title="No product sales yet"
-              description="Top products will appear after customers complete checkout."
+              title="ยังไม่มีสินค้าขายดี"
+              description="รายการขายดีจะแสดงหลังลูกค้า Checkout สำเร็จ"
             />
           ) : (
             <div className="space-y-5">
@@ -220,7 +218,7 @@ export default async function AdminPage() {
                 <GraphBar
                   key={product.shoeId}
                   label={product.name}
-                  value={`${product.quantity} sold`}
+                  value={`ขายแล้ว ${product.quantity} คู่`}
                   helper={product.brandName}
                   percent={product.percent}
                   tone="bg-[#d8ff6a]"
@@ -233,14 +231,14 @@ export default async function AdminPage() {
 
       <div className="grid gap-6 xl:grid-cols-[minmax(420px,1.1fr)_minmax(0,0.9fr)]">
         <SectionPanel
-          title="Stock alerts"
-          description="Sizes at 3 units or fewer."
+          title="แจ้งเตือน Stock"
+          description="ไซซ์ที่เหลือ 3 คู่หรือน้อยกว่า"
           icon={<AlertTriangle size={18} />}
         >
           {dashboard.stockAlerts.length === 0 ? (
             <EmptyState
-              title="No low-stock sizes"
-              description="Stock levels are healthy across tracked shoe sizes."
+              title="ยังไม่มีไซซ์ที่ Stock ต่ำ"
+              description="ระดับ Stock ของไซซ์ที่ติดตามยังอยู่ในเกณฑ์ดี"
             />
           ) : (
             <div className="divide-y divide-gray-800">
@@ -252,18 +250,18 @@ export default async function AdminPage() {
                   <div>
                     <p className="font-semibold text-white">{alert.shoeName}</p>
                     <p className="mt-1 text-sm text-gray-400">
-                      {alert.brandName} - Size {alert.size}
+                      {alert.brandName} - ไซซ์ {alert.size}
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-3 md:justify-end">
                     <span className="rounded-full border border-red-400/30 bg-red-400/10 px-3 py-1 text-xs font-semibold text-red-100">
-                      {alert.stock} left
+                      เหลือ {alert.stock}
                     </span>
                     <Link
                       href={`/admin/shoes/${alert.shoeId}`}
                       className="inline-flex items-center gap-1 text-sm font-medium text-[#ecff9c] transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
                     >
-                      Edit
+                      แก้ไข
                       <ArrowRight size={14} />
                     </Link>
                   </div>
@@ -274,8 +272,8 @@ export default async function AdminPage() {
         </SectionPanel>
 
         <SectionPanel
-          title="Catalog health"
-          description="Product readiness signals for the storefront."
+          title="สุขภาพ Catalog"
+          description="สัญญาณความพร้อมของสินค้าในหน้าร้าน"
           icon={<Boxes size={18} />}
         >
           <div className="space-y-3">

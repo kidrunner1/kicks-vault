@@ -71,7 +71,7 @@ export default function FloatingCartButton() {
       </div>
 
       <span className="text-xs uppercase tracking-widest">
-        {totalItems} {totalItems === 1 ? "Item" : "Items"}
+        {totalItems} รายการ
       </span>
     </motion.button>
   )

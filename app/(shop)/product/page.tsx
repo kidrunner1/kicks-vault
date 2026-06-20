@@ -30,10 +30,10 @@ interface ProductsPageProps {
 }
 
 const audienceOptions = [
-  { value: "all", label: "All" },
-  { value: "men", label: "Men" },
-  { value: "women", label: "Women" },
-  { value: "kids", label: "Kids" },
+  { value: "all", label: "ทั้งหมด" },
+  { value: "men", label: "ผู้ชาย" },
+  { value: "women", label: "ผู้หญิง" },
+  { value: "kids", label: "เด็ก" },
 ]
 
 const categoryOptions = [
@@ -45,23 +45,23 @@ const categoryOptions = [
 ]
 
 const sortOptions = [
-  { value: "newest", label: "Newest arrivals" },
-  { value: "stock-desc", label: "Most available" },
+  { value: "newest", label: "มาใหม่ล่าสุด" },
+  { value: "stock-desc", label: "Stock มากที่สุด" },
 ]
 
 const priceRangeOptions = [
-  { value: "all", label: "All", shortLabel: "All", min: null, max: null },
-  { value: "0-5000", label: "Under 5,000", shortLabel: "<5k", min: 0, max: 5000 },
-  { value: "5000-9000", label: "5,000 to 9,000", shortLabel: "5-9k", min: 5000, max: 9000 },
-  { value: "9000-13000", label: "9,000 to 13,000", shortLabel: "9-13k", min: 9000, max: 13000 },
-  { value: "13000-up", label: "13,000 and up", shortLabel: "13k+", min: 13000, max: null },
+  { value: "all", label: "ทุกราคา", shortLabel: "ทั้งหมด", min: null, max: null },
+  { value: "0-5000", label: "ต่ำกว่า 5,000", shortLabel: "<5k", min: 0, max: 5000 },
+  { value: "5000-9000", label: "5,000 ถึง 9,000", shortLabel: "5-9k", min: 5000, max: 9000 },
+  { value: "9000-13000", label: "9,000 ถึง 13,000", shortLabel: "9-13k", min: 9000, max: 13000 },
+  { value: "13000-up", label: "13,000 ขึ้นไป", shortLabel: "13k+", min: 13000, max: null },
 ]
 
 const availabilityOptions = [
-  { value: "all", label: "All products" },
-  { value: "in-stock", label: "In stock" },
-  { value: "low-stock", label: "Low stock" },
-  { value: "out-of-stock", label: "Out of stock" },
+  { value: "all", label: "สินค้าทั้งหมด" },
+  { value: "in-stock", label: "มีสินค้า" },
+  { value: "low-stock", label: "เหลือน้อย" },
+  { value: "out-of-stock", label: "สินค้าหมด" },
 ]
 
 const badges = [
@@ -104,7 +104,7 @@ function createMockMeta(
     badge: badges[index % badges.length],
     rating: (4.6 + (index % 4) * 0.1).toFixed(1),
     reviews: 48 + index * 19,
-    delivery: index % 2 === 0 ? "Ships in 24h" : "2 day dispatch",
+    delivery: index % 2 === 0 ? "จัดส่งใน 24 ชม." : "จัดส่งภายใน 2 วัน",
   }
 }
 
@@ -253,7 +253,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             href="/"
             className={`text-sm ${uiAction.ghost}`}
           >
-            <AppLogo compact subLabel="Back to Home" />
+            <AppLogo compact subLabel="กลับหน้าแรก" />
           </Link>
         </div>
       </section>
@@ -267,19 +267,19 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   <div className="flex flex-col justify-between gap-8">
                     <div>
                       <span className="inline-flex rounded-full border border-black bg-[#d8ff6a] px-4 py-2 text-sm font-semibold text-black">
-                        Store for every rotation
+                        Store สำหรับทุกสไตล์
                       </span>
                       <h1 className="mt-5 max-w-xl text-4xl font-semibold leading-none md:text-6xl">
-                        Find the pair that fits the whole lineup.
+                        หา sneaker คู่ที่เข้ากับทุกวันของคุณ
                       </h1>
                       <p className="mt-5 max-w-md text-sm leading-7 text-black/60 md:text-base">
-                        Browse real inventory by audience, category, size, brand, and price before choosing the pair that fits.
+                        เลือกจากสินค้าจริงตามกลุ่มผู้ใส่ หมวดหมู่ ไซซ์ แบรนด์ และราคา ก่อนตัดสินใจ
                       </p>
                     </div>
 
                     <div className="space-y-3">
                       <p className="text-sm font-semibold text-black">
-                        Quick audience
+                        เลือกกลุ่มผู้ใส่
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {audienceOptions.map((option) => (
@@ -297,16 +297,16 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
                     <div className="grid grid-cols-3 gap-3">
                       <StoreStat
-                        label="Products"
+                        label="สินค้า"
                         value={enrichedShoes.length}
                         tone="accent"
                       />
                       <StoreStat
-                        label="Pairs"
+                        label="จำนวนคู่"
                         value={totalAvailablePairs}
                       />
                       <StoreStat
-                        label="Filters"
+                        label="ตัวกรอง"
                         value={activeFiltersCount}
                       />
                     </div>
@@ -336,7 +336,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 <aside className="border-t border-black/10 bg-[#f8f7f3] p-6 md:p-8 lg:border-l lg:border-t-0">
                   <div className="flex h-full flex-col justify-between gap-8">
                     <div>
-                      <p className="text-sm text-black/55">Featured from the vault</p>
+                      <p className="text-sm text-black/55">คู่แนะนำจาก vault</p>
                       <h2 className="mt-3 text-3xl font-semibold leading-tight">
                         {heroShoe.name}
                       </h2>
@@ -356,15 +356,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     <div className="grid gap-5">
                       <div className="grid grid-cols-3 gap-3">
                         <StoreStat
-                          label="Rating"
+                          label="คะแนน"
                           value={heroShoe.meta.rating}
                         />
                         <StoreStat
-                          label="Reviews"
+                          label="รีวิว"
                           value={heroShoe.meta.reviews}
                         />
                         <StoreStat
-                          label="Pairs"
+                          label="จำนวนคู่"
                           value={totalStock(heroShoe.sizes)}
                           tone="accent"
                         />
@@ -376,7 +376,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                           className={`px-6 py-3 text-sm font-semibold ${uiAction.accent}`}
                         >
                           <Eye size={16} />
-                          View featured pair
+                          ดูคู่แนะนำ
                         </Link>
                         <Link
                           href={createHref({ audience: heroShoe.meta.audience })}
@@ -393,7 +393,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                               className="h-2 w-2 rounded-full bg-black"
                             />
                           )}
-                          Shop {heroAudienceLabel ?? heroShoe.meta.audience}
+                          เลือกดู {heroAudienceLabel ?? heroShoe.meta.audience}
                         </Link>
                       </div>
                     </div>
@@ -404,10 +404,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           ) : (
             <div className="rounded-lg border border-black/10 bg-white px-8 py-16 text-center">
               <h1 className="text-4xl font-semibold">
-                Store inventory is empty
+                ยังไม่มีสินค้าใน Store
               </h1>
               <p className="mx-auto mt-4 max-w-xl text-black/50">
-                Add products from the admin dashboard to turn this page into a live store.
+                เพิ่มสินค้าจากหน้า Admin dashboard เพื่อเริ่มเปิดหน้าร้านจริง
               </p>
             </div>
           )}
@@ -419,7 +419,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           <div className="rounded-lg border border-black/10 bg-white p-3 shadow-sm">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-sm font-semibold text-black">
-                Shop by audience
+                เลือกตามกลุ่มผู้ใส่
               </h2>
               <div className="flex flex-wrap gap-2">
                 {audienceOptions.map((option) => {
@@ -447,24 +447,24 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <div className="flex items-center justify-between gap-4 border-b border-black/10 pb-5">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal size={18} />
-                <h2 className="font-semibold">Shop filters</h2>
+                <h2 className="font-semibold">ตัวกรองสินค้า</h2>
               </div>
               {activeFiltersCount > 0 && (
                 <Link href="/product" className={`text-sm ${uiAction.ghost}`}>
-                  Reset
+                  รีเซ็ต
                 </Link>
               )}
             </div>
 
             <div className="divide-y divide-black/10">
-              <FilterGroup title="Price range">
+              <FilterGroup title="ช่วงราคา">
                 <PriceRangeFilter
                   activePriceRange={activePriceRange}
                   createHref={(value) => createHref({ price: value })}
                 />
               </FilterGroup>
 
-              <FilterGroup title="Sort">
+              <FilterGroup title="เรียงลำดับ">
                 {sortOptions.map((option) => (
                   <FilterLink
                     key={option.value}
@@ -476,7 +476,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 ))}
               </FilterGroup>
 
-              <FilterGroup title="Category">
+              <FilterGroup title="หมวดหมู่">
                 {categoryOptions.map((category) => (
                   <FilterLink
                     key={category}
@@ -490,7 +490,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 ))}
               </FilterGroup>
 
-              <FilterGroup title="Brand">
+              <FilterGroup title="แบรนด์">
                 {brands.map((brand) => (
                   <FilterLink
                     key={brand}
@@ -504,7 +504,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 ))}
               </FilterGroup>
 
-              <FilterGroup title="Size">
+              <FilterGroup title="ไซซ์">
                 <div className="grid grid-cols-3 gap-2">
                   {sizes.map((size) => (
                     <Link
@@ -524,7 +524,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 </div>
               </FilterGroup>
 
-              <FilterGroup title="Availability">
+              <FilterGroup title="สถานะสินค้า">
                 {availabilityOptions.map((option) => (
                   <FilterLink
                     key={option.value}
@@ -542,25 +542,25 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
               <div>
                 <h2 className="text-3xl font-semibold">
-                  Shop the vault
+                  เลือกซื้อจาก vault
                 </h2>
                 <p className="mt-2 text-sm text-black/50">
-                  Showing {filteredShoes.length} of {enrichedShoes.length} products with live stock labels.
+                  แสดง {filteredShoes.length} จาก {enrichedShoes.length} รายการ พร้อมป้าย Stock จริง
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-2 text-xs text-black/55">
                 <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-2">
                   <ShieldCheck size={14} />
-                  Secure checkout
+                  Checkout ปลอดภัย
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-2">
                   <Truck size={14} />
-                  Fast dispatch
+                  จัดส่งรวดเร็ว
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-2">
                   <RotateCcw size={14} />
-                  Easy review
+                  ตรวจสอบง่าย
                 </span>
               </div>
             </div>
@@ -626,7 +626,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                           </span>
                           <span className="inline-flex items-center gap-1 text-black/55">
                             <Check size={14} />
-                            Size stock
+                            Stock ตามไซซ์
                           </span>
                         </div>
                       </div>
@@ -637,17 +637,17 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             ) : (
               <div className="rounded-lg border border-black/10 bg-white px-8 py-16 text-center">
                 <h3 className="text-2xl font-semibold">
-                  No products match these filters
+                  ไม่พบสินค้าที่ตรงกับตัวกรอง
                 </h3>
                 <p className="mx-auto mt-3 max-w-md text-sm text-black/50">
-                  Try clearing a size, category, or audience filter to see more pairs from the vault.
+                  ลองล้างตัวกรองไซซ์ หมวดหมู่ หรือกลุ่มผู้ใส่ เพื่อดูสินค้ามากขึ้น
                 </p>
                 <Link
                   href="/product"
                   className={`mt-6 px-5 py-3 text-sm font-semibold ${uiAction.accent}`}
                 >
                   <RotateCcw size={16} />
-                  Clear filters
+                  ล้างตัวกรอง
                 </Link>
               </div>
             )}
@@ -734,8 +734,8 @@ function PriceRangeFilter({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between text-xs text-black/60">
-        <span>Low</span>
-        <span>High</span>
+        <span>ต่ำ</span>
+        <span>สูง</span>
       </div>
       <div className="relative px-2 pb-10 pt-4">
         <div className="absolute left-4 right-4 top-7 h-1.5 rounded-full bg-black/10" />
@@ -755,7 +755,7 @@ function PriceRangeFilter({
                 href={createHref(option.value)}
                 aria-current={isActive ? true : undefined}
                 className="group flex w-12 flex-col items-center gap-2.5 text-center"
-                aria-label={`Filter price ${option.label}`}
+                aria-label={`กรองราคา ${option.label}`}
               >
                 <span
                   className={`relative z-10 flex h-6 w-6 items-center justify-center rounded-full border-2 transition ${
@@ -784,7 +784,7 @@ function PriceRangeFilter({
         </div>
       </div>
       <p className="rounded-lg border border-black/10 bg-white px-3 py-2.5 text-sm text-black/60">
-        {activeOption.value === "all" ? "All prices" : activeOption.label}
+        {activeOption.value === "all" ? "ทุกราคา" : activeOption.label}
       </p>
     </div>
   )

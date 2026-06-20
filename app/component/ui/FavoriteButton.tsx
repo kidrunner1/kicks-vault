@@ -34,7 +34,7 @@ export default function FavoriteButton({
 
         // ⭐ Auth check
         if (!isAuthenticated) {
-            toast.error("Please login to continue.")
+            toast.error("กรุณาเข้าสู่ระบบก่อนดำเนินการต่อ")
             router.push("/login")
             return
         }
@@ -56,9 +56,9 @@ export default function FavoriteButton({
                 setIsFavorited(previousState)
 
                 if (res.error === "NOT_FOUND") {
-                    toast.error("Product not found.")
+                    toast.error("ไม่พบสินค้านี้")
                 } else {
-                    toast.error("Something went wrong.")
+                    toast.error("เกิดข้อผิดพลาด กรุณาลองอีกครั้ง")
                 }
 
                 return
@@ -66,8 +66,8 @@ export default function FavoriteButton({
 
             toast.success(
                 res.state === "ADDED"
-                    ? "Added to favorites"
-                    : "Removed from favorites"
+                    ? "เพิ่มลงรายการโปรดแล้ว"
+                    : "นำออกจากรายการโปรดแล้ว"
             )
 
             // optional refresh favorites page
@@ -80,7 +80,7 @@ export default function FavoriteButton({
             onClick={handleToggle}
             disabled={isPending}
             aria-pressed={isFavorited}
-            aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
+            aria-label={isFavorited ? "นำออกจากรายการโปรด" : "เพิ่มลงรายการโปรด"}
             whileTap={{ scale: 0.9 }}
             className={`
         group

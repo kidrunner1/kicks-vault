@@ -53,28 +53,28 @@ const MotionImage = motion(Image)
 
 const trustItems = [
   {
-    label: "Secure checkout",
+    label: "Checkout ปลอดภัย",
     icon: ShieldCheck,
   },
   {
-    label: "Fast dispatch",
+    label: "จัดส่งรวดเร็ว",
     icon: Truck,
   },
   {
-    label: "Size stock verified",
+    label: "ยืนยัน Stock ตามไซซ์",
     icon: Check,
   },
   {
-    label: "Order history saved",
+    label: "บันทึกประวัติออเดอร์",
     icon: PackageCheck,
   },
 ]
 
 const fallbackSpecs = [
-  { id: "style", label: "Style", value: "Lifestyle" },
-  { id: "cushion", label: "Cushion", value: "Comfort foam" },
-  { id: "upper", label: "Upper", value: "Mixed textile" },
-  { id: "fit", label: "Fit", value: "True to size" },
+  { id: "style", label: "สไตล์", value: "Lifestyle" },
+  { id: "cushion", label: "ซัพพอร์ต", value: "Comfort foam" },
+  { id: "upper", label: "วัสดุด้านบน", value: "Mixed textile" },
+  { id: "fit", label: "ฟิตติ้ง", value: "True to size" },
 ]
 
 function buildProductMeta(product: Product) {
@@ -94,10 +94,10 @@ function buildProductMeta(product: Product) {
 
   return {
     category,
-    badge: totalStock(product.sizes) <= 3 ? "Limited Stock" : "Verified Drop",
+    badge: totalStock(product.sizes) <= 3 ? "Stock เหลือน้อย" : "Verified Drop",
     rating: (4.6 + ratingSeed * 0.1).toFixed(1),
     reviews: 68 + product.slug.length * 7,
-    delivery: category === "Kids" ? "Family sizing ready" : "Ships in 24h",
+    delivery: category === "Kids" ? "มีไซซ์สำหรับครอบครัว" : "จัดส่งใน 24 ชม.",
   }
 }
 
@@ -130,29 +130,29 @@ export default function ProductDetail({ product, isFavorited }: Props) {
   )
 
   const stockMessage = !hasAvailableStock
-    ? "This pair is currently out of stock."
+    ? "คู่นี้สินค้าหมดชั่วคราว"
     : selectedSizeObj
-      ? `${selectedSizeObj.stock} available in size ${selectedSizeObj.size}`
-      : "Select an available size."
+      ? `เหลือ ${selectedSizeObj.stock} คู่ในไซซ์ ${selectedSizeObj.size}`
+      : "เลือกไซซ์ที่ยังมีสินค้า"
 
   const handleAddToCart = () => {
     if (!selectedSize || !selectedSizeObj) {
-      toast.error("Select size first")
+      toast.error("กรุณาเลือกไซซ์ก่อน")
       return
     }
 
     if (selectedSizeObj.stock <= 0) {
-      toast.error("Selected size is out of stock")
+      toast.error("ไซซ์ที่เลือกสินค้าหมด")
       return
     }
 
     if (!hasPrice || priceValue == null) {
-      toast.error("Price is unavailable")
+      toast.error("ยังไม่มีราคาสินค้า")
       return
     }
 
     if (quantity > selectedSizeObj.stock) {
-      toast.error("Not enough stock")
+      toast.error("Stock ไม่เพียงพอ")
       return
     }
 
@@ -166,7 +166,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
       maxStock: selectedSizeObj.stock,
     })
 
-    toast.success("Added to cart")
+    toast.success("เพิ่มลงตะกร้าแล้ว")
   }
 
   return (
@@ -177,14 +177,14 @@ export default function ProductDetail({ product, isFavorited }: Props) {
             href="/product"
             className={`text-sm ${uiAction.ghost}`}
           >
-            <AppLogo compact subLabel="Back to Store" />
+            <AppLogo compact subLabel="กลับไป Store" />
           </Link>
 
           <Link
             href="/cart"
             className={`px-5 py-2.5 text-sm ${uiAction.surface}`}
           >
-            View cart
+            ดูตะกร้า
           </Link>
         </div>
 
@@ -228,7 +228,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                           ? "border-black bg-[#d8ff6a]"
                           : "border-black/10 hover:border-black/30 hover:bg-[#f8f7f3]"
                       }`}
-                      aria-label={`View ${product.name} image`}
+                    aria-label={`ดูรูป ${product.name}`}
                     >
                       <Image
                         src={normalizeImagePath(image.url)}
@@ -271,9 +271,9 @@ export default function ProductDetail({ product, isFavorited }: Props) {
 
             <div className="mt-6 flex items-end justify-between gap-4 border-y border-black/10 py-5">
               <div>
-                <p className="text-sm text-black/60">Price</p>
+                <p className="text-sm text-black/60">ราคา</p>
                 <p className="mt-1 text-3xl font-semibold">
-                  {formattedPrice ?? "Price unavailable"}
+                  {formattedPrice ?? "ยังไม่มีราคา"}
                 </p>
               </div>
               <div className="text-right text-sm">
@@ -292,13 +292,13 @@ export default function ProductDetail({ product, isFavorited }: Props) {
 
             <div className="mt-7">
               <div className="mb-3 flex items-center justify-between gap-4">
-                <p className="text-sm font-semibold">Select size</p>
+                <p className="text-sm font-semibold">เลือกไซซ์</p>
                 <button
                   onClick={() => setIsSizeGuideOpen(true)}
                   className={`text-sm ${uiAction.ghost}`}
                 >
                   <Ruler size={15} />
-                  Size guide
+                  ตารางไซซ์
                 </button>
               </div>
 
@@ -328,7 +328,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                         {size.size}
                       </span>
                       <span className="mt-1 block text-xs opacity-70">
-                        {isOutOfStock ? "Sold out" : `${size.stock} left`}
+                        {isOutOfStock ? "หมด" : `เหลือ ${size.stock}`}
                       </span>
                     </button>
                   )
@@ -366,13 +366,13 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                 disabled={!canRequestAddToCart}
                 className={`h-12 flex-1 px-6 text-sm font-semibold ${uiAction.accent}`}
               >
-                {hasAvailableStock ? "Add to cart" : "Out of stock"}
+                {hasAvailableStock ? "เพิ่มลงตะกร้า" : "สินค้าหมด"}
               </button>
             </div>
 
             {selectedSizeObj && (
               <p className="mt-3 text-xs text-black/60">
-                Max {selectedSizeObj.stock} pairs available for size {selectedSizeObj.size}.
+                เลือกได้สูงสุด {selectedSizeObj.stock} คู่สำหรับไซซ์ {selectedSizeObj.size}
               </p>
             )}
 
@@ -396,7 +396,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
 
         <section className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="rounded-lg border border-black/10 bg-white p-6 md:p-8">
-            <h2 className="text-2xl font-semibold">Product details</h2>
+            <h2 className="text-2xl font-semibold">รายละเอียดสินค้า</h2>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-black/60">
               {product.description}
             </p>
@@ -416,13 +416,13 @@ export default function ProductDetail({ product, isFavorited }: Props) {
           </div>
 
           <div className="rounded-lg border border-black/10 bg-white p-6">
-            <h2 className="text-xl font-semibold">Stock snapshot</h2>
+            <h2 className="text-xl font-semibold">ภาพรวม Stock</h2>
             <div className="mt-5 space-y-3">
               {product.sizes.map((size) => (
                 <div key={size.id} className="flex items-center justify-between text-sm">
-                  <span className="text-black/60">Size {size.size}</span>
+                  <span className="text-black/60">ไซซ์ {size.size}</span>
                   <span className={size.stock > 0 ? "font-medium" : "text-red-600"}>
-                    {size.stock > 0 ? `${size.stock} pairs` : "Sold out"}
+                    {size.stock > 0 ? `${size.stock} คู่` : "หมด"}
                   </span>
                 </div>
               ))}
@@ -432,7 +432,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
               href="/product"
               className={`mt-6 w-full px-5 py-3 text-sm font-medium ${uiAction.surface}`}
             >
-              Continue browsing
+              เลือกดูสินค้าต่อ
             </Link>
           </div>
         </section>
@@ -466,14 +466,14 @@ export default function ProductDetail({ product, isFavorited }: Props) {
               >
                 <div className="mb-8 flex items-center justify-between gap-4">
                   <h2 className="text-xl font-semibold">
-                    Size guide
+                    ตารางไซซ์
                   </h2>
 
                   <button
                     onClick={() => setIsSizeGuideOpen(false)}
                     className={`text-sm ${uiAction.ghost}`}
                   >
-                    Close
+                    ปิด
                   </button>
                 </div>
 

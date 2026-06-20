@@ -54,7 +54,7 @@ function createPaymentSnapshot(paymentMethod: PaymentMethod) {
       paymentMethod,
       paidAt: new Date(),
       paymentNote:
-        "Mock instant payment approved from customer checkout. No real payment was processed.",
+        "ลูกค้าเลือก Mock payment ทันทีจากหน้า Checkout ไม่มีการชำระเงินจริง",
     }
   }
 
@@ -64,7 +64,7 @@ function createPaymentSnapshot(paymentMethod: PaymentMethod) {
       paymentMethod,
       paidAt: null,
       paymentNote:
-        "Customer selected bank transfer mock payment. Awaiting admin verification.",
+        "ลูกค้าเลือกโอนเงินผ่านธนาคารแบบ Mock payment รอ Admin ตรวจสอบ",
     }
   }
 
@@ -73,7 +73,7 @@ function createPaymentSnapshot(paymentMethod: PaymentMethod) {
     paymentMethod,
     paidAt: null,
     paymentNote:
-      "Customer selected cash on delivery mock payment. Payment will be confirmed later.",
+      "ลูกค้าเลือกเก็บเงินปลายทางแบบ Mock payment รอยืนยันสถานะภายหลัง",
   }
 }
 
@@ -81,13 +81,13 @@ export async function createOrder(data: CreateOrderInput) {
   const parsed = orderSchema.safeParse(data)
 
   if (!parsed.success) {
-    throw new Error("Invalid order data")
+    throw new Error("ข้อมูลออเดอร์ไม่ถูกต้อง")
   }
 
   const user = await getCurrentUser()
 
   if (!user) {
-    throw new Error("Please sign in before checking out")
+    throw new Error("กรุณาเข้าสู่ระบบก่อน Checkout")
   }
 
   const items = normalizeOrderItems(parsed.data.items)
@@ -104,7 +104,7 @@ export async function createOrder(data: CreateOrderInput) {
     })
 
     if (!shippingAddress) {
-      throw new Error("Select a valid shipping address")
+      throw new Error("กรุณาเลือกที่อยู่จัดส่งที่ถูกต้อง")
     }
 
     const shippingSnapshot = toOrderShippingSnapshot(shippingAddress)
@@ -131,11 +131,11 @@ export async function createOrder(data: CreateOrderInput) {
       })
 
       if (!shoe || shoe.price === null) {
-        throw new Error("Product price was not found")
+        throw new Error("ไม่พบราคาสินค้า")
       }
 
       if (shoe.sizes.length === 0) {
-        throw new Error("Selected size was not found")
+        throw new Error("ไม่พบไซซ์ที่เลือก")
       }
 
       const stockUpdate = await tx.shoeSize.updateMany({
@@ -150,7 +150,7 @@ export async function createOrder(data: CreateOrderInput) {
       })
 
       if (stockUpdate.count !== 1) {
-        throw new Error("Insufficient stock for selected size")
+        throw new Error("สินค้าในไซซ์ที่เลือกมีไม่เพียงพอ")
       }
 
       const price = new Prisma.Decimal(shoe.price)

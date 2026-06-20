@@ -84,17 +84,16 @@ export default async function AdminOrdersPage({
     <div className="space-y-6 text-gray-100">
       <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Orders</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">ออเดอร์</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-400">
-            Review customer, shipping, order, and mock payment state from one
-            protected admin view.
+            ตรวจสอบลูกค้า ที่อยู่จัดส่ง สินค้า และสถานะ Mock payment จากหน้า Admin เดียว
           </p>
         </div>
       </header>
 
       <form className="grid gap-3 rounded-lg border border-gray-800 bg-gray-900 p-4 lg:grid-cols-[1fr_180px_180px_auto_auto]">
         <label className="relative block">
-          <span className="sr-only">Search orders</span>
+          <span className="sr-only">ค้นหาออเดอร์</span>
           <Search
             className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
             size={17}
@@ -102,7 +101,7 @@ export default async function AdminOrdersPage({
           <input
             name="q"
             defaultValue={query}
-            aria-label="Search by id, email, name, or phone"
+            aria-label="ค้นหาด้วย id, email, ชื่อ หรือเบอร์โทร"
             className="h-11 w-full rounded-lg border border-gray-700 bg-gray-950 pl-10 pr-3 text-sm text-white outline-none transition focus:border-white"
           />
         </label>
@@ -112,7 +111,7 @@ export default async function AdminOrdersPage({
           defaultValue={activeStatus}
           className="h-11 rounded-lg border border-gray-700 bg-gray-950 px-3 text-sm text-white outline-none transition focus:border-white"
         >
-          <option value="all">All statuses</option>
+          <option value="all">ทุกสถานะ</option>
           {ORDER_STATUSES.map((status) => (
             <option key={status} value={status}>
               {orderStatusLabels[status]}
@@ -125,7 +124,7 @@ export default async function AdminOrdersPage({
           defaultValue={activePayment}
           className="h-11 rounded-lg border border-gray-700 bg-gray-950 px-3 text-sm text-white outline-none transition focus:border-white"
         >
-          <option value="all">All payments</option>
+          <option value="all">ทุกสถานะ Payment</option>
           {PAYMENT_STATUSES.map((status) => (
             <option key={status} value={status}>
               {paymentStatusLabels[status]}
@@ -137,7 +136,7 @@ export default async function AdminOrdersPage({
           type="submit"
           className="inline-flex h-11 items-center justify-center rounded-lg border border-black bg-[#d8ff6a] px-4 text-sm font-semibold text-black transition hover:bg-white hover:text-black"
         >
-          Apply
+          ใช้ตัวกรอง
         </button>
 
         <Link
@@ -145,17 +144,16 @@ export default async function AdminOrdersPage({
           className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-950 px-4 text-sm font-medium text-gray-200 transition hover:bg-gray-800 hover:text-white"
         >
           <RotateCcw size={16} />
-          Reset
+          รีเซ็ต
         </Link>
       </form>
 
       <section className="overflow-hidden rounded-lg border border-gray-800 bg-gray-900">
         {orders.length === 0 ? (
           <div className="p-8 text-center">
-            <p className="font-medium text-gray-200">No orders found</p>
+            <p className="font-medium text-gray-200">ไม่พบออเดอร์</p>
             <p className="mt-2 text-sm text-gray-500">
-              Orders will appear here after checkout, or after filters are
-              cleared.
+              ออเดอร์จะแสดงที่นี่หลัง Checkout หรือเมื่อล้างตัวกรองแล้ว
             </p>
           </div>
         ) : (
@@ -186,8 +184,8 @@ export default async function AdminOrdersPage({
                       {order.user.email}
                     </p>
                     <p className="mt-1 text-xs text-gray-500">
-                      {order.shippingRecipientName ?? "No recipient"} -{" "}
-                      {order.shippingPhone ?? "No phone"}
+                      {order.shippingRecipientName ?? "ไม่มีชื่อผู้รับ"} -{" "}
+                      {order.shippingPhone ?? "ไม่มีเบอร์โทร"}
                     </p>
                   </div>
 
@@ -205,13 +203,13 @@ export default async function AdminOrdersPage({
                       {formatCurrency(order.total.toString())}
                     </p>
                     <p className="mt-1 text-xs text-gray-500">
-                      {itemCount} item{itemCount === 1 ? "" : "s"} -{" "}
+                      {itemCount} รายการ -{" "}
                       {paymentMethodLabels[order.paymentMethod]}
                     </p>
                   </div>
 
                   <span className="inline-flex items-center justify-end gap-1 text-sm font-medium text-[#ecff9c]">
-                    Details
+                    รายละเอียด
                     <ArrowRight size={15} />
                   </span>
                 </Link>

@@ -35,7 +35,7 @@ export interface AddressView extends AddressInput {
 }
 
 const emptyForm: AddressInput = {
-  label: "Home",
+  label: "บ้าน",
   recipientName: "",
   phone: "",
   addressLine1: "",
@@ -128,7 +128,7 @@ export default function AddressBookClient({
 
     if (Object.keys(nextFieldErrors).length > 0) {
       setFieldErrors(nextFieldErrors)
-      toast.error("Please complete the required address fields")
+      toast.error("กรุณากรอกข้อมูลที่อยู่ให้ครบ")
       return
     }
 
@@ -136,17 +136,17 @@ export default function AddressBookClient({
       try {
         if (editingId) {
           await updateAddress(editingId, form)
-          toast.success("Address updated")
+          toast.success("อัปเดตที่อยู่แล้ว")
         } else {
           await createAddress(form)
-          toast.success("Address added")
+          toast.success("เพิ่มที่อยู่แล้ว")
         }
 
         closeForm()
         router.refresh()
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Unable to save address"
+          error instanceof Error ? error.message : "ไม่สามารถบันทึกที่อยู่ได้"
         )
       }
     })
@@ -156,27 +156,27 @@ export default function AddressBookClient({
     startTransition(async () => {
       try {
         await setDefaultAddress(id)
-        toast.success("Default address updated")
+        toast.success("ตั้งเป็นที่อยู่เริ่มต้นแล้ว")
         router.refresh()
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Unable to update default"
+          error instanceof Error ? error.message : "ไม่สามารถตั้งค่าเริ่มต้นได้"
         )
       }
     })
   }
 
   function handleDelete(id: string) {
-    if (!confirm("Delete this address?")) return
+    if (!confirm("ต้องการลบที่อยู่นี้ใช่หรือไม่?")) return
 
     startTransition(async () => {
       try {
         await deleteAddress(id)
-        toast.success("Address deleted")
+        toast.success("ลบที่อยู่แล้ว")
         router.refresh()
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Unable to delete address"
+          error instanceof Error ? error.message : "ไม่สามารถลบที่อยู่ได้"
         )
       }
     })
@@ -186,12 +186,12 @@ export default function AddressBookClient({
     <div className="space-y-8">
       <header className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-sm text-black/50">Delivery settings</p>
+          <p className="text-sm text-black/50">ตั้งค่าการจัดส่ง</p>
           <h1 className="mt-2 text-4xl font-semibold leading-tight">
-            My addresses
+            ที่อยู่ของฉัน
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-black/55">
-            Save delivery addresses and choose the default address used at checkout.
+            บันทึกที่อยู่จัดส่ง และเลือกที่อยู่เริ่มต้นสำหรับ Checkout
           </p>
         </div>
 
@@ -201,7 +201,7 @@ export default function AddressBookClient({
           className={`h-11 px-5 text-sm font-semibold ${uiAction.accent}`}
         >
           <Plus size={16} />
-          Add address
+          เพิ่มที่อยู่
         </button>
       </header>
 
@@ -210,10 +210,10 @@ export default function AddressBookClient({
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-semibold">
-                {editingAddress ? "Edit address" : "Add address"}
+                {editingAddress ? "แก้ไขที่อยู่" : "เพิ่มที่อยู่"}
               </h2>
               <p className="mt-1 text-sm text-black/50">
-                Recipient and location details are required for checkout.
+                ข้อมูลผู้รับและตำแหน่งจัดส่งจำเป็นสำหรับ Checkout
               </p>
             </div>
             <button
@@ -221,29 +221,29 @@ export default function AddressBookClient({
               onClick={closeForm}
               className={`px-4 py-2 text-sm ${uiAction.surface}`}
             >
-              Cancel
+              ยกเลิก
             </button>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <AddressInputField
-              label="Label"
+              label="ชื่อที่อยู่"
               value={form.label}
               onChange={(value) => updateField("label", value)}
-              placeholder="Home, Work, Studio"
+              placeholder="บ้าน, ที่ทำงาน, Studio"
               error={fieldErrors.label}
               required
             />
             <AddressInputField
-              label="Recipient name"
+              label="ชื่อผู้รับ"
               value={form.recipientName}
               onChange={(value) => updateField("recipientName", value)}
-              placeholder="Full name"
+              placeholder="ชื่อ-นามสกุล"
               error={fieldErrors.recipientName}
               required
             />
             <AddressInputField
-              label="Phone"
+              label="เบอร์โทร"
               value={form.phone}
               onChange={(value) => updateField("phone", value)}
               placeholder="080-000-0000"
@@ -251,7 +251,7 @@ export default function AddressBookClient({
               required
             />
             <AddressInputField
-              label="Postal code"
+              label="รหัสไปรษณีย์"
               value={form.postalCode}
               onChange={(value) => updateField("postalCode", value)}
               placeholder="10330"
@@ -259,43 +259,43 @@ export default function AddressBookClient({
               required
             />
             <AddressInputField
-              label="Address line 1"
+              label="ที่อยู่"
               value={form.addressLine1}
               onChange={(value) => updateField("addressLine1", value)}
-              placeholder="House number, building, street"
+              placeholder="บ้านเลขที่ อาคาร ถนน"
               error={fieldErrors.addressLine1}
               required
               wide
             />
             <AddressInputField
-              label="Address line 2"
+              label="รายละเอียดเพิ่มเติม"
               value={form.addressLine2 ?? ""}
               onChange={(value) => updateField("addressLine2", value)}
-              placeholder="Room, floor, landmark"
+              placeholder="ห้อง ชั้น จุดสังเกต"
               error={fieldErrors.addressLine2}
               wide
             />
             <AddressInputField
-              label="Subdistrict"
+              label="ตำบล/แขวง"
               value={form.subdistrict}
               onChange={(value) => updateField("subdistrict", value)}
-              placeholder="Subdistrict"
+              placeholder="ตำบล/แขวง"
               error={fieldErrors.subdistrict}
               required
             />
             <AddressInputField
-              label="District"
+              label="อำเภอ/เขต"
               value={form.district}
               onChange={(value) => updateField("district", value)}
-              placeholder="District"
+              placeholder="อำเภอ/เขต"
               error={fieldErrors.district}
               required
             />
             <AddressInputField
-              label="Province"
+              label="จังหวัด"
               value={form.province}
               onChange={(value) => updateField("province", value)}
-              placeholder="Province"
+              placeholder="จังหวัด"
               error={fieldErrors.province}
               required
             />
@@ -306,7 +306,7 @@ export default function AddressBookClient({
                 onChange={(event) => updateField("isDefault", event.target.checked)}
                 className="h-4 w-4 accent-black"
               />
-              Set as default address
+              ตั้งเป็นที่อยู่เริ่มต้น
             </label>
           </div>
 
@@ -317,7 +317,7 @@ export default function AddressBookClient({
             className={`mt-5 h-11 px-5 text-sm font-semibold ${uiAction.accent}`}
           >
             {isPending && <Loader2 size={16} className="animate-spin" />}
-            {editingAddress ? "Save address" : "Create address"}
+            {editingAddress ? "บันทึกที่อยู่" : "สร้างที่อยู่"}
           </button>
         </section>
       )}
@@ -328,10 +328,10 @@ export default function AddressBookClient({
             <MapPin size={24} />
           </div>
           <h2 className="mt-5 text-2xl font-semibold">
-            No saved addresses
+            ยังไม่มีที่อยู่ที่บันทึกไว้
           </h2>
           <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-black/55">
-            Add a delivery address once, then select it from checkout like a real marketplace flow.
+            เพิ่มที่อยู่จัดส่งครั้งเดียว แล้วเลือกใช้ได้จาก Checkout แบบร้านค้าออนไลน์จริง
           </p>
         </section>
       ) : (
@@ -355,7 +355,7 @@ export default function AddressBookClient({
                     {address.isDefault && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-[#eef7f0] px-3 py-1.5 text-xs font-medium text-[#1f6a3a]">
                         <CheckCircle2 size={13} />
-                        Default
+                        ค่าเริ่มต้น
                       </span>
                     )}
                   </div>
@@ -385,7 +385,7 @@ export default function AddressBookClient({
                       className={`h-10 px-4 text-sm ${uiAction.surface}`}
                     >
                       <Star size={15} />
-                      Set default
+                      ตั้งเริ่มต้น
                     </button>
                   )}
                   <button
@@ -394,7 +394,7 @@ export default function AddressBookClient({
                     className={`h-10 px-4 text-sm ${uiAction.surface}`}
                   >
                     <Pencil size={15} />
-                    Edit
+                    แก้ไข
                   </button>
                   <button
                     type="button"
@@ -403,7 +403,7 @@ export default function AddressBookClient({
                     className={`h-10 px-4 text-sm ${uiAction.danger}`}
                   >
                     <Trash2 size={15} />
-                    Delete
+                    ลบ
                   </button>
                 </div>
               </div>
@@ -442,7 +442,7 @@ function AddressInputField({
           </span>
         ) : (
           <span className="text-xs text-black/50">
-            Optional
+            ไม่บังคับ
           </span>
         )}
       </span>

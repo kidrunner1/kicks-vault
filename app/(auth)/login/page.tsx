@@ -15,12 +15,12 @@ const loginSchema = z.object({
   email: z
     .string()
     .trim()
-    .min(1, "Email is required.")
-    .email("Enter a valid email address."),
+    .min(1, "กรุณากรอก Email")
+    .email("กรุณากรอก Email ให้ถูกต้อง"),
   password: z
     .string()
-    .min(1, "Password is required.")
-    .min(6, "Password must be at least 6 characters."),
+    .min(1, "กรุณากรอกรหัสผ่าน")
+    .min(6, "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"),
 })
 
 type LoginFieldErrors = {
@@ -77,14 +77,14 @@ export default function LoginPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        setFormError(data.error || "Email or password is incorrect.")
+        setFormError(data.error || "Email หรือรหัสผ่านไม่ถูกต้อง")
         return
       }
 
       setUser(data.user)
       router.push(data.user.role === "ADMIN" ? "/admin" : "/")
     } catch {
-      setFormError("Unable to connect. Please try again.")
+      setFormError("ไม่สามารถเชื่อมต่อได้ กรุณาลองอีกครั้ง")
     } finally {
       setLoading(false)
     }
@@ -117,10 +117,10 @@ export default function LoginPage() {
         </div>
 
         <h1 className="text-4xl font-semibold leading-tight tracking-tight">
-          Welcome back
+          ยินดีต้อนรับกลับ
         </h1>
         <p className="mt-3 text-sm leading-6 text-black/65">
-          Sign in to use saved addresses, favorites, and order history.
+          เข้าสู่ระบบเพื่อใช้ที่อยู่ที่บันทึกไว้ รายการโปรด และประวัติออเดอร์
         </p>
       </div>
 
@@ -153,7 +153,7 @@ export default function LoginPage() {
         <FormInput
           type="password"
           name="password"
-          label="Password"
+          label="รหัสผ่าน"
           icon={<Lock size={18} />}
           value={password}
           onChange={handlePasswordChange}
@@ -169,19 +169,19 @@ export default function LoginPage() {
           className={`h-12 w-full px-5 text-sm font-semibold ${uiAction.accent}`}
         >
           <LogIn size={16} />
-          {loading ? "Signing in..." : "Sign in"}
+          {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
         </button>
       </form>
 
       <div className="mt-7 border-t border-black/10 pt-5">
         <p className="mb-3 text-sm text-black/60">
-          New to Kicks Vault?
+          ยังไม่มีบัญชี Kicks Vault?
         </p>
         <Link
           href="/register"
           className={`h-11 w-full px-4 text-sm font-medium ${uiAction.surface}`}
         >
-          Create account
+          สร้างบัญชี
           <ArrowRight size={15} />
         </Link>
       </div>

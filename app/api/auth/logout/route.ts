@@ -38,7 +38,7 @@ export async function POST() {
   }
 
   const response = NextResponse.json(
-    { message: "Logged out" },
+    { message: "ออกจากระบบแล้ว" },
     { status: 200 }
   )
 

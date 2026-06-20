@@ -44,7 +44,7 @@ export default function PaymentStatusForm({
           className="text-sm font-medium text-gray-300"
           htmlFor="paymentMethod"
         >
-          Payment method
+          วิธีชำระเงิน
         </label>
         <select
           id="paymentMethod"
@@ -65,7 +65,7 @@ export default function PaymentStatusForm({
           className="text-sm font-medium text-gray-300"
           htmlFor="paymentNote"
         >
-          Payment note
+          หมายเหตุ Payment
         </label>
         <textarea
           id="paymentNote"
@@ -91,7 +91,7 @@ export default function PaymentStatusForm({
                 : "border-gray-700 bg-gray-950 text-gray-200 hover:bg-gray-800 hover:text-white"
             }`}
           >
-            Mark as {paymentStatusLabels[status].toLowerCase()}
+            ตั้งเป็น {paymentStatusLabels[status]}
           </button>
         ))}
       </div>

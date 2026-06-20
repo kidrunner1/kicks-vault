@@ -7,7 +7,7 @@ export default function ProfileCard({ email }: Props) {
     <div className="border border-neutral-800 p-10 rounded-2xl space-y-4">
 
       <p className="text-neutral-500 text-sm uppercase tracking-wide">
-        Email
+        Email บัญชี
       </p>
 
       <p className="text-xl">

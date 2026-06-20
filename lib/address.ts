@@ -1,15 +1,15 @@
 import { z } from "zod"
 
 export const addressInputSchema = z.object({
-  label: z.string().trim().min(1, "Label is required").max(40),
-  recipientName: z.string().trim().min(1, "Recipient name is required").max(120),
-  phone: z.string().trim().min(5, "Phone is required").max(30),
-  addressLine1: z.string().trim().min(1, "Address is required").max(180),
+  label: z.string().trim().min(1, "กรุณาระบุชื่อที่อยู่").max(40),
+  recipientName: z.string().trim().min(1, "กรุณาระบุชื่อผู้รับ").max(120),
+  phone: z.string().trim().min(5, "กรุณาระบุเบอร์โทร").max(30),
+  addressLine1: z.string().trim().min(1, "กรุณาระบุที่อยู่").max(180),
   addressLine2: z.string().trim().max(180).optional().or(z.literal("")),
-  subdistrict: z.string().trim().min(1, "Subdistrict is required").max(80),
-  district: z.string().trim().min(1, "District is required").max(80),
-  province: z.string().trim().min(1, "Province is required").max(80),
-  postalCode: z.string().trim().regex(/^\d{5}$/, "Postal code must be 5 digits"),
+  subdistrict: z.string().trim().min(1, "กรุณาระบุตำบล/แขวง").max(80),
+  district: z.string().trim().min(1, "กรุณาระบุอำเภอ/เขต").max(80),
+  province: z.string().trim().min(1, "กรุณาระบุจังหวัด").max(80),
+  postalCode: z.string().trim().regex(/^\d{5}$/, "รหัสไปรษณีย์ต้องเป็นตัวเลข 5 หลัก"),
   isDefault: z.boolean().optional().default(false),
 })
 
@@ -17,16 +17,16 @@ export type AddressInput = z.infer<typeof addressInputSchema>
 export type AddressFieldErrors = Partial<Record<keyof AddressInput, string>>
 
 const addressFieldLabels: Record<keyof AddressInput, string> = {
-  label: "Label",
-  recipientName: "Recipient name",
-  phone: "Phone",
-  addressLine1: "Address",
-  addressLine2: "Address line 2",
-  subdistrict: "Subdistrict",
-  district: "District",
-  province: "Province",
-  postalCode: "Postal code",
-  isDefault: "Default address",
+  label: "ชื่อที่อยู่",
+  recipientName: "ชื่อผู้รับ",
+  phone: "เบอร์โทร",
+  addressLine1: "ที่อยู่",
+  addressLine2: "รายละเอียดเพิ่มเติม",
+  subdistrict: "ตำบล/แขวง",
+  district: "อำเภอ/เขต",
+  province: "จังหวัด",
+  postalCode: "รหัสไปรษณีย์",
+  isDefault: "ที่อยู่เริ่มต้น",
 }
 
 export interface AddressRecord {
@@ -90,8 +90,8 @@ export function parseAddressInput(input: unknown): AddressInput {
 
   throw new Error(
     fieldNames
-      ? `Please complete: ${fieldNames}`
-      : "Please check the address details"
+      ? `กรุณากรอกข้อมูลให้ครบ: ${fieldNames}`
+      : "กรุณาตรวจสอบรายละเอียดที่อยู่"
   )
 }
 

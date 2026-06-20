@@ -34,7 +34,7 @@ export async function updateOrderPaymentState(
   if (!parsed.success) {
     return {
       ok: false,
-      message: "Payment update data is invalid.",
+      message: "ข้อมูล Payment ไม่ถูกต้อง",
     }
   }
 
@@ -52,7 +52,7 @@ export async function updateOrderPaymentState(
   if (!order) {
     return {
       ok: false,
-      message: "Order was not found.",
+      message: "ไม่พบออเดอร์นี้",
     }
   }
 
@@ -81,6 +81,6 @@ export async function updateOrderPaymentState(
 
   return {
     ok: true,
-    message: "Payment status updated.",
+    message: "อัปเดตสถานะ Payment แล้ว",
   }
 }

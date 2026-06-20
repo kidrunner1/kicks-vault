@@ -49,10 +49,10 @@ export interface CheckoutAddress {
 }
 
 const trustItems: { label: string; icon: LucideIcon }[] = [
-  { label: "Database prices", icon: ShieldCheck },
-  { label: "Stock checked", icon: PackageCheck },
-  { label: "Secure session", icon: LockKeyhole },
-  { label: "Fast dispatch", icon: Truck },
+  { label: "ราคาจาก Database", icon: ShieldCheck },
+  { label: "เช็ก Stock แล้ว", icon: PackageCheck },
+  { label: "Session ปลอดภัย", icon: LockKeyhole },
+  { label: "จัดส่งรวดเร็ว", icon: Truck },
 ]
 
 const paymentIcons: Record<CheckoutPaymentMethod, LucideIcon> = {
@@ -116,7 +116,7 @@ export default function CartClient({
     }
 
     if (!selectedAddressId) {
-      toast.error("Select a shipping address before checkout")
+      toast.error("กรุณาเลือกที่อยู่จัดส่งก่อน Checkout")
       router.push("/account/addresses")
       return
     }
@@ -140,7 +140,7 @@ export default function CartClient({
       const message =
         error instanceof Error
           ? error.message
-          : "Unable to process order."
+          : "ไม่สามารถดำเนินการออเดอร์ได้"
 
       toast.error(message)
     } finally {
@@ -157,7 +157,7 @@ export default function CartClient({
             className={`text-sm ${uiAction.ghost}`}
           >
             <ArrowLeft size={16} />
-            <AppLogo compact subLabel="Back to Store" />
+            <AppLogo compact subLabel="กลับไป Store" />
           </Link>
 
           <div className="flex flex-wrap gap-2 text-xs text-black/55">
@@ -180,14 +180,14 @@ export default function CartClient({
         <header className="mb-8 grid gap-4 lg:grid-cols-[1fr_360px] lg:items-end">
           <div>
             <p className="text-sm text-black/50">
-              Checkout review
+              ตรวจสอบก่อน Checkout
             </p>
             <h1 className="mt-3 text-5xl font-semibold leading-[0.92] md:text-6xl">
-              Review your order.
+              ตรวจสอบออเดอร์ของคุณ
             </h1>
           </div>
           <p className="max-w-sm text-sm leading-7 text-black/55 lg:justify-self-end">
-            Choose a saved shipping address, then confirm stock-backed quantities before creating the order.
+            เลือกที่อยู่จัดส่งที่บันทึกไว้ แล้วตรวจจำนวนสินค้าก่อนสร้างออเดอร์
           </p>
         </header>
 
@@ -195,12 +195,12 @@ export default function CartClient({
           <section className="grid gap-5 rounded-lg border border-black/10 bg-white p-6 md:grid-cols-[1fr_320px] md:p-8">
             <div className="flex flex-col justify-between gap-10">
               <div>
-                <p className="text-sm text-black/50">Cart is empty</p>
+                <p className="text-sm text-black/50">ตะกร้าว่างอยู่</p>
                 <h2 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight">
-                  Your next pair is still waiting in the vault.
+                  คู่ต่อไปของคุณยังรออยู่ใน vault
                 </h2>
                 <p className="mt-4 max-w-xl text-sm leading-7 text-black/55">
-                  Browse men, women, and kids selections, then choose a live size before checkout.
+                  เลือกดูรุ่นสำหรับ Men, Women และ Kids แล้วเลือกไซซ์ที่ยังมี Stock ก่อน Checkout
                 </p>
               </div>
 
@@ -208,7 +208,7 @@ export default function CartClient({
                 href="/product"
                 className={`w-fit px-5 py-3 text-sm font-semibold ${uiAction.accent}`}
               >
-                Browse products
+                เลือกซื้อสินค้า
                 <ArrowLeft size={15} className="rotate-180" />
               </Link>
             </div>
@@ -230,17 +230,17 @@ export default function CartClient({
                 <div className="flex items-center justify-between gap-4 border-b border-black/10 pb-4">
                   <div>
                     <h2 className="text-xl font-semibold">
-                      Cart items
+                      สินค้าในตะกร้า
                     </h2>
                     <p className="mt-1 text-sm text-black/50">
-                      {itemCount} {itemCount === 1 ? "pair" : "pairs"} reserved from your local cart.
+                      มีทั้งหมด {itemCount} คู่ในตะกร้าของคุณ
                     </p>
                   </div>
                   <Link
                     href="/product"
                     className={`px-4 py-2 text-sm ${uiAction.secondary}`}
                   >
-                    Add more
+                    เพิ่มสินค้า
                   </Link>
                 </div>
 
@@ -270,7 +270,7 @@ export default function CartClient({
                               Size {item.size}
                             </span>
                             <span className="rounded-full bg-[#eef7f0] px-3 py-1.5 text-[#1f6a3a]">
-                              {item.maxStock} available
+                              เหลือ {item.maxStock} คู่
                             </span>
                           </div>
 
@@ -286,7 +286,7 @@ export default function CartClient({
                                   )
                                 }
                                 disabled={item.quantity <= 1}
-                                aria-label={`Decrease quantity for ${item.name}`}
+                                aria-label={`ลดจำนวน ${item.name}`}
                                 className="flex h-9 w-9 items-center justify-center rounded-full text-black transition hover:bg-black/10 disabled:cursor-not-allowed disabled:text-black/45"
                               >
                                 <Minus size={15} />
@@ -306,7 +306,7 @@ export default function CartClient({
                                   )
                                 }
                                 disabled={item.quantity >= item.maxStock}
-                                aria-label={`Increase quantity for ${item.name}`}
+                                aria-label={`เพิ่มจำนวน ${item.name}`}
                                 className="flex h-9 w-9 items-center justify-center rounded-full text-black transition hover:bg-black/10 disabled:cursor-not-allowed disabled:text-black/45"
                               >
                                 <Plus size={15} />
@@ -319,17 +319,17 @@ export default function CartClient({
                               className={`px-3 py-2 text-sm ${uiAction.danger}`}
                             >
                               <Trash2 size={15} />
-                              Remove
+                              ลบออก
                             </button>
                           </div>
                         </div>
 
                         <div className="min-w-36 text-left md:text-right">
-                          <p className="text-sm text-black/60">Unit price</p>
+                          <p className="text-sm text-black/60">ราคาต่อคู่</p>
                           <p className="mt-1 font-medium">
                             {formatCurrency(item.price)}
                           </p>
-                          <p className="mt-4 text-sm text-black/60">Line total</p>
+                          <p className="mt-4 text-sm text-black/60">รวมรายการนี้</p>
                           <p className="mt-1 text-lg font-semibold">
                             {formatCurrency(item.price * item.quantity)}
                           </p>
@@ -363,30 +363,30 @@ export default function CartClient({
                   <div className="flex items-center gap-2">
                     <MapPin size={18} />
                     <h2 className="text-lg font-semibold">
-                      Shipping address
+                      ที่อยู่จัดส่ง
                     </h2>
                   </div>
                   <Link
                     href="/account/addresses"
                     className={`text-sm ${uiAction.ghost}`}
                   >
-                    Manage
+                    จัดการ
                   </Link>
                 </div>
 
                 {!isSignedIn ? (
                   <AddressEmptyState
-                    title="Sign in required"
-                    description="Sign in to use saved delivery addresses."
+                    title="กรุณาเข้าสู่ระบบ"
+                    description="เข้าสู่ระบบเพื่อใช้ที่อยู่จัดส่งที่บันทึกไว้"
                     href="/login"
-                    action="Sign in"
+                    action="เข้าสู่ระบบ"
                   />
                 ) : addresses.length === 0 ? (
                   <AddressEmptyState
-                    title="No saved address"
-                    description="Add a delivery address before placing your order."
+                    title="ยังไม่มีที่อยู่"
+                    description="เพิ่มที่อยู่จัดส่งก่อนยืนยันออเดอร์"
                     href="/account/addresses"
-                    action="Add address"
+                    action="เพิ่มที่อยู่"
                   />
                 ) : (
                   <div className="space-y-3">
@@ -409,7 +409,7 @@ export default function CartClient({
                                 </span>
                                 {address.isDefault && (
                                   <span className="rounded-full bg-[#eef7f0] px-3 py-1 text-xs font-medium text-[#1f6a3a]">
-                                    Default
+                                    ค่าเริ่มต้น
                                   </span>
                                 )}
                               </div>
@@ -444,11 +444,11 @@ export default function CartClient({
                   <div className="flex items-center gap-2">
                     <CreditCard size={18} />
                     <h2 className="text-lg font-semibold">
-                      Payment method
+                      วิธีชำระเงิน
                     </h2>
                   </div>
                   <span className="rounded-full bg-[#f4f3ef] px-3 py-1 text-xs text-black/55">
-                    Mock only
+                    Mock เท่านั้น
                   </span>
                 </div>
 
@@ -504,7 +504,7 @@ export default function CartClient({
                 <div className="mb-5 flex items-center gap-2">
                   <CreditCard size={18} />
                   <h2 className="text-lg font-semibold">
-                    Order review
+                    สรุปออเดอร์
                   </h2>
                 </div>
 
@@ -523,24 +523,24 @@ export default function CartClient({
                 </div>
 
                 <div className="mt-5 space-y-4 text-sm">
-                  <SummaryRow label="Subtotal" value={formatCurrency(subtotal)} />
+                  <SummaryRow label="ยอดสินค้า" value={formatCurrency(subtotal)} />
                   <SummaryRow
-                    label="Shipping"
-                    value={shipping === 0 ? "Free" : formatCurrency(shipping)}
+                    label="ค่าจัดส่ง"
+                    value={shipping === 0 ? "ฟรี" : formatCurrency(shipping)}
                   />
                   {selectedAddress && (
                     <SummaryRow
-                      label="Ship to"
+                      label="จัดส่งไป"
                       value={`${selectedAddress.province} ${selectedAddress.postalCode}`}
                     />
                   )}
                   <SummaryRow
-                    label="Payment"
+                    label="ชำระเงิน"
                     value={paymentMethodLabels[selectedPaymentMethod]}
                   />
                   <div className="border-t border-black/10 pt-4">
                     <SummaryRow
-                      label="Total"
+                      label="รวมทั้งหมด"
                       value={formatCurrency(total)}
                       strong
                     />
@@ -553,12 +553,12 @@ export default function CartClient({
                   disabled={isCheckoutDisabled}
                   className={`mt-6 h-12 w-full px-6 text-sm font-semibold ${uiAction.accent}`}
                 >
-                  {loading ? "Creating order..." : "Confirm order"}
+                  {loading ? "กำลังสร้างออเดอร์..." : "ยืนยันออเดอร์"}
                 </button>
 
                 {!checkoutReady && isSignedIn && (
                   <p className="mt-3 text-xs leading-5 text-black/60">
-                    Select or add a shipping address to continue.
+                    เลือกหรือเพิ่มที่อยู่จัดส่งเพื่อดำเนินการต่อ
                   </p>
                 )}
               </div>

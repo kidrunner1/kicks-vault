@@ -95,14 +95,14 @@ export default function ShoeForm({
     const numericPrice = Number(values.price)
 
     if (!values.name.trim() || !values.brandId || !Number.isFinite(numericPrice) || numericPrice < 0) {
-      setMessage("Name, brand, and valid price are required.")
+      setMessage("กรุณาระบุชื่อสินค้า แบรนด์ และราคาที่ถูกต้อง")
       return
     }
 
     const normalizedSizes = normalizeStockRows(values.sizes)
 
     if (normalizedSizes.length === 0) {
-      setMessage("Add at least one size row.")
+      setMessage("กรุณาเพิ่มข้อมูลไซซ์อย่างน้อย 1 แถว")
       return
     }
 
@@ -137,14 +137,14 @@ export default function ShoeForm({
       const data = await res.json()
 
       if (!res.ok) {
-        setMessage(data.error || "Unable to save product.")
+        setMessage(data.error || "ไม่สามารถบันทึกสินค้าได้")
         return
       }
 
       router.push("/admin/shoes")
       router.refresh()
     } catch {
-      setMessage("Unable to connect to the server.")
+      setMessage("ไม่สามารถเชื่อมต่อกับ server ได้")
     } finally {
       setSaving(false)
     }
@@ -154,10 +154,10 @@ export default function ShoeForm({
     <div className="max-w-3xl text-gray-100 space-y-6">
       <div>
         <h1 className="text-3xl font-semibold">
-          {mode === "create" ? "Add Shoe" : "Edit Shoe"}
+          {mode === "create" ? "เพิ่มสินค้า" : "แก้ไขสินค้า"}
         </h1>
         <p className="mt-2 text-sm text-gray-400">
-          Manage the product basics customers need before checkout.
+          จัดการข้อมูลพื้นฐานที่ลูกค้าต้องเห็นก่อน Checkout
         </p>
       </div>
 
@@ -169,7 +169,7 @@ export default function ShoeForm({
         )}
 
         <div>
-          <label className="text-sm text-gray-400">Name</label>
+          <label className="text-sm text-gray-400">ชื่อสินค้า</label>
           <input
             value={values.name}
             onChange={(event) => updateField("name", event.target.value)}
@@ -183,7 +183,7 @@ export default function ShoeForm({
         </div>
 
         <div>
-          <label className="text-sm text-gray-400">Description</label>
+          <label className="text-sm text-gray-400">รายละเอียด</label>
           <textarea
             value={values.description}
             onChange={(event) => updateField("description", event.target.value)}
@@ -194,13 +194,13 @@ export default function ShoeForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="text-sm text-gray-400">Brand</label>
+            <label className="text-sm text-gray-400">แบรนด์</label>
             <select
               value={values.brandId}
               onChange={(event) => updateField("brandId", event.target.value)}
               className="w-full mt-1 p-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500"
             >
-              <option value="">Select Brand</option>
+              <option value="">เลือกแบรนด์</option>
               {brands.map((brand) => (
                 <option key={brand.id} value={brand.id}>
                   {brand.name}
@@ -210,7 +210,7 @@ export default function ShoeForm({
           </div>
 
           <div>
-            <label className="text-sm text-gray-400">Price</label>
+            <label className="text-sm text-gray-400">ราคา</label>
             <input
               type="number"
               min="0"
@@ -223,7 +223,7 @@ export default function ShoeForm({
         </div>
 
         <div>
-          <label className="text-sm text-gray-400">Primary Image URL</label>
+          <label className="text-sm text-gray-400">URL รูปหลัก</label>
           <input
             value={values.image}
             onChange={(event) => updateField("image", event.target.value)}
@@ -234,9 +234,9 @@ export default function ShoeForm({
         <div>
           <div className="flex items-center justify-between gap-4 mb-3">
             <div>
-              <h2 className="text-lg font-medium">Size Stock</h2>
+              <h2 className="text-lg font-medium">Stock ตามไซซ์</h2>
               <p className="text-sm text-gray-500">
-                These rows power product availability and checkout limits.
+                ข้อมูลนี้ใช้แสดงสถานะสินค้าและจำกัดจำนวนตอน Checkout
               </p>
             </div>
             <button
@@ -244,7 +244,7 @@ export default function ShoeForm({
               onClick={addSizeRow}
               className="rounded-lg border border-gray-700 px-3 py-2 text-sm text-gray-200 hover:bg-gray-800"
             >
-              Add Size
+              เพิ่มไซซ์
             </button>
           </div>
 
@@ -254,7 +254,7 @@ export default function ShoeForm({
                 <input
                   value={row.size}
                   onChange={(event) => updateSize(index, "size", event.target.value)}
-                  placeholder="Size"
+                  placeholder="ไซซ์"
                   className="p-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-blue-500"
                 />
                 <input
@@ -270,7 +270,7 @@ export default function ShoeForm({
                   onClick={() => removeSizeRow(index)}
                   className="rounded-lg px-3 py-2 text-sm text-red-300 hover:bg-red-500/10"
                 >
-                  Remove
+                  ลบ
                 </button>
               </div>
             ))}
@@ -282,7 +282,7 @@ export default function ShoeForm({
           disabled={saving}
           className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-medium transition disabled:opacity-50"
         >
-          {saving ? "Saving..." : mode === "create" ? "Create Shoe" : "Update Shoe"}
+          {saving ? "กำลังบันทึก..." : mode === "create" ? "สร้างสินค้า" : "อัปเดตสินค้า"}
         </button>
       </div>
     </div>

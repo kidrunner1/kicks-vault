@@ -5,6 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import FavoriteRemoveButton from "@/app/component/ui/FavoriteRemoveButton"
 import { normalizeImagePath } from "@/lib/image"
+import { formatCurrency } from "@/lib/commerce"
 
 export default async function FavoritesPage() {
 
@@ -30,10 +31,10 @@ export default async function FavoritesPage() {
             {/* ================= HEADER ================= */}
             <div>
                 <h1 className="text-3xl font-semibold">
-                    Your Collection
+                    คอลเลกชันของคุณ
                 </h1>
                 <p className="text-sm text-black/50 mt-2">
-                    Sneakers you have saved for later.
+                    Sneaker ที่คุณบันทึกไว้สำหรับกลับมาดูภายหลัง
                 </p>
             </div>
 
@@ -97,7 +98,7 @@ export default async function FavoritesPage() {
 
                                     {shoe.price && (
                                         <p className="text-sm text-black/70">
-                                            ${Number(shoe.price).toFixed(2)}
+                                            {formatCurrency(shoe.price.toString())}
                                         </p>
                                     )}
 

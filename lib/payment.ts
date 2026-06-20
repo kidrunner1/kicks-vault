@@ -22,35 +22,35 @@ export const checkoutPaymentOptions: {
 }[] = [
   {
     method: "MANUAL",
-    title: "Mock instant payment",
-    description: "Simulate an approved online payment without charging a card.",
-    badge: "Marked paid",
+    title: "Mock payment ทันที",
+    description: "จำลองการชำระเงินผ่านแล้ว โดยไม่มีการตัดบัตรจริง",
+    badge: "ชำระแล้ว",
   },
   {
     method: "BANK_TRANSFER",
-    title: "Bank transfer",
-    description: "Place the order now and let admin verify transfer details later.",
-    badge: "Admin review",
+    title: "โอนเงินผ่านธนาคาร",
+    description: "สร้างออเดอร์ไว้ก่อน แล้วให้ Admin ตรวจสอบยอดโอนภายหลัง",
+    badge: "รอตรวจสอบ",
   },
   {
     method: "COD",
-    title: "Cash on delivery",
-    description: "Pay when the order arrives. Admin can confirm payment later.",
-    badge: "Pay later",
+    title: "เก็บเงินปลายทาง",
+    description: "ชำระเมื่อได้รับสินค้า แล้วให้ Admin ยืนยันสถานะภายหลัง",
+    badge: "จ่ายทีหลัง",
   },
 ]
 
 export const paymentMethodLabels: Record<CheckoutPaymentMethod, string> = {
-  MANUAL: "Mock instant payment",
-  BANK_TRANSFER: "Bank transfer",
-  COD: "Cash on delivery",
+  MANUAL: "Mock payment ทันที",
+  BANK_TRANSFER: "โอนเงินผ่านธนาคาร",
+  COD: "เก็บเงินปลายทาง",
 }
 
 export const paymentStatusLabels: Record<CheckoutPaymentStatus, string> = {
-  UNPAID: "Unpaid",
-  PAID: "Paid",
-  FAILED: "Failed",
-  REFUNDED: "Refunded",
+  UNPAID: "ยังไม่ชำระ",
+  PAID: "ชำระแล้ว",
+  FAILED: "ชำระไม่สำเร็จ",
+  REFUNDED: "คืนเงินแล้ว",
 }
 
 export const paymentStatusToneClass: Record<CheckoutPaymentStatus, string> = {
@@ -62,10 +62,10 @@ export const paymentStatusToneClass: Record<CheckoutPaymentStatus, string> = {
 
 export const paymentStatusDescriptions: Record<CheckoutPaymentStatus, string> =
   {
-    UNPAID: "Payment is pending admin confirmation.",
-    PAID: "Mock payment was recorded successfully.",
-    FAILED: "Payment needs attention before fulfillment.",
-    REFUNDED: "Payment has been marked as refunded.",
+    UNPAID: "สถานะการชำระเงินรอ Admin ตรวจสอบ",
+    PAID: "บันทึก Mock payment สำเร็จแล้ว",
+    FAILED: "การชำระเงินต้องตรวจสอบก่อนดำเนินการต่อ",
+    REFUNDED: "ออเดอร์นี้ถูกทำเครื่องหมายว่าคืนเงินแล้ว",
   }
 
 export function isCheckoutPaymentMethod(

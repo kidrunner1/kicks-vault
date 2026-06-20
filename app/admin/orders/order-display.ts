@@ -20,24 +20,24 @@ export type PaymentStatusValue = (typeof PAYMENT_STATUSES)[number]
 export type PaymentMethodValue = (typeof PAYMENT_METHODS)[number]
 
 export const orderStatusLabels: Record<OrderStatusValue, string> = {
-  PENDING: "Pending",
-  PROCESSING: "Processing",
-  SHIPPED: "Shipped",
-  DELIVERED: "Delivered",
-  CANCELLED: "Cancelled",
+  PENDING: "รอดำเนินการ",
+  PROCESSING: "กำลังเตรียมสินค้า",
+  SHIPPED: "จัดส่งแล้ว",
+  DELIVERED: "ส่งสำเร็จ",
+  CANCELLED: "ยกเลิกแล้ว",
 }
 
 export const paymentStatusLabels: Record<PaymentStatusValue, string> = {
-  UNPAID: "Unpaid",
-  PAID: "Paid",
-  FAILED: "Failed",
-  REFUNDED: "Refunded",
+  UNPAID: "ยังไม่ชำระ",
+  PAID: "ชำระแล้ว",
+  FAILED: "ชำระไม่สำเร็จ",
+  REFUNDED: "คืนเงินแล้ว",
 }
 
 export const paymentMethodLabels: Record<PaymentMethodValue, string> = {
-  MANUAL: "Manual",
-  BANK_TRANSFER: "Bank Transfer",
-  COD: "Cash on Delivery",
+  MANUAL: "Mock payment ทันที",
+  BANK_TRANSFER: "โอนเงินผ่านธนาคาร",
+  COD: "เก็บเงินปลายทาง",
 }
 
 export const orderStatusTones: Record<OrderStatusValue, string> = {
@@ -73,7 +73,7 @@ export function formatAdminDate(date: Date | null | undefined) {
     return "-"
   }
 
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("th-TH", {
     month: "short",
     day: "numeric",
     year: "numeric",

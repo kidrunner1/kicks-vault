@@ -12,7 +12,7 @@ export async function GET(
 
     if (!id) {
       return NextResponse.json(
-        { error: "Missing id" },
+        { error: "ไม่พบรหัสสินค้า" },
         { status: 400 }
       )
     }
@@ -34,7 +34,7 @@ export async function GET(
 
     if (!shoe) {
       return NextResponse.json(
-        { error: "Shoe not found" },
+        { error: "ไม่พบสินค้านี้" },
         { status: 404 }
       )
     }
@@ -55,7 +55,7 @@ export async function GET(
     console.error(error)
 
     return NextResponse.json(
-      { error: "Server error" },
+      { error: "เกิดข้อผิดพลาดภายในระบบ" },
       { status: 500 }
     )
 

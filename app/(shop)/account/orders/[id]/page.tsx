@@ -44,6 +44,15 @@ function statusClass(status: string) {
   return "border border-black bg-[#d8ff6a] text-black"
 }
 
+function orderStatusLabel(status: string) {
+  if (status === "DELIVERED") return "ส่งสำเร็จ"
+  if (status === "CANCELLED") return "ยกเลิกแล้ว"
+  if (status === "SHIPPED") return "จัดส่งแล้ว"
+  if (status === "PROCESSING") return "กำลังเตรียมสินค้า"
+
+  return "รอดำเนินการ"
+}
+
 export default async function OrderDetailPage({ params }: Props) {
   const user = await getCurrentUser()
   if (!user) redirect("/login")
@@ -99,29 +108,29 @@ export default async function OrderDetailPage({ params }: Props) {
           className={`text-sm ${uiAction.ghost}`}
         >
           <ArrowLeft size={15} />
-          Back to orders
+          กลับไปประวัติออเดอร์
         </Link>
 
         <span className={`rounded-full px-4 py-2 text-xs font-medium ${statusClass(order.status)}`}>
-          {order.status}
+          {orderStatusLabel(order.status)}
         </span>
       </div>
 
       <header className="grid gap-5 lg:grid-cols-[1fr_320px] lg:items-end">
         <div>
           <p className="text-sm text-black/50">
-            Receipt #{order.id.slice(0, 8)}
+            ใบสรุป #{order.id.slice(0, 8)}
           </p>
           <h1 className="mt-2 text-4xl font-semibold leading-tight">
-            Order detail
+            รายละเอียดออเดอร์
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-black/55">
-            Placed {formatOrderDate(order.createdAt)} with {pairCount} {pairCount === 1 ? "pair" : "pairs"}.
+            สั่งซื้อเมื่อ {formatOrderDate(order.createdAt)} รวมทั้งหมด {pairCount} คู่
           </p>
         </div>
 
         <div className="rounded-lg border border-black/10 bg-[#f4f3ef] p-4">
-          <p className="text-sm text-black/50">Order total</p>
+          <p className="text-sm text-black/50">ยอดรวมออเดอร์</p>
           <p className="mt-2 text-3xl font-semibold">
             {formatCurrency(order.total.toString())}
           </p>
@@ -134,11 +143,11 @@ export default async function OrderDetailPage({ params }: Props) {
             <div className="flex items-center gap-2">
               <ReceiptText size={18} />
               <h2 className="text-lg font-semibold">
-                Purchased pairs
+                สินค้าที่สั่งซื้อ
               </h2>
             </div>
             <span className="text-sm text-black/50">
-              {order.items.length} {order.items.length === 1 ? "item" : "items"}
+              {order.items.length} รายการ
             </span>
           </div>
 
@@ -171,19 +180,19 @@ export default async function OrderDetailPage({ params }: Props) {
                     </h3>
                     <div className="mt-3 flex flex-wrap gap-2 text-sm text-black/55">
                       <span className="rounded-full bg-white px-3 py-1.5">
-                        Size {item.size}
+                        ไซซ์ {item.size}
                       </span>
                       <span className="rounded-full bg-white px-3 py-1.5">
-                        Qty {item.quantity}
+                        จำนวน {item.quantity}
                       </span>
                       <span className="rounded-full bg-white px-3 py-1.5">
-                        Unit {formatCurrency(item.price.toString())}
+                        ราคาต่อคู่ {formatCurrency(item.price.toString())}
                       </span>
                     </div>
                   </div>
 
                   <div className="md:text-right">
-                    <p className="text-sm text-black/60">Line total</p>
+                    <p className="text-sm text-black/60">รวมรายการนี้</p>
                     <p className="mt-1 text-lg font-semibold">
                       {formatCurrency(lineTotal)}
                     </p>
@@ -199,18 +208,18 @@ export default async function OrderDetailPage({ params }: Props) {
             <div className="mb-5 flex items-center gap-2">
               <PackageCheck size={18} />
               <h2 className="text-lg font-semibold">
-                Summary
+                สรุปออเดอร์
               </h2>
             </div>
 
             <div className="space-y-4 text-sm">
-              <SummaryRow label="Items subtotal" value={formatCurrency(lineSubtotal)} />
-              <SummaryRow label="Shipping" value="Free" />
-              <SummaryRow label="Status" value={order.status} />
-              <SummaryRow label="Payment" value={paymentStatusLabel} />
+              <SummaryRow label="ยอดสินค้า" value={formatCurrency(lineSubtotal)} />
+              <SummaryRow label="ค่าจัดส่ง" value="ฟรี" />
+              <SummaryRow label="สถานะ" value={orderStatusLabel(order.status)} />
+              <SummaryRow label="ชำระเงิน" value={paymentStatusLabel} />
               <div className="border-t border-black/10 pt-4">
                 <SummaryRow
-                  label="Total"
+                  label="รวมทั้งหมด"
                   value={formatCurrency(order.total.toString())}
                   strong
                 />
@@ -222,14 +231,14 @@ export default async function OrderDetailPage({ params }: Props) {
             <div className="mb-5 flex items-center gap-2">
               <CreditCard size={18} />
               <h2 className="text-lg font-semibold">
-                Payment
+                การชำระเงิน
               </h2>
             </div>
 
             <div className="rounded-lg bg-[#f4f3ef] p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm text-black/50">Method</p>
+                  <p className="text-sm text-black/50">วิธีชำระเงิน</p>
                   <p className="mt-1 font-medium">{paymentMethodLabel}</p>
                 </div>
                 <span
@@ -243,7 +252,7 @@ export default async function OrderDetailPage({ params }: Props) {
               </p>
               {order.paidAt && (
                 <p className="mt-3 text-xs text-black/45">
-                  Mock paid at {formatOrderDate(order.paidAt)}
+                  Mock paid เมื่อ {formatOrderDate(order.paidAt)}
                 </p>
               )}
             </div>
@@ -254,7 +263,7 @@ export default async function OrderDetailPage({ params }: Props) {
               <div className="mb-5 flex items-center gap-2">
                 <MapPin size={18} />
                 <h2 className="text-lg font-semibold">
-                  Shipping address
+                  ที่อยู่จัดส่ง
                 </h2>
               </div>
               <p className="font-medium">
@@ -273,7 +282,7 @@ export default async function OrderDetailPage({ params }: Props) {
             <div className="mb-5 flex items-center gap-2">
               <Truck size={18} />
               <h2 className="text-lg font-semibold">
-                Order trail
+                เส้นทางออเดอร์
               </h2>
             </div>
 
@@ -281,8 +290,8 @@ export default async function OrderDetailPage({ params }: Props) {
               <TrailItem
                 active
                 icon={CheckCircle2}
-                title="Order created"
-                detail="Database price and size stock were confirmed."
+                title="สร้างออเดอร์แล้ว"
+                detail="ยืนยันราคาจาก Database และ Stock ของไซซ์ที่เลือกแล้ว"
               />
               <TrailItem
                 active={order.paymentStatus === "PAID"}
@@ -293,14 +302,14 @@ export default async function OrderDetailPage({ params }: Props) {
               <TrailItem
                 active={order.status !== "PENDING"}
                 icon={PackageCheck}
-                title="Preparing"
-                detail="Admin stock and product basics are ready for review."
+                title="กำลังเตรียมสินค้า"
+                detail="Admin พร้อมตรวจสอบ Stock และข้อมูลสินค้า"
               />
               <TrailItem
                 active={["SHIPPED", "DELIVERED"].includes(order.status)}
                 icon={Truck}
-                title="Dispatch"
-                detail="Shipping status will move here when updated."
+                title="จัดส่ง"
+                detail="สถานะจัดส่งจะแสดงที่นี่เมื่อมีการอัปเดต"
               />
             </div>
           </div>
@@ -310,14 +319,14 @@ export default async function OrderDetailPage({ params }: Props) {
               href="/product"
               className={`h-12 px-5 text-sm font-semibold ${uiAction.accent}`}
             >
-              Continue shopping
+              เลือกซื้อต่อ
               <ArrowRight size={15} />
             </Link>
             <Link
               href="/account"
               className={`h-12 px-5 text-sm font-medium ${uiAction.surface}`}
             >
-              Account overview
+              ภาพรวมบัญชี
             </Link>
           </div>
         </aside>

@@ -16,11 +16,11 @@ export const ORDER_STATUS_ORDER: OrderStatus[] = [
 ]
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
-  [OrderStatus.PENDING]: "Pending",
-  [OrderStatus.PROCESSING]: "Processing",
-  [OrderStatus.SHIPPED]: "Shipped",
-  [OrderStatus.DELIVERED]: "Delivered",
-  [OrderStatus.CANCELLED]: "Cancelled",
+  [OrderStatus.PENDING]: "รอดำเนินการ",
+  [OrderStatus.PROCESSING]: "กำลังเตรียมสินค้า",
+  [OrderStatus.SHIPPED]: "จัดส่งแล้ว",
+  [OrderStatus.DELIVERED]: "ส่งสำเร็จ",
+  [OrderStatus.CANCELLED]: "ยกเลิกแล้ว",
 }
 
 export const ORDER_STATUS_TONES: Record<OrderStatus, string> = {
@@ -39,10 +39,10 @@ export const PAYMENT_STATUS_ORDER: PaymentStatus[] = [
 ]
 
 export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
-  [PaymentStatus.UNPAID]: "Unpaid",
-  [PaymentStatus.PAID]: "Paid",
-  [PaymentStatus.FAILED]: "Failed",
-  [PaymentStatus.REFUNDED]: "Refunded",
+  [PaymentStatus.UNPAID]: "ยังไม่ชำระ",
+  [PaymentStatus.PAID]: "ชำระแล้ว",
+  [PaymentStatus.FAILED]: "ชำระไม่สำเร็จ",
+  [PaymentStatus.REFUNDED]: "คืนเงินแล้ว",
 }
 
 export type AdminMetricTone = "neutral" | "accent" | "warning" | "danger"
@@ -295,41 +295,41 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
   return {
     metrics: [
       {
-        label: "Revenue",
+        label: "รายได้",
         value: formatCurrency(totalRevenue._sum.total?.toString() ?? "0"),
-        helper: "Non-cancelled order total",
+        helper: "ยอดรวมออเดอร์ที่ไม่ถูกยกเลิก",
         tone: "accent",
       },
       {
-        label: "Orders today",
+        label: "ออเดอร์วันนี้",
         value: ordersToday.toString(),
-        helper: "Created since local midnight",
+        helper: "สร้างหลังเที่ยงคืนของวันนี้",
         tone: ordersToday > 0 ? "accent" : "neutral",
       },
       {
-        label: "Pending orders",
+        label: "ออเดอร์รอดำเนินการ",
         value: pendingOrders.toString(),
-        helper: "Need admin attention",
+        helper: "ต้องการการตรวจจาก Admin",
         tone: pendingOrders > 0 ? "warning" : "neutral",
       },
       {
-        label: "Products",
+        label: "สินค้า",
         value: totalProducts.toString(),
-        helper: `${totalBrands} brands in catalog`,
+        helper: `${totalBrands} แบรนด์ใน catalog`,
         href: "/admin/shoes",
         tone: "neutral",
       },
       {
-        label: "Low-stock sizes",
+        label: "ไซซ์ที่ Stock เหลือน้อย",
         value: lowStockSizes.length.toString(),
-        helper: `${LOW_STOCK_THRESHOLD} units or fewer`,
+        helper: `${LOW_STOCK_THRESHOLD} คู่หรือน้อยกว่า`,
         href: "/admin/shoes",
         tone: lowStockSizes.length > 0 ? "warning" : "neutral",
       },
       {
-        label: "Sold-out sizes",
+        label: "ไซซ์ที่สินค้าหมด",
         value: soldOutSizes.toString(),
-        helper: "Stock count is zero",
+        helper: "จำนวน Stock เป็นศูนย์",
         href: "/admin/shoes",
         tone: soldOutSizes > 0 ? "danger" : "neutral",
       },
@@ -358,33 +358,33 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     })),
     catalogHealth: [
       {
-        label: "Products without images",
+        label: "สินค้าที่ไม่มีรูป",
         value: productsWithoutImages.toString(),
-        helper: "Need at least one image for storefront confidence",
+        helper: "ควรมีอย่างน้อยหนึ่งรูปเพื่อให้หน้าร้านดูน่าเชื่อถือ",
         tone: productsWithoutImages > 0 ? "warning" : "neutral",
       },
       {
-        label: "Products without price",
+        label: "สินค้าที่ไม่มีราคา",
         value: productsWithoutPrice.toString(),
-        helper: "Cannot support confident checkout without price",
+        helper: "Checkout ได้ไม่มั่นใจถ้าไม่มีราคา",
         tone: productsWithoutPrice > 0 ? "danger" : "neutral",
       },
       {
-        label: "Featured products",
+        label: "สินค้า Featured",
         value: featuredProducts.toString(),
-        helper: "Used by landing and store highlights",
+        helper: "ใช้ในหน้า Landing และไฮไลต์ของ Store",
         tone: featuredProducts > 0 ? "accent" : "neutral",
       },
       {
-        label: "Brands",
+        label: "แบรนด์",
         value: totalBrands.toString(),
-        helper: "Available brand taxonomy",
+        helper: "รายการแบรนด์ที่มีในระบบ",
         tone: totalBrands > 0 ? "neutral" : "warning",
       },
       {
-        label: "Total orders",
+        label: "ออเดอร์ทั้งหมด",
         value: totalOrders.toString(),
-        helper: "Lifetime order records",
+        helper: "จำนวนออเดอร์ตลอดการใช้งาน",
         tone: totalOrders > 0 ? "neutral" : "warning",
       },
     ],

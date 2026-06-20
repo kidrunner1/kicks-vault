@@ -34,6 +34,15 @@ function statusClass(status: string) {
   return "border border-black bg-[#d8ff6a] text-black"
 }
 
+function orderStatusLabel(status: string) {
+  if (status === "DELIVERED") return "ส่งสำเร็จ"
+  if (status === "CANCELLED") return "ยกเลิกแล้ว"
+  if (status === "SHIPPED") return "จัดส่งแล้ว"
+  if (status === "PROCESSING") return "กำลังเตรียมสินค้า"
+
+  return "รอดำเนินการ"
+}
+
 export default async function OrdersPage() {
   const user = await getCurrentUser()
   if (!user) redirect("/login")
@@ -72,13 +81,13 @@ export default async function OrdersPage() {
       <header className="grid gap-5 lg:grid-cols-[1fr_360px] lg:items-end">
         <div>
           <p className="text-sm text-black/50">
-            Account receipts
+            ประวัติการสั่งซื้อ
           </p>
           <h1 className="mt-2 text-4xl font-semibold leading-tight">
-            Order history
+            ออเดอร์ของคุณ
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-black/55">
-            Review confirmed pairs, totals, stock-backed sizes, and order status in one place.
+            ดูคู่ที่สั่งซื้อ ยอดรวม ไซซ์ที่มี Stock จริง และสถานะออเดอร์ได้ในหน้าเดียว
           </p>
         </div>
 
@@ -86,32 +95,32 @@ export default async function OrdersPage() {
           href="/product"
           className={`h-11 px-5 text-sm font-semibold lg:justify-self-end ${uiAction.accent}`}
         >
-          Browse products
+          เลือกซื้อสินค้า
           <ArrowRight size={15} />
         </Link>
       </header>
 
       <section className="grid gap-3 sm:grid-cols-4">
-        <StatCard icon={ReceiptText} label="Orders" value={orders.length.toString()} />
-        <StatCard icon={ShoppingBag} label="Pairs" value={totalPairs.toString()} />
-        <StatCard icon={Clock3} label="Active" value={activeOrders.toString()} />
-        <StatCard icon={CreditCard} label="Paid" value={paidOrders.toString()} />
+        <StatCard icon={ReceiptText} label="ออเดอร์" value={orders.length.toString()} />
+        <StatCard icon={ShoppingBag} label="จำนวนคู่" value={totalPairs.toString()} />
+        <StatCard icon={Clock3} label="กำลังดำเนินการ" value={activeOrders.toString()} />
+        <StatCard icon={CreditCard} label="ชำระแล้ว" value={paidOrders.toString()} />
       </section>
 
       {orders.length === 0 ? (
         <section className="grid gap-6 rounded-lg border border-black/10 bg-[#f4f3ef] p-6 md:grid-cols-[1fr_240px]">
           <div>
             <h2 className="text-2xl font-semibold">
-              No orders yet.
+              ยังไม่มีออเดอร์
             </h2>
             <p className="mt-3 max-w-xl text-sm leading-7 text-black/55">
-              Your receipts will appear here after checkout. Start with a live product and select an available size.
+              ใบสรุปออเดอร์จะแสดงที่นี่หลัง Checkout เริ่มจากเลือกสินค้าที่มี Stock และไซซ์ที่พร้อมขาย
             </p>
             <Link
               href="/product"
               className={`mt-6 px-5 py-3 text-sm font-semibold ${uiAction.accent}`}
             >
-              Shop the vault
+              เลือกซื้อจาก vault
             </Link>
           </div>
           <div className="relative min-h-[220px] overflow-hidden rounded-lg bg-white">
@@ -172,7 +181,7 @@ export default async function OrdersPage() {
                           Order #{order.id.slice(0, 8)}
                         </p>
                         <span className={`rounded-full px-3 py-1 text-[11px] font-medium ${statusClass(order.status)}`}>
-                          {order.status}
+                          {orderStatusLabel(order.status)}
                         </span>
                         <span className={`rounded-full px-3 py-1 text-[11px] font-medium ${paymentStatusToneClass[order.paymentStatus]}`}>
                           {paymentStatusLabels[order.paymentStatus]}
@@ -183,7 +192,7 @@ export default async function OrdersPage() {
                         {remainingNames > 0 ? `, +${remainingNames} more` : ""}
                       </p>
                       <p className="mt-1 text-sm text-black/60">
-                        {formatOrderDate(order.createdAt)} / {pairCount} {pairCount === 1 ? "pair" : "pairs"}
+                        {formatOrderDate(order.createdAt)} / {pairCount} คู่
                       </p>
                     </div>
                   </div>
@@ -195,7 +204,7 @@ export default async function OrdersPage() {
 
                   <div className="flex items-center justify-between gap-3 lg:justify-end">
                     <div className="lg:text-right">
-                      <p className="text-xs text-black/60">Total</p>
+                      <p className="text-xs text-black/60">รวมทั้งหมด</p>
                       <p className="mt-1 font-semibold">
                         {formatCurrency(order.total.toString())}
                       </p>
@@ -216,14 +225,14 @@ export default async function OrdersPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-black/50">
-                Lifetime spend
+                ยอดซื้อสะสม
               </p>
               <p className="mt-1 text-2xl font-semibold">
                 {formatCurrency(totalSpent)}
               </p>
             </div>
             <p className="max-w-md text-sm leading-7 text-black/55">
-              Totals are stored from database prices at the moment each order was created.
+              ยอดรวมถูกบันทึกจากราคาจริงใน Database ณ เวลาที่สร้างออเดอร์
             </p>
           </div>
         </footer>

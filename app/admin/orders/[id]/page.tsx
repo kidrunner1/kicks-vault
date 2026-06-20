@@ -76,7 +76,7 @@ export default async function AdminOrderDetailPage({
         className="inline-flex items-center gap-2 text-sm font-medium text-gray-300 transition hover:text-white"
       >
         <ArrowLeft size={16} />
-        Back to orders
+        กลับไปหน้าออเดอร์
       </Link>
 
       <header className="grid gap-5 lg:grid-cols-[1fr_280px] lg:items-end">
@@ -95,12 +95,12 @@ export default async function AdminOrderDetailPage({
             />
           </div>
           <p className="mt-2 break-all text-sm text-gray-500">
-            Full id: {order.id}
+            ID เต็ม: {order.id}
           </p>
         </div>
 
         <div className="rounded-lg border border-[#d8ff6a]/30 bg-[#d8ff6a]/10 p-4">
-          <p className="text-sm text-[#ecff9c]">Order total</p>
+          <p className="text-sm text-[#ecff9c]">ยอดรวมออเดอร์</p>
           <p className="mt-2 text-3xl font-semibold text-white">
             {formatCurrency(order.total.toString())}
           </p>
@@ -110,32 +110,32 @@ export default async function AdminOrderDetailPage({
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px] xl:items-start">
         <div className="space-y-6">
           <Panel
-            title="Order summary"
-            description={`${itemCount} item${itemCount === 1 ? "" : "s"} in this order.`}
+            title="สรุปออเดอร์"
+            description={`ออเดอร์นี้มี ${itemCount} รายการ`}
             icon={<PackageCheck size={18} />}
           >
             <div className="grid gap-3 sm:grid-cols-2">
-              <InfoRow label="Created" value={formatAdminDate(order.createdAt)} />
-              <InfoRow label="Updated" value={formatAdminDate(order.updatedAt)} />
+              <InfoRow label="สร้างเมื่อ" value={formatAdminDate(order.createdAt)} />
+              <InfoRow label="อัปเดตล่าสุด" value={formatAdminDate(order.updatedAt)} />
               <InfoRow
-                label="Order status"
+                label="สถานะออเดอร์"
                 value={orderStatusLabels[order.status]}
               />
               <InfoRow
-                label="Payment status"
+                label="สถานะ Payment"
                 value={paymentStatusLabels[order.paymentStatus]}
               />
               <InfoRow
-                label="Payment method"
+                label="วิธีชำระเงิน"
                 value={paymentMethodLabels[order.paymentMethod]}
               />
-              <InfoRow label="Paid at" value={formatAdminDate(order.paidAt)} />
+              <InfoRow label="ชำระเมื่อ" value={formatAdminDate(order.paidAt)} />
             </div>
           </Panel>
 
           <Panel
-            title="Purchased items"
-            description="Prices are snapshots from checkout."
+            title="สินค้าที่สั่งซื้อ"
+            description="ราคาถูกบันทึกเป็น snapshot ตอน Checkout"
             icon={<PackageCheck size={18} />}
           >
             <div className="divide-y divide-gray-800">
@@ -167,19 +167,19 @@ export default async function AdminOrderDetailPage({
                       </h2>
                       <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-300">
                         <span className="rounded-full border border-gray-700 bg-gray-950 px-3 py-1">
-                          Size {item.size ?? "-"}
+                          ไซซ์ {item.size ?? "-"}
                         </span>
                         <span className="rounded-full border border-gray-700 bg-gray-950 px-3 py-1">
-                          Qty {item.quantity}
+                          จำนวน {item.quantity}
                         </span>
                         <span className="rounded-full border border-gray-700 bg-gray-950 px-3 py-1">
-                          Unit {formatCurrency(item.price.toString())}
+                          ราคาต่อคู่ {formatCurrency(item.price.toString())}
                         </span>
                       </div>
                     </div>
 
                     <div className="md:text-right">
-                      <p className="text-xs text-gray-500">Line total</p>
+                      <p className="text-xs text-gray-500">รวมรายการนี้</p>
                       <p className="mt-1 text-lg font-semibold text-white">
                         {formatCurrency(lineTotal)}
                       </p>
@@ -193,30 +193,30 @@ export default async function AdminOrderDetailPage({
 
         <aside className="space-y-6 xl:sticky xl:top-6">
           <Panel
-            title="Customer"
-            description="Buyer and recipient from this order."
+            title="ลูกค้า"
+            description="บัญชีผู้ซื้อและผู้รับจากออเดอร์นี้"
             icon={<User size={18} />}
           >
             <div className="space-y-3">
-              <InfoRow label="Account email" value={order.user.email} />
+              <InfoRow label="Email บัญชี" value={order.user.email} />
               <InfoRow
-                label="Recipient"
+                label="ผู้รับ"
                 value={order.shippingRecipientName ?? "-"}
               />
-              <InfoRow label="Phone" value={order.shippingPhone ?? "-"} />
+              <InfoRow label="เบอร์โทร" value={order.shippingPhone ?? "-"} />
             </div>
           </Panel>
 
           <Panel
-            title="Shipping address"
-            description="Snapshot saved at checkout."
+            title="ที่อยู่จัดส่ง"
+            description="snapshot ที่บันทึกไว้ตอน Checkout"
             icon={<MapPin size={18} />}
           >
             <div className="space-y-3">
-              <InfoRow label="Label" value={order.shippingLabel ?? "-"} />
+              <InfoRow label="ชื่อที่อยู่" value={order.shippingLabel ?? "-"} />
               {addressLines.length === 0 ? (
                 <p className="rounded-lg border border-dashed border-gray-800 bg-gray-950/60 p-4 text-sm text-gray-500">
-                  No shipping snapshot was saved for this order.
+                  ออเดอร์นี้ไม่มี snapshot ที่อยู่จัดส่ง
                 </p>
               ) : (
                 <div className="rounded-lg border border-gray-800 bg-gray-950/60 p-4 text-sm leading-6 text-gray-300">
@@ -230,7 +230,7 @@ export default async function AdminOrderDetailPage({
 
           <Panel
             title="Mock payment"
-            description="Manual state for this phase. No real money is processed."
+            description="สถานะจำลองสำหรับ phase นี้ ไม่มีการชำระเงินจริง"
             icon={<CreditCard size={18} />}
           >
             <PaymentStatusForm

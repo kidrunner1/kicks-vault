@@ -34,7 +34,7 @@ export const useAuthStore = create<AuthState>((set) => ({
                 credentials: "include",
             })
 
-            if (!res.ok) throw new Error("Unable to fetch user")
+            if (!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลผู้ใช้ได้")
 
             const data: { user: User | null } = await res.json()
 

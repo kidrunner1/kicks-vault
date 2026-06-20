@@ -23,18 +23,16 @@ export default function SizeChart({ brand }: SizeChartProps) {
       transition={{ duration: 0.3 }}
       className="mt-6"
     >
-      {/* Header */}
       <div className="mb-10">
         <h3 className="text-2xl font-semibold tracking-tight">
-          Size Guide {brand && `— ${brand}`}
+          คู่มือไซซ์ {brand && `- ${brand}`}
         </h3>
         <p className="text-sm text-black/50 mt-2 max-w-xl">
-          Use the chart below to find your perfect fit. If you are between
-          sizes, we recommend sizing up for comfort.
+          ใช้ตารางนี้เทียบไซซ์ก่อนสั่งซื้อ หากอยู่กึ่งกลางระหว่างสองไซซ์
+          แนะนำให้เลือกไซซ์ใหญ่ขึ้นเพื่อความสบาย
         </p>
       </div>
 
-      {/* Conversion Table */}
       <div className="overflow-x-auto rounded-2xl border border-black/10 bg-white">
 
         <table className="w-full text-sm">
@@ -66,37 +64,34 @@ export default function SizeChart({ brand }: SizeChartProps) {
         </table>
       </div>
 
-      {/* Measurement Guide */}
       <div className="mt-12 grid md:grid-cols-2 gap-12">
 
         <div>
           <h4 className="font-medium mb-3">
-            How to Measure
+            วิธีวัดเท้า
           </h4>
           <ol className="text-sm text-black/60 space-y-2 leading-relaxed list-decimal list-inside">
-            <li>Place your foot on a flat surface.</li>
-            <li>Measure from heel to longest toe.</li>
-            <li>Compare the measurement with the CM column.</li>
+            <li>วางเท้าบนพื้นเรียบ</li>
+            <li>วัดจากส้นเท้าถึงปลายนิ้วที่ยาวที่สุด</li>
+            <li>นำความยาวที่ได้ไปเทียบกับคอลัมน์ CM</li>
           </ol>
         </div>
 
         <div>
           <h4 className="font-medium mb-3">
-            Fit Advice
+            คำแนะนำการเลือกไซซ์
           </h4>
           <p className="text-sm text-black/60 leading-relaxed">
-            Our sneakers are designed for a true-to-size fit.
-            If you prefer a looser fit or wear thicker socks,
-            consider sizing up by half a size.
+            รองเท้าแต่ละรุ่นตั้งใจให้ใส่ได้ตามไซซ์มาตรฐาน
+            หากชอบทรงหลวมหรือใส่ถุงเท้าหนา
+            ลองเพิ่มครึ่งไซซ์เพื่อให้เดินสบายขึ้น
           </p>
         </div>
 
       </div>
 
-      {/* Disclaimer */}
       <div className="mt-12 border-t border-black/10 pt-6 text-xs text-black/60">
-        Please note that sizing may vary slightly depending on model and
-        collection.
+        ไซซ์จริงอาจต่างกันเล็กน้อยตามรุ่นและ collection
       </div>
 
     </motion.div>

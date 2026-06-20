@@ -39,10 +39,10 @@ export function totalStock(rows: StockRow[]): number {
 export function availabilityLabel(rows: StockRow[]): string {
   const total = totalStock(rows)
 
-  if (total === 0) return "Out of stock"
-  if (total <= 3) return `Low stock (${total})`
+  if (total === 0) return "สินค้าหมด"
+  if (total <= 3) return `เหลือน้อย (${total})`
 
-  return `${total} in stock`
+  return `มีสินค้า ${total} คู่`
 }
 
 export function formatCurrency(value: string | number | null | undefined): string {

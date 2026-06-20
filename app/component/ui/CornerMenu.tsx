@@ -30,15 +30,15 @@ export default function CornerMenu() {
     pathname === "/register"
   const accountHref = isAuthenticated ? "/account" : "/login"
   const accountLabel = isLoading
-    ? "Account"
+    ? "บัญชี"
     : isAuthenticated
-      ? "Profile"
-      : "Sign in"
+      ? "โปรไฟล์"
+      : "เข้าสู่ระบบ"
   const accountDetail = isLoading
-    ? "Checking"
+    ? "กำลังตรวจสอบ"
     : isAuthenticated
-      ? user?.email ?? "Member"
-      : "Member access"
+      ? user?.email ?? "สมาชิก"
+      : "พื้นที่สมาชิก"
   const accountInitial = user?.email?.[0]?.toUpperCase() ?? "K"
   const AccountIcon = isAuthenticated ? UserRound : LogIn
 
