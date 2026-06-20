@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { getCurrentUser } from "@/lib/auth"
-import { Prisma } from "@prisma/client"
+import { PaymentMethod, PaymentStatus, Prisma } from "@prisma/client"
 import { toOrderShippingSnapshot } from "@/lib/address"
 
 interface CreateOrderInput {
@@ -133,6 +133,8 @@ export async function createOrder(data: CreateOrderInput) {
         userId: user.id,
         ...shippingSnapshot,
         total,
+        paymentStatus: PaymentStatus.UNPAID,
+        paymentMethod: PaymentMethod.MANUAL,
         items: {
           create: orderItems,
         },

@@ -1,0 +1,8 @@
+CREATE TYPE "PaymentStatus" AS ENUM ('UNPAID', 'PAID', 'FAILED', 'REFUNDED');
+CREATE TYPE "PaymentMethod" AS ENUM ('MANUAL', 'BANK_TRANSFER', 'COD');
+
+ALTER TABLE "Order"
+ADD COLUMN "paymentStatus" "PaymentStatus" NOT NULL DEFAULT 'UNPAID',
+ADD COLUMN "paymentMethod" "PaymentMethod" NOT NULL DEFAULT 'MANUAL',
+ADD COLUMN "paidAt" TIMESTAMP(3),
+ADD COLUMN "paymentNote" TEXT;
