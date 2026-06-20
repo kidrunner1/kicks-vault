@@ -4,7 +4,9 @@ import {
   ArrowRight,
   Boxes,
   ClipboardList,
+  CreditCard,
   PackagePlus,
+  TrendingUp,
 } from "lucide-react"
 import {
   getAdminDashboardData,
@@ -21,6 +23,21 @@ const metricToneClass: Record<AdminMetricTone, string> = {
   danger: "border-red-400/30 bg-red-400/10 text-red-100",
 }
 
+const graphToneClass: Record<AdminMetricTone, string> = {
+  neutral: "bg-gray-500",
+  accent: "bg-[#d8ff6a]",
+  warning: "bg-amber-300",
+  danger: "bg-red-400",
+}
+
+const orderStatusGraphTone: Record<keyof typeof ORDER_STATUS_LABELS, string> = {
+  PENDING: "bg-amber-300",
+  PROCESSING: "bg-sky-300",
+  SHIPPED: "bg-indigo-300",
+  DELIVERED: "bg-emerald-300",
+  CANCELLED: "bg-red-400",
+}
+
 function formatDashboardDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -32,6 +49,10 @@ function formatDashboardDate(date: Date) {
 
 export default async function AdminPage() {
   const dashboard = await getAdminDashboardData()
+  const highestPipelineCount = Math.max(
+    ...dashboard.pipeline.map((item) => item.count),
+    0,
+  )
 
   return (
     <div className="space-y-8 text-gray-100">
@@ -42,12 +63,19 @@ export default async function AdminPage() {
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-400">
             Store health across orders, stock, and catalog readiness. This
-            phase is read-only so the dashboard can stay dependable while order
-            actions are added next.
+            dashboard now includes order management signals, mock payment state,
+            and product stock attention points.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-3">
+          <Link
+            href="/admin/orders"
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 text-sm font-medium text-gray-100 transition hover:border-gray-500 hover:bg-gray-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+          >
+            View orders
+            <ArrowRight size={16} />
+          </Link>
           <Link
             href="/admin/shoes"
             className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 text-sm font-medium text-gray-100 transition hover:border-gray-500 hover:bg-gray-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
@@ -82,19 +110,28 @@ export default async function AdminPage() {
           description="Status count across all orders."
           icon={<ClipboardList size={18} />}
         >
-          <div className="space-y-3">
+          {dashboard.pipeline.every((item) => item.count === 0) ? (
+            <EmptyState
+              title="No order status data"
+              description="Checkout orders will populate this pipeline."
+            />
+          ) : (
+            <div className="space-y-5">
             {dashboard.pipeline.map((item) => (
-              <div
+              <GraphBar
                 key={item.status}
-                className="flex items-center justify-between rounded-lg border border-gray-800 bg-gray-950/60 px-4 py-3"
-              >
-                <StatusBadge status={item.status} />
-                <span className="text-lg font-semibold text-white">
-                  {item.count}
-                </span>
-              </div>
+                label={item.label}
+                value={`${item.count} order${item.count === 1 ? "" : "s"}`}
+                percent={
+                  highestPipelineCount > 0
+                    ? Math.round((item.count / highestPipelineCount) * 100)
+                    : 0
+                }
+                tone={orderStatusGraphTone[item.status]}
+              />
             ))}
-          </div>
+            </div>
+          )}
         </SectionPanel>
 
         <SectionPanel
@@ -134,6 +171,60 @@ export default async function AdminPage() {
                     </p>
                   </div>
                 </div>
+              ))}
+            </div>
+          )}
+        </SectionPanel>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-2">
+        <SectionPanel
+          title="Payment summary"
+          description="Mock payment count and revenue by state."
+          icon={<CreditCard size={18} />}
+        >
+          {dashboard.paymentSummary.length === 0 ? (
+            <EmptyState
+              title="No payment data"
+              description="Orders created at checkout will start as unpaid manual payments."
+            />
+          ) : (
+            <div className="space-y-5">
+              {dashboard.paymentSummary.map((item) => (
+                <GraphBar
+                  key={item.status}
+                  label={item.label}
+                  value={`${item.count} order${item.count === 1 ? "" : "s"}`}
+                  helper={`${item.revenue} revenue`}
+                  percent={item.percent}
+                  tone={graphToneClass[item.tone]}
+                />
+              ))}
+            </div>
+          )}
+        </SectionPanel>
+
+        <SectionPanel
+          title="Top products"
+          description="Best-selling pairs by quantity sold."
+          icon={<TrendingUp size={18} />}
+        >
+          {dashboard.topProducts.length === 0 ? (
+            <EmptyState
+              title="No product sales yet"
+              description="Top products will appear after customers complete checkout."
+            />
+          ) : (
+            <div className="space-y-5">
+              {dashboard.topProducts.map((product) => (
+                <GraphBar
+                  key={product.shoeId}
+                  label={product.name}
+                  value={`${product.quantity} sold`}
+                  helper={product.brandName}
+                  percent={product.percent}
+                  tone="bg-[#d8ff6a]"
+                />
               ))}
             </div>
           )}
@@ -280,6 +371,38 @@ function StatusBadge({
     >
       {ORDER_STATUS_LABELS[status]}
     </span>
+  )
+}
+
+function GraphBar({
+  label,
+  value,
+  helper,
+  percent,
+  tone = "bg-[#d8ff6a]",
+}: {
+  label: string
+  value: string
+  helper?: string
+  percent: number
+  tone?: string
+}) {
+  const width = percent > 0 ? Math.max(percent, 4) : 0
+
+  return (
+    <div>
+      <div className="mb-2 flex items-center justify-between gap-3 text-sm">
+        <span className="min-w-0 font-medium text-gray-200">{label}</span>
+        <span className="shrink-0 text-gray-400">{value}</span>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-gray-800">
+        <div
+          className={`h-full rounded-full ${tone}`}
+          style={{ width: `${width}%` }}
+        />
+      </div>
+      {helper && <p className="mt-2 text-xs text-gray-500">{helper}</p>}
+    </div>
   )
 }
 

@@ -1,6 +1,6 @@
 import "server-only"
 
-import { OrderStatus } from "@prisma/client"
+import { OrderStatus, PaymentStatus } from "@prisma/client"
 import { formatCurrency } from "@/lib/commerce"
 import { prisma } from "@/lib/prisma"
 
@@ -29,6 +29,20 @@ export const ORDER_STATUS_TONES: Record<OrderStatus, string> = {
   [OrderStatus.SHIPPED]: "border-indigo-400/30 bg-indigo-400/10 text-indigo-100",
   [OrderStatus.DELIVERED]: "border-emerald-400/30 bg-emerald-400/10 text-emerald-100",
   [OrderStatus.CANCELLED]: "border-red-400/30 bg-red-400/10 text-red-100",
+}
+
+export const PAYMENT_STATUS_ORDER: PaymentStatus[] = [
+  PaymentStatus.UNPAID,
+  PaymentStatus.PAID,
+  PaymentStatus.FAILED,
+  PaymentStatus.REFUNDED,
+]
+
+export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
+  [PaymentStatus.UNPAID]: "Unpaid",
+  [PaymentStatus.PAID]: "Paid",
+  [PaymentStatus.FAILED]: "Failed",
+  [PaymentStatus.REFUNDED]: "Refunded",
 }
 
 export type AdminMetricTone = "neutral" | "accent" | "warning" | "danger"
@@ -71,6 +85,21 @@ export interface AdminDashboardData {
     helper: string
     tone: AdminMetricTone
   }[]
+  paymentSummary: {
+    status: PaymentStatus
+    label: string
+    count: number
+    revenue: string
+    percent: number
+    tone: AdminMetricTone
+  }[]
+  topProducts: {
+    shoeId: string
+    name: string
+    brandName: string
+    quantity: number
+    percent: number
+  }[]
 }
 
 function startOfToday() {
@@ -98,6 +127,8 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     productsWithoutPrice,
     productsWithoutImages,
     pipelineGroups,
+    paymentGroups,
+    topProductGroups,
     recentOrders,
     lowStockSizes,
   ] = await Promise.all([
@@ -154,6 +185,27 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
         _all: true,
       },
     }),
+    prisma.order.groupBy({
+      by: ["paymentStatus"],
+      _count: {
+        _all: true,
+      },
+      _sum: {
+        total: true,
+      },
+    }),
+    prisma.orderItem.groupBy({
+      by: ["shoeId"],
+      _sum: {
+        quantity: true,
+      },
+      orderBy: {
+        _sum: {
+          quantity: "desc",
+        },
+      },
+      take: 5,
+    }),
     prisma.order.findMany({
       take: RECENT_ORDER_LIMIT,
       orderBy: {
@@ -205,6 +257,39 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
 
   const pipelineByStatus = new Map(
     pipelineGroups.map((group) => [group.status, group._count._all])
+  )
+  const paymentByStatus = new Map(
+    paymentGroups.map((group) => [group.paymentStatus, group])
+  )
+  const highestPaymentCount = Math.max(
+    ...paymentGroups.map((group) => group._count._all),
+    0,
+  )
+  const topProductIds = topProductGroups.map((group) => group.shoeId)
+  const topProductShoes = topProductIds.length
+    ? await prisma.shoe.findMany({
+        where: {
+          id: {
+            in: topProductIds,
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          brand: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      })
+    : []
+  const topProductById = new Map(
+    topProductShoes.map((shoe) => [shoe.id, shoe])
+  )
+  const highestProductQuantity = Math.max(
+    ...topProductGroups.map((group) => group._sum.quantity ?? 0),
+    0,
   )
 
   return {
@@ -303,5 +388,59 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
         tone: totalOrders > 0 ? "neutral" : "warning",
       },
     ],
+    paymentSummary:
+      totalOrders === 0
+        ? []
+        : PAYMENT_STATUS_ORDER.map((status) => {
+            const group = paymentByStatus.get(status)
+            const count = group?._count._all ?? 0
+
+            return {
+              status,
+              label: PAYMENT_STATUS_LABELS[status],
+              count,
+              revenue: formatCurrency(group?._sum.total?.toString() ?? "0"),
+              percent:
+                highestPaymentCount > 0
+                  ? Math.round((count / highestPaymentCount) * 100)
+                  : 0,
+              tone: paymentTone(status),
+            }
+          }),
+    topProducts: topProductGroups.flatMap((group) => {
+      const shoe = topProductById.get(group.shoeId)
+      const quantity = group._sum.quantity ?? 0
+
+      if (!shoe || quantity <= 0) {
+        return []
+      }
+
+      return {
+        shoeId: shoe.id,
+        name: shoe.name,
+        brandName: shoe.brand.name,
+        quantity,
+        percent:
+          highestProductQuantity > 0
+            ? Math.round((quantity / highestProductQuantity) * 100)
+            : 0,
+      }
+    }),
   }
+}
+
+function paymentTone(status: PaymentStatus): AdminMetricTone {
+  if (status === PaymentStatus.PAID) {
+    return "accent"
+  }
+
+  if (status === PaymentStatus.UNPAID) {
+    return "warning"
+  }
+
+  if (status === PaymentStatus.FAILED) {
+    return "danger"
+  }
+
+  return "neutral"
 }
