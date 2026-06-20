@@ -8,6 +8,7 @@ import { LogIn, ShoppingBag, UserRound } from "lucide-react"
 import MenuButton from "./Menubutton"
 import FullscreenMenu from "./FullscreenMenu"
 import { useAuthStore } from "@/lib/auth-store"
+import { uiAction } from "@/lib/ui-interactions"
 
 export default function CornerMenu() {
   const [open, setOpen] = useState(false)
@@ -48,14 +49,10 @@ export default function CornerMenu() {
           <Link
             href="/product"
             aria-current={storeActive ? "page" : undefined}
-            className={`group inline-flex h-11 items-center justify-center gap-2 rounded-full px-3 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:px-4 ${
-              storeActive
-                ? "bg-black text-white"
-                : "text-black hover:bg-black hover:text-white"
-            }`}
+            className={`group h-11 px-3 text-sm font-medium sm:px-4 ${uiAction.primary}`}
           >
-            <ShoppingBag size={17} />
-            <span className="hidden sm:inline">Store</span>
+            <ShoppingBag size={17} className="transition" />
+            <span className="hidden transition sm:inline">Store</span>
           </Link>
         </motion.div>
 
@@ -63,40 +60,24 @@ export default function CornerMenu() {
           <Link
             href={accountHref}
             aria-current={accountActive ? "page" : undefined}
-            className={`group inline-flex h-11 min-w-11 items-center gap-2 rounded-full px-1.5 pr-3 text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:ring-offset-white md:min-w-[176px] ${
-              accountActive
-                ? "bg-[#f4f3ef] text-black"
-                : "text-black hover:bg-black hover:text-white"
+            className={`group h-11 min-w-11 px-1.5 pr-3 text-sm md:min-w-[176px] ${uiAction.secondary} ${
+              accountActive ? "border-black/15 bg-[#f4f3ef] text-black" : ""
             }`}
           >
             <span
               className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
-                accountActive
-                  ? isAuthenticated
-                    ? "bg-black text-white"
-                    : "bg-black/10 text-black"
-                  : isAuthenticated
-                    ? "bg-black text-white group-hover:bg-white group-hover:text-black"
-                    : "bg-black/10 text-black group-hover:bg-white group-hover:text-black"
+                isAuthenticated
+                  ? "bg-black text-white group-hover:bg-white group-hover:text-black"
+                  : "bg-black/10 text-black group-hover:bg-white group-hover:text-black"
               }`}
             >
               {isAuthenticated ? accountInitial : <AccountIcon size={15} />}
             </span>
             <span className="hidden min-w-0 flex-col leading-tight md:flex">
-              <span
-                className={`font-medium ${
-                  accountActive ? "text-black" : "text-black group-hover:text-white"
-                }`}
-              >
+              <span className="font-medium text-black transition group-hover:text-white">
                 {accountLabel}
               </span>
-              <span
-                className={`max-w-[118px] truncate text-xs ${
-                  accountActive
-                    ? "text-black/60"
-                    : "text-black/60 group-hover:text-white/70"
-                }`}
-              >
+              <span className="max-w-[118px] truncate text-xs text-black/60 transition group-hover:text-white/70">
                 {accountDetail}
               </span>
             </span>

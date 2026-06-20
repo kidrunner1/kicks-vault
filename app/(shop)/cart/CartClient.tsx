@@ -26,6 +26,7 @@ import { useCartStore } from "@/app/store/cart-store"
 import { formatAddress } from "@/lib/address"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
+import { uiAction } from "@/lib/ui-interactions"
 
 export interface CheckoutAddress {
   id: string
@@ -127,7 +128,7 @@ export default function CartClient({
         <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
           <Link
             href="/product"
-            className="inline-flex items-center gap-3 text-sm text-black/60 transition hover:text-black"
+            className={`text-sm ${uiAction.ghost}`}
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-full border border-black/20">
               <ArrowLeft size={15} />
@@ -188,7 +189,7 @@ export default function CartClient({
 
               <Link
                 href="/product"
-                className="inline-flex w-fit items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+                className={`w-fit px-5 py-3 text-sm font-medium ${uiAction.primary}`}
               >
                 Browse products
                 <ArrowLeft size={15} className="rotate-180" />
@@ -220,7 +221,7 @@ export default function CartClient({
                   </div>
                   <Link
                     href="/product"
-                    className="rounded-full border border-black/10 px-4 py-2 text-sm text-black/55 transition hover:border-black/25 hover:text-black"
+                    className={`px-4 py-2 text-sm ${uiAction.secondary}`}
                   >
                     Add more
                   </Link>
@@ -298,7 +299,7 @@ export default function CartClient({
                             <button
                               type="button"
                               onClick={() => removeItem(item.shoeId, item.size)}
-                              className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm text-black/60 transition hover:bg-red-50 hover:text-red-600"
+                              className={`px-3 py-2 text-sm ${uiAction.danger}`}
                             >
                               <Trash2 size={15} />
                               Remove
@@ -350,7 +351,7 @@ export default function CartClient({
                   </div>
                   <Link
                     href="/account/addresses"
-                    className="text-sm text-black/60 transition hover:text-black"
+                    className={`text-sm ${uiAction.ghost}`}
                   >
                     Manage
                   </Link>
@@ -472,7 +473,7 @@ export default function CartClient({
                   type="button"
                   onClick={handleCheckout}
                   disabled={isCheckoutDisabled}
-                  className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-black px-6 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-700 disabled:opacity-100"
+                  className={`mt-6 h-12 w-full px-6 text-sm font-medium ${uiAction.primary}`}
                 >
                   {loading ? "Creating order..." : "Confirm order"}
                 </button>
@@ -511,7 +512,7 @@ function AddressEmptyState({
       <p className="mt-2 text-sm leading-6 text-black/65">{description}</p>
       <Link
         href={href}
-        className="mt-4 inline-flex rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+        className={`mt-4 px-4 py-2 text-sm font-medium ${uiAction.primary}`}
       >
         {action}
       </Link>

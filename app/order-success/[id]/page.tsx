@@ -15,6 +15,7 @@ import { formatAddress } from "@/lib/address"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
 import { prisma } from "@/lib/prisma"
+import { uiAction } from "@/lib/ui-interactions"
 
 interface Props {
   params: Promise<{
@@ -91,7 +92,7 @@ export default async function OrderSuccessPage({ params }: Props) {
         <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
           <Link
             href="/product"
-            className="inline-flex items-center gap-3 text-sm text-black/60 transition hover:text-black"
+            className={`text-sm ${uiAction.ghost}`}
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-full border border-black/20 text-xs font-semibold tracking-widest">
               KV
@@ -203,7 +204,7 @@ export default async function OrderSuccessPage({ params }: Props) {
 
               <Link
                 href={`/account/orders/${order.id}`}
-                className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-black px-6 text-sm font-medium text-white transition hover:bg-neutral-800"
+                className={`mt-6 h-12 w-full px-6 text-sm font-medium ${uiAction.primary}`}
               >
                 View order detail
                 <ArrowRight size={15} />

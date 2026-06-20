@@ -4,6 +4,7 @@ import { useCartStore } from "@/app/store/cart-store"
 import { motion } from "framer-motion"
 import { ShoppingBag } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { uiAction } from "@/lib/ui-interactions"
 
 export default function FloatingCartButton() {
   const items = useCartStore((state) => state.items)
@@ -24,25 +25,18 @@ export default function FloatingCartButton() {
       whileHover={{ y: -4 }}
       whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.35 }}
-      className="
+      className={`
         fixed
         bottom-8
         right-8
         z-50
-        flex
-        items-center
-        gap-3
+        group
         px-6
         py-3
-        rounded-full
-        bg-white
-        border
-        border-black/10
-        text-black
         shadow-lg
         hover:shadow-xl
-        transition
-      "
+        ${uiAction.secondary}
+      `}
     >
       <div className="relative flex items-center justify-center">
         <ShoppingBag size={20} />
@@ -62,6 +56,8 @@ export default function FloatingCartButton() {
             px-1
             bg-black
             text-white
+            group-hover:bg-white
+            group-hover:text-black
             text-[10px]
             font-medium
             rounded-full

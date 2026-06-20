@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { uiAction } from "@/lib/ui-interactions"
 
 interface Props {
   open: boolean
@@ -16,31 +17,17 @@ export default function MenuButton({ open, toggle }: Props) {
       aria-expanded={open}
       whileHover={{ scale: 1.04 }}
       whileTap={{ scale: 0.96 }}
-      className="
+      className={`
         group
         relative
-        flex
         h-11
         w-11
         shrink-0
-        items-center
-        justify-center
-        rounded-full
-        border
-        border-black
-        bg-black
-        text-white
+        p-0
         shadow-sm
-        transition
         duration-200
-        hover:bg-white
-        hover:text-black
-        focus:outline-none
-        focus-visible:ring-2
-        focus-visible:ring-black
-        focus-visible:ring-offset-2
-        focus-visible:ring-offset-white
-      "
+        ${uiAction.primary}
+      `}
     >
       <svg
         width="24"

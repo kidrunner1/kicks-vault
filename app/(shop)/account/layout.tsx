@@ -2,6 +2,7 @@ import Link from "next/link"
 import { getCurrentUser } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { headers } from "next/headers"
+import { uiAction } from "@/lib/ui-interactions"
 
 export default async function AccountLayout({
   children,
@@ -62,17 +63,9 @@ export default async function AccountLayout({
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`
-                      px-4 py-3
-                      rounded-xl
-                      text-sm
-                      transition
-                      flex items-center justify-between
-                      ${isActive
-                        ? "bg-black text-white"
-                        : "text-black/60 hover:bg-black/5 hover:text-black"
-                      }
-                    `}
+                    className={`px-4 py-3 text-sm ${
+                      isActive ? uiAction.navActive : uiAction.navItem
+                    }`}
                   >
                     {item.name}
 

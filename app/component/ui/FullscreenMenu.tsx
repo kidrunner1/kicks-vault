@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { useAuthStore } from "@/lib/auth-store"
+import { uiAction } from "@/lib/ui-interactions"
 
 interface Props {
   onClose: () => void
@@ -264,10 +265,8 @@ export default function FullscreenMenu({ onClose }: Props) {
                         href={link.href}
                         onClick={onClose}
                         aria-current={active ? "page" : undefined}
-                        className={`flex h-11 items-center justify-center gap-2 rounded-full border px-3 text-sm font-medium transition ${
-                          active
-                            ? "border-black bg-black text-white"
-                            : "border-black/10 text-black/70 hover:border-black hover:bg-black hover:text-white"
+                        className={`h-11 px-3 text-sm font-medium ${
+                          active ? uiAction.primary : uiAction.secondary
                         }`}
                       >
                         <Icon size={15} />
@@ -281,7 +280,7 @@ export default function FullscreenMenu({ onClose }: Props) {
                   type="button"
                   onClick={handleLogout}
                   disabled={isLoggingOut}
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-red-50 px-4 text-sm font-medium text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-black/45"
+                  className={`h-11 w-full px-4 text-sm font-medium ${uiAction.danger}`}
                 >
                   <LogOut size={16} />
                   {isLoggingOut ? "Logging out..." : "Logout"}
@@ -298,7 +297,7 @@ export default function FullscreenMenu({ onClose }: Props) {
                 <Link
                   href="/login"
                   onClick={onClose}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800"
+                  className={`h-11 px-5 text-sm font-medium ${uiAction.primary}`}
                 >
                   <LogIn size={16} />
                   Login

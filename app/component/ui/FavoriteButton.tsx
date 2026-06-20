@@ -7,6 +7,7 @@ import { motion } from "framer-motion"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/lib/auth-store"
+import { uiAction } from "@/lib/ui-interactions"
 
 interface Props {
     shoeId: string
@@ -82,15 +83,11 @@ export default function FavoriteButton({
             aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
             whileTap={{ scale: 0.9 }}
             className={`
-        w-11 h-11
-        rounded-full
-        border
-        flex items-center justify-center
-        transition
         group
+        h-11 w-11 p-0
         ${isFavorited
-                    ? "bg-black border-black text-white"
-                    : "bg-white border-black/10 text-black hover:border-black/30"}
+                    ? uiAction.primary
+                    : uiAction.secondary}
         ${isPending ? "opacity-60 pointer-events-none" : ""}
       `}
         >
@@ -109,8 +106,8 @@ export default function FavoriteButton({
             w-5 h-5
             transition-all duration-300
             ${isFavorited
-                            ? "fill-white text-white"
-                            : "text-black/60 group-hover:text-black"}
+                            ? "fill-white text-white group-hover:fill-black group-hover:text-black"
+                            : "text-black/60 group-hover:text-white"}
           `}
                 />
             </motion.div>

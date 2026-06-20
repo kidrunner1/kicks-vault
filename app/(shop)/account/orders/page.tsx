@@ -13,6 +13,7 @@ import { getCurrentUser } from "@/lib/auth"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
 import { prisma } from "@/lib/prisma"
+import { uiAction } from "@/lib/ui-interactions"
 
 function formatOrderDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
@@ -77,7 +78,7 @@ export default async function OrdersPage() {
 
         <Link
           href="/product"
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800 lg:justify-self-end"
+          className={`h-11 px-5 text-sm font-medium lg:justify-self-end ${uiAction.primary}`}
         >
           Browse products
           <ArrowRight size={15} />
@@ -101,7 +102,7 @@ export default async function OrdersPage() {
             </p>
             <Link
               href="/product"
-              className="mt-6 inline-flex rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+              className={`mt-6 px-5 py-3 text-sm font-medium ${uiAction.primary}`}
             >
               Shop the vault
             </Link>

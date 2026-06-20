@@ -20,6 +20,7 @@ import {
   formatCurrency,
   totalStock,
 } from "@/lib/commerce"
+import { uiAction } from "@/lib/ui-interactions"
 import FloatingCartButton from "../cart/FloatingCartButton"
 import SizeChart from "../ui/SizeChart"
 import FavoriteButton from "../ui/FavoriteButton"
@@ -173,7 +174,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <Link
             href="/product"
-            className="inline-flex items-center gap-3 text-sm text-black/60 transition hover:text-black"
+            className={`text-sm ${uiAction.ghost}`}
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-full border border-black/20 text-xs font-semibold tracking-widest">
               KV
@@ -190,7 +191,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
 
           <Link
             href="/cart"
-            className="rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm text-black/60 transition hover:border-black/25 hover:text-black"
+            className={`px-5 py-2.5 text-sm ${uiAction.secondary}`}
           >
             View cart
           </Link>
@@ -303,7 +304,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                 <p className="text-sm font-semibold">Select size</p>
                 <button
                   onClick={() => setIsSizeGuideOpen(true)}
-                  className="inline-flex items-center gap-1 text-sm text-black/60 transition hover:text-black"
+                  className={`text-sm ${uiAction.ghost}`}
                 >
                   <Ruler size={15} />
                   Size guide
@@ -325,8 +326,8 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                       }}
                       className={`rounded-lg border px-3 py-3 text-left transition ${
                         isActive
-                          ? "border-black bg-black text-white"
-                          : "border-black/10 bg-[#f4f3ef] text-black hover:border-black/30"
+                          ? "border-black bg-black text-white hover:bg-white hover:text-black"
+                          : "border-black/10 bg-[#f4f3ef] text-black hover:border-black hover:bg-black hover:text-white"
                       } ${isOutOfStock ? "cursor-not-allowed opacity-35" : ""}`}
                     >
                       <span className="block text-sm font-semibold">
@@ -369,11 +370,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
               <button
                 onClick={handleAddToCart}
                 disabled={!canRequestAddToCart}
-                className={`h-12 flex-1 rounded-full bg-black px-6 text-sm font-medium text-white transition ${
-                  canRequestAddToCart
-                    ? "hover:bg-neutral-800"
-                    : "cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-700 disabled:opacity-100"
-                }`}
+                className={`h-12 flex-1 px-6 text-sm font-medium ${uiAction.primary}`}
               >
                 {hasAvailableStock ? "Add to cart" : "Out of stock"}
               </button>
@@ -439,7 +436,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
 
             <Link
               href="/product"
-              className="mt-6 inline-flex w-full items-center justify-center rounded-full border border-black/10 px-5 py-3 text-sm font-medium text-black/60 transition hover:border-black/30 hover:text-black"
+              className={`mt-6 w-full px-5 py-3 text-sm font-medium ${uiAction.secondary}`}
             >
               Continue browsing
             </Link>
@@ -480,7 +477,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
 
                   <button
                     onClick={() => setIsSizeGuideOpen(false)}
-                    className="text-sm text-black/60 transition hover:text-black"
+                    className={`text-sm ${uiAction.ghost}`}
                   >
                     Close
                   </button>

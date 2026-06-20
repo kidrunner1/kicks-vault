@@ -16,6 +16,7 @@ import { formatAddress } from "@/lib/address"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
 import { prisma } from "@/lib/prisma"
+import { uiAction } from "@/lib/ui-interactions"
 
 interface Props {
   params: Promise<{ id: string }>
@@ -86,7 +87,7 @@ export default async function OrderDetailPage({ params }: Props) {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <Link
           href="/account/orders"
-          className="inline-flex items-center gap-2 text-sm text-black/55 transition hover:text-black"
+          className={`text-sm ${uiAction.ghost}`}
         >
           <ArrowLeft size={15} />
           Back to orders
@@ -260,14 +261,14 @@ export default async function OrderDetailPage({ params }: Props) {
           <div className="grid gap-3">
             <Link
               href="/product"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800"
+              className={`h-12 px-5 text-sm font-medium ${uiAction.primary}`}
             >
               Continue shopping
               <ArrowRight size={15} />
             </Link>
             <Link
               href="/account"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-black/10 px-5 text-sm font-medium text-black/60 transition hover:border-black/25 hover:text-black"
+              className={`h-12 px-5 text-sm font-medium ${uiAction.secondary}`}
             >
               Account overview
             </Link>

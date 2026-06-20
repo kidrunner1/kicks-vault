@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/auth"
 import { formatAddress } from "@/lib/address"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { uiAction } from "@/lib/ui-interactions"
 
 export default async function AccountPage() {
 
@@ -112,7 +113,7 @@ export default async function AccountPage() {
               </h3>
               <Link
                 href="/account/addresses"
-                className="text-sm text-black/60 transition hover:text-black"
+                className={`text-sm ${uiAction.ghost}`}
               >
                 Manage
               </Link>
@@ -135,7 +136,7 @@ export default async function AccountPage() {
                 </p>
                 <Link
                   href="/account/addresses"
-                  className="mt-5 inline-flex rounded-full bg-black px-4 py-2 text-sm text-white transition hover:bg-neutral-800"
+                  className={`mt-5 px-4 py-2 text-sm ${uiAction.primary}`}
                 >
                   Add address
                 </Link>

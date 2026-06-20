@@ -27,6 +27,7 @@ import {
   type AddressFieldErrors,
   type AddressInput,
 } from "@/lib/address"
+import { uiAction } from "@/lib/ui-interactions"
 
 export interface AddressView extends AddressInput {
   id: string
@@ -197,7 +198,7 @@ export default function AddressBookClient({
         <button
           type="button"
           onClick={openCreateForm}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800"
+          className={`h-11 px-5 text-sm font-medium ${uiAction.primary}`}
         >
           <Plus size={16} />
           Add address
@@ -218,7 +219,7 @@ export default function AddressBookClient({
             <button
               type="button"
               onClick={closeForm}
-              className="rounded-full border border-black/10 px-4 py-2 text-sm text-black/55 transition hover:border-black/25 hover:text-black"
+              className={`px-4 py-2 text-sm ${uiAction.secondary}`}
             >
               Cancel
             </button>
@@ -313,7 +314,7 @@ export default function AddressBookClient({
             type="button"
             onClick={submitForm}
             disabled={isPending}
-            className="mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-full bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-700 disabled:opacity-100"
+            className={`mt-5 h-11 px-5 text-sm font-medium ${uiAction.primary}`}
           >
             {isPending && <Loader2 size={16} className="animate-spin" />}
             {editingAddress ? "Save address" : "Create address"}
@@ -381,7 +382,7 @@ export default function AddressBookClient({
                       type="button"
                       onClick={() => handleSetDefault(address.id)}
                       disabled={isPending}
-                      className="inline-flex h-10 items-center gap-2 rounded-full border border-black/10 px-4 text-sm text-black/70 transition hover:border-black/25 hover:text-black disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-black/45 disabled:opacity-100"
+                      className={`h-10 px-4 text-sm ${uiAction.secondary}`}
                     >
                       <Star size={15} />
                       Set default
@@ -390,7 +391,7 @@ export default function AddressBookClient({
                   <button
                     type="button"
                     onClick={() => openEditForm(address)}
-                    className="inline-flex h-10 items-center gap-2 rounded-full border border-black/10 px-4 text-sm text-black/70 transition hover:border-black/25 hover:text-black"
+                    className={`h-10 px-4 text-sm ${uiAction.secondary}`}
                   >
                     <Pencil size={15} />
                     Edit
@@ -399,7 +400,7 @@ export default function AddressBookClient({
                     type="button"
                     onClick={() => handleDelete(address.id)}
                     disabled={isPending}
-                    className="inline-flex h-10 items-center gap-2 rounded-full px-4 text-sm text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:text-red-400 disabled:opacity-100"
+                    className={`h-10 px-4 text-sm ${uiAction.danger}`}
                   >
                     <Trash2 size={15} />
                     Delete

@@ -9,6 +9,7 @@ import {
   normalizeStockRows,
   totalStock,
 } from "@/lib/commerce"
+import { uiAction } from "@/lib/ui-interactions"
 import {
   Check,
   RotateCcw,
@@ -242,7 +243,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <div className="mx-auto max-w-7xl">
           <Link
             href="/"
-            className="inline-flex items-center gap-3 text-sm text-black/60 transition hover:text-black"
+            className={`text-sm ${uiAction.ghost}`}
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-full border border-black/20 text-xs font-semibold tracking-widest">
               KV
@@ -335,7 +336,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
                     <Link
                       href={`/product/${heroShoe.slug}`}
-                      className="inline-flex items-center justify-center rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+                      className={`px-6 py-3 text-sm font-medium ${uiAction.primary}`}
                     >
                       View featured pair
                     </Link>
@@ -366,10 +367,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 <Link
                   key={option.value}
                   href={createHref({ audience: option.value })}
-                  className={`rounded-full px-5 py-2.5 text-sm font-medium transition ${
-                    isActive
-                      ? "bg-black text-white"
-                      : "bg-white text-black/60 hover:text-black"
+                  className={`px-5 py-2.5 text-sm font-medium ${
+                    isActive ? uiAction.primary : uiAction.secondary
                   }`}
                 >
                   {option.label}
@@ -389,7 +388,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 <h2 className="font-semibold">Shop filters</h2>
               </div>
               {activeFiltersCount > 0 && (
-                <Link href="/product" className="text-sm text-black/60 transition hover:text-black">
+                <Link href="/product" className={`text-sm ${uiAction.ghost}`}>
                   Reset
                 </Link>
               )}
@@ -451,10 +450,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                       href={createHref({
                         size: activeSize === size ? null : size,
                       })}
-                      className={`rounded-lg border px-3 py-2 text-center text-sm transition ${
+                      className={`h-10 px-3 text-center text-sm ${
                         activeSize === size
-                          ? "border-black bg-black text-white"
-                          : "border-black/10 bg-[#f4f3ef] text-black/60 hover:text-black"
+                          ? uiAction.primaryPanel
+                          : uiAction.secondaryPanel
                       }`}
                     >
                       {size}
@@ -583,7 +582,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 </p>
                 <Link
                   href="/product"
-                  className="mt-6 inline-flex rounded-full bg-black px-5 py-3 text-sm font-medium text-white"
+                  className={`mt-6 px-5 py-3 text-sm font-medium ${uiAction.primary}`}
                 >
                   Clear filters
                 </Link>
@@ -694,10 +693,8 @@ function FilterLink({
   return (
     <Link
       href={href}
-      className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition ${
-        active
-          ? "bg-black text-white"
-          : "bg-[#f4f3ef] text-black/60 hover:text-black"
+      className={`h-10 justify-between px-3 py-2 text-sm ${
+        active ? uiAction.primaryPanel : uiAction.secondaryPanel
       }`}
     >
       <span>{children}</span>

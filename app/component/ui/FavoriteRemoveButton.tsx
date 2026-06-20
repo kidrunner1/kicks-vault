@@ -34,8 +34,9 @@ export default function FavoriteRemoveButton({ shoeId }: Props) {
         text-white
         p-3
         rounded-full
-        hover:bg-black/75
-        hover:border-red-500
+        hover:bg-red-600
+        hover:border-red-600
+        hover:text-white
         transition
         disabled:cursor-not-allowed
         disabled:opacity-70

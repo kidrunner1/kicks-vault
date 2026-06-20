@@ -9,6 +9,7 @@ import {
   PackageCheck,
   ShieldCheck,
 } from "lucide-react"
+import { uiAction } from "@/lib/ui-interactions"
 
 const features = [
   {
@@ -68,13 +69,13 @@ export default function FeatureSection() {
           <div className="mt-9 flex flex-wrap items-center gap-4">
             <Link
               href="/product"
-              className="inline-flex rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+              className={`px-6 py-3 text-sm font-medium ${uiAction.primary}`}
             >
               Browse products
             </Link>
             <Link
               href="/account/orders"
-              className="inline-flex rounded-full border border-black/15 px-6 py-3 text-sm font-medium text-neutral-700 transition hover:border-black/35 hover:text-black"
+              className={`px-6 py-3 text-sm font-medium ${uiAction.secondary}`}
             >
               View orders
             </Link>

@@ -7,6 +7,7 @@ import { Mail, Lock } from "lucide-react"
 import { z } from "zod"
 import FormInput from "../../component/ui/FormInput"
 import { toast } from "sonner"
+import { uiAction } from "@/lib/ui-interactions"
 
 const registerSchema = z.object({
   email: z.string().email("Invalid email format"),
@@ -192,22 +193,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="
-              w-full
-              h-12
-              rounded-xl
-              bg-black
-              text-white
-              text-sm
-              font-medium
-              transition
-              hover:bg-black/80
-              disabled:cursor-not-allowed
-              disabled:bg-neutral-300
-              disabled:text-neutral-700
-              disabled:opacity-100
-              flex items-center justify-center
-            "
+            className={`h-12 w-full text-sm font-medium ${uiAction.primary}`}
           >
             {loading ? "Creating..." : "Create Account"}
           </button>
