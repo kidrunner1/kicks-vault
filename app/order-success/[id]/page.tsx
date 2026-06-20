@@ -240,7 +240,7 @@ export default async function OrderSuccessPage({ params }: Props) {
 
               <Link
                 href={`/account/orders/${order.id}`}
-                className={`mt-6 h-12 w-full px-6 text-sm font-medium ${uiAction.primary}`}
+                className={`mt-6 h-12 w-full px-6 text-sm font-semibold ${uiAction.accent}`}
               >
                 View order detail
                 <ArrowRight size={15} />
