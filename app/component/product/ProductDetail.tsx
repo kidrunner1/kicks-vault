@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import Image from "next/image"
 import Link from "next/link"
 import {
+  ArrowRight,
   Check,
   PackageCheck,
   Ruler,
@@ -20,6 +21,11 @@ import {
   formatCurrency,
   totalStock,
 } from "@/lib/commerce"
+import {
+  buildDiscoveryMeta,
+  type DiscoveryMeta,
+  type DiscoveryShoeInput,
+} from "@/lib/product-discovery"
 import { filterActionClass, uiAction } from "@/lib/ui-interactions"
 import FloatingCartButton from "../cart/FloatingCartButton"
 import AppLogo from "../ui/AppLogo"
@@ -32,21 +38,33 @@ interface ProductSpec {
   value: string
 }
 
+interface ProductImage {
+  id: string
+  url: string
+}
+
 interface Product {
   id: string
   slug: string
   name: string
   description: string
   price: string | null
+  featured?: boolean
   brand: { name: string }
-  images: { id: string; url: string }[]
+  images: ProductImage[]
   specs: ProductSpec[]
   sizes: { id: string; size: string; stock: number }[]
+}
+
+interface RecommendationProduct extends DiscoveryShoeInput {
+  images: { url: string }[]
+  meta: DiscoveryMeta
 }
 
 interface Props {
   product: Product
   isFavorited: boolean
+  recommendations?: RecommendationProduct[]
 }
 
 const MotionImage = motion(Image)
@@ -77,31 +95,11 @@ const fallbackSpecs = [
   { id: "fit", label: "ฟิตติ้ง", value: "True to size" },
 ]
 
-function buildProductMeta(product: Product) {
-  const name = product.name.toLowerCase()
-  const brand = product.brand.name.toLowerCase()
-  const category = name.includes("jordan")
-    ? "Basketball"
-    : name.includes("sk8") || name.includes("skool") || name.includes("dunk")
-      ? "Skate"
-      : brand.includes("adidas") || name.includes("pegasus") || name.includes("gel")
-        ? "Running"
-        : name.includes("kids")
-          ? "Kids"
-          : "Lifestyle"
-
-  const ratingSeed = product.slug.length % 4
-
-  return {
-    category,
-    badge: totalStock(product.sizes) <= 3 ? "Stock เหลือน้อย" : "Verified Drop",
-    rating: (4.6 + ratingSeed * 0.1).toFixed(1),
-    reviews: 68 + product.slug.length * 7,
-    delivery: category === "Kids" ? "มีไซซ์สำหรับครอบครัว" : "จัดส่งใน 24 ชม.",
-  }
-}
-
-export default function ProductDetail({ product, isFavorited }: Props) {
+export default function ProductDetail({
+  product,
+  isFavorited,
+  recommendations = [],
+}: Props) {
   const firstAvailableSize = product.sizes.find((size) => size.stock > 0)
   const [activeImage, setActiveImage] = useState(
     product.images[0]?.url ?? "/placeholder.png"
@@ -114,7 +112,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
 
   const addItem = useCartStore((state) => state.addItem)
 
-  const productMeta = useMemo(() => buildProductMeta(product), [product])
+  const productMeta = useMemo(() => buildDiscoveryMeta(product, 0), [product])
   const selectedSizeObj = useMemo(() => {
     return product.sizes.find((size) => size.size === selectedSize)
   }, [selectedSize, product.sizes])
@@ -228,7 +226,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                           ? "border-black bg-[#d8ff6a]"
                           : "border-black/10 hover:border-black/30 hover:bg-[#f8f7f3]"
                       }`}
-                    aria-label={`ดูรูป ${product.name}`}
+                      aria-label={`ดูรูป ${product.name}`}
                     >
                       <Image
                         src={normalizeImagePath(image.url)}
@@ -281,7 +279,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                   {availabilityLabel(product.sizes)}
                 </p>
                 <p className="mt-1 text-black/60">
-                  {availablePairs} total pairs
+                  ทั้งหมด {availablePairs} คู่
                 </p>
               </div>
             </div>
@@ -346,6 +344,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity === 1}
                   className="flex h-10 w-10 items-center justify-center rounded-full text-black transition hover:bg-black/10 disabled:cursor-not-allowed disabled:text-black/45"
+                  aria-label="ลดจำนวนสินค้า"
                 >
                   -
                 </button>
@@ -356,6 +355,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                   onClick={() => setQuantity(Math.min(maxStock, quantity + 1))}
                   disabled={!selectedSizeObj || quantity >= maxStock}
                   className="flex h-10 w-10 items-center justify-center rounded-full text-black transition hover:bg-black/10 disabled:cursor-not-allowed disabled:text-black/45"
+                  aria-label="เพิ่มจำนวนสินค้า"
                 >
                   +
                 </button>
@@ -436,6 +436,66 @@ export default function ProductDetail({ product, isFavorited }: Props) {
             </Link>
           </div>
         </section>
+
+        {recommendations.length > 0 && (
+          <section className="mt-10">
+            <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-semibold">คู่ที่อาจเข้ากับคุณ</h2>
+                <p className="mt-2 text-sm text-black/55">
+                  แนะนำจากแบรนด์ หมวดหมู่ ราคา และ Stock ที่ใกล้เคียงกับคู่นี้
+                </p>
+              </div>
+              <Link href="/product" className={`text-sm ${uiAction.ghost}`}>
+                ดูทั้งหมด
+                <ArrowRight size={15} />
+              </Link>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {recommendations.map((item) => {
+                const stock = totalStock(item.sizes)
+
+                return (
+                  <Link
+                    key={item.id}
+                    href={`/product/${item.slug}`}
+                    className="group rounded-lg border border-black/10 bg-white p-4 transition hover:-translate-y-1 hover:shadow-lg"
+                  >
+                    <div className="relative aspect-square overflow-hidden rounded-lg bg-[#f4f3ef]">
+                      <div className="absolute left-3 top-3 z-10 flex flex-wrap gap-2">
+                        <span className="rounded-full bg-black px-3 py-1.5 text-xs font-medium text-white">
+                          {item.meta.badge}
+                        </span>
+                      </div>
+                      <Image
+                        src={normalizeImagePath(item.images[0]?.url)}
+                        alt={item.name}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 280px"
+                        className="object-contain p-7 transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="mt-4">
+                      <p className="text-sm text-black/55">{item.brand.name}</p>
+                      <h3 className="mt-1 min-h-12 text-base font-semibold leading-tight">
+                        {item.name}
+                      </h3>
+                      <div className="mt-3 flex items-center justify-between gap-3 text-sm">
+                        <span className="font-semibold">
+                          {formatCurrency(item.price)}
+                        </span>
+                        <span className={stock > 0 ? "text-black/55" : "text-red-600"}>
+                          {availabilityLabel(item.sizes)}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </section>
+        )}
       </div>
 
       <div className="fixed bottom-8 right-8 z-50">

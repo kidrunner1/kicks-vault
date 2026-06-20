@@ -10,11 +10,24 @@ import {
   normalizeStockRows,
   totalStock,
 } from "@/lib/commerce"
+import {
+  audienceOptions,
+  availabilityOptions,
+  collectionOptions,
+  enrichDiscoveryShoe,
+  matchesCollection,
+  matchesProductSearch,
+  priceInRange,
+  priceRangeOptions,
+  sortOptions,
+  type CollectionValue,
+} from "@/lib/product-discovery"
 import { filterActionClass, uiAction } from "@/lib/ui-interactions"
 import {
   Check,
   Eye,
   RotateCcw,
+  Search,
   ShieldCheck,
   SlidersHorizontal,
   Star,
@@ -29,100 +42,14 @@ interface ProductsPageProps {
   searchParams?: Promise<Record<string, SearchValue>>
 }
 
-const audienceOptions = [
-  { value: "all", label: "ทั้งหมด" },
-  { value: "men", label: "ผู้ชาย" },
-  { value: "women", label: "ผู้หญิง" },
-  { value: "kids", label: "เด็ก" },
-]
-
-const categoryOptions = [
-  "Lifestyle",
-  "Running",
-  "Basketball",
-  "Skate",
-  "Training",
-]
-
-const sortOptions = [
-  { value: "newest", label: "มาใหม่ล่าสุด" },
-  { value: "stock-desc", label: "Stock มากที่สุด" },
-]
-
-const priceRangeOptions = [
-  { value: "all", label: "ทุกราคา", shortLabel: "ทั้งหมด", min: null, max: null },
-  { value: "0-5000", label: "ต่ำกว่า 5,000", shortLabel: "<5k", min: 0, max: 5000 },
-  { value: "5000-9000", label: "5,000 ถึง 9,000", shortLabel: "5-9k", min: 5000, max: 9000 },
-  { value: "9000-13000", label: "9,000 ถึง 13,000", shortLabel: "9-13k", min: 9000, max: 13000 },
-  { value: "13000-up", label: "13,000 ขึ้นไป", shortLabel: "13k+", min: 13000, max: null },
-]
-
-const availabilityOptions = [
-  { value: "all", label: "สินค้าทั้งหมด" },
-  { value: "in-stock", label: "มีสินค้า" },
-  { value: "low-stock", label: "เหลือน้อย" },
-  { value: "out-of-stock", label: "สินค้าหมด" },
-]
-
-const badges = [
-  "New Drop",
-  "Best Seller",
-  "Limited",
-  "Verified Stock",
-  "Staff Pick",
-]
-
 function readParam(params: Record<string, SearchValue>, key: string) {
   const value = params[key]
 
   return Array.isArray(value) ? value[0] : value
 }
 
-function createMockMeta(
-  shoe: {
-    name: string
-    brand: { name: string }
-  },
-  index: number
-) {
-  const name = shoe.name.toLowerCase()
-  const brand = shoe.brand.name.toLowerCase()
-  const audience = index % 5 === 2 ? "kids" : index % 3 === 1 ? "women" : "men"
-  const category = name.includes("jordan")
-    ? "Basketball"
-    : name.includes("sb") || name.includes("dunk")
-      ? "Skate"
-      : brand.includes("adidas")
-        ? "Running"
-        : index % 2 === 0
-          ? "Lifestyle"
-          : "Training"
-
-  return {
-    audience,
-    category,
-    badge: badges[index % badges.length],
-    rating: (4.6 + (index % 4) * 0.1).toFixed(1),
-    reviews: 48 + index * 19,
-    delivery: index % 2 === 0 ? "จัดส่งใน 24 ชม." : "จัดส่งภายใน 2 วัน",
-  }
-}
-
-function priceOf(price: string | null) {
-  return price == null ? 0 : Number(price)
-}
-
-function priceInRange(price: string | null, rangeValue: string) {
-  const range = priceRangeOptions.find((option) => option.value === rangeValue)
-
-  if (!range || range.value === "all") return true
-
-  const value = priceOf(price)
-
-  if (range.min != null && value < range.min) return false
-  if (range.max != null && value > range.max) return false
-
-  return true
+function isCollectionValue(value: string | undefined): value is CollectionValue {
+  return collectionOptions.some((option) => option.value === value)
 }
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
@@ -134,13 +61,18 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const activeAvailability = readParam(params, "availability") ?? "all"
   const activeSort = readParam(params, "sort") ?? "newest"
   const activePriceRangeParam = readParam(params, "price") ?? "all"
+  const activeQuery = (readParam(params, "q") ?? "").trim()
+  const activeCollectionParam = readParam(params, "collection")
+  const activeCollection = isCollectionValue(activeCollectionParam)
+    ? activeCollectionParam
+    : null
   const activePriceRange = priceRangeOptions.some(
     (option) => option.value === activePriceRangeParam
   )
     ? activePriceRangeParam
     : "all"
 
-  const createHref = (updates: Record<string, string | null>) => {
+  const createHref = (updates: Record<string, string | null | undefined>) => {
     const nextParams = new URLSearchParams()
 
     for (const [key, rawValue] of Object.entries(params)) {
@@ -169,39 +101,53 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       id: true,
       name: true,
       slug: true,
+      description: true,
       price: true,
+      featured: true,
       brand: {
-        select: { name: true }
+        select: { name: true },
       },
       images: {
         select: { url: true },
         orderBy: { order: "asc" },
-        take: 1
+        take: 1,
       },
       sizes: {
         select: {
           size: true,
-          stock: true
-        }
-      }
+          stock: true,
+        },
+      },
     },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
   })
 
-  const enrichedShoes = shoes.map((shoe, index) => ({
-    ...shoe,
-    price: shoe.price == null ? null : shoe.price.toString(),
-    sizes: normalizeStockRows(shoe.sizes),
-    meta: createMockMeta(shoe, index),
-    originalIndex: index,
-  }))
+  const enrichedShoes = shoes.map((shoe, index) =>
+    enrichDiscoveryShoe(
+      {
+        ...shoe,
+        price: shoe.price == null ? null : shoe.price.toString(),
+        sizes: normalizeStockRows(shoe.sizes),
+      },
+      index
+    )
+  )
 
   const inStockShoes = enrichedShoes.filter((shoe) => totalStock(shoe.sizes) > 0)
   const heroShoe = inStockShoes[0] ?? enrichedShoes[0]
   const brands = Array.from(new Set(enrichedShoes.map((shoe) => shoe.brand.name))).sort()
+  const categories = Array.from(new Set(enrichedShoes.map((shoe) => shoe.meta.category))).sort()
   const sizes = Array.from(
     new Set(enrichedShoes.flatMap((shoe) => shoe.sizes.map((size) => size.size)))
   ).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }))
+  const collectionCounts = Object.fromEntries(
+    collectionOptions.map((option) => [
+      option.value,
+      enrichedShoes.filter((shoe) =>
+        matchesCollection(shoe, shoe.meta, option.value, shoe.originalIndex)
+      ).length,
+    ])
+  )
 
   const filteredShoes = enrichedShoes
     .filter((shoe) => activeAudience === "all" || shoe.meta.audience === activeAudience)
@@ -209,6 +155,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     .filter((shoe) => !activeBrand || shoe.brand.name === activeBrand)
     .filter((shoe) => !activeSize || shoe.sizes.some((size) => size.size === activeSize && size.stock > 0))
     .filter((shoe) => priceInRange(shoe.price, activePriceRange))
+    .filter((shoe) =>
+      matchesCollection(shoe, shoe.meta, activeCollection, shoe.originalIndex)
+    )
+    .filter((shoe) => matchesProductSearch(shoe, shoe.meta, activeQuery))
     .filter((shoe) => {
       const stock = totalStock(shoe.sizes)
 
@@ -220,6 +170,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     })
     .sort((a, b) => {
       if (activeSort === "stock-desc") return totalStock(b.sizes) - totalStock(a.sizes)
+      if (activeSort === "price-asc") return Number(a.price ?? 0) - Number(b.price ?? 0)
+      if (activeSort === "price-desc") return Number(b.price ?? 0) - Number(a.price ?? 0)
 
       return a.originalIndex - b.originalIndex
     })
@@ -236,6 +188,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     activeAvailability !== "all",
     activePriceRange !== "all",
     activeSort !== "newest",
+    Boolean(activeCollection),
+    Boolean(activeQuery),
   ].filter(Boolean).length
   const heroImage = normalizeImagePath(heroShoe?.images[0]?.url)
   const heroAudienceLabel = heroShoe
@@ -244,6 +198,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const heroAudienceActive = heroShoe
     ? activeAudience === heroShoe.meta.audience
     : false
+  const activeCollectionLabel = activeCollection
+    ? collectionOptions.find((option) => option.value === activeCollection)?.label
+    : null
 
   return (
     <main className="min-h-screen bg-[#f4f3ef] text-black">
@@ -253,7 +210,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             href="/"
             className={`text-sm ${uiAction.ghost}`}
           >
-            <AppLogo compact subLabel="กลับหน้าแรก" />
+            <AppLogo compact subLabel="กลับหน้าหลัก" />
           </Link>
         </div>
       </section>
@@ -273,27 +230,62 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                         หา sneaker คู่ที่เข้ากับทุกวันของคุณ
                       </h1>
                       <p className="mt-5 max-w-md text-sm leading-7 text-black/60 md:text-base">
-                        เลือกจากสินค้าจริงตามกลุ่มผู้ใส่ หมวดหมู่ ไซซ์ แบรนด์ และราคา ก่อนตัดสินใจ
+                        ค้นหาแบรนด์ รุ่น หมวดหมู่ และเลือก collection ได้ในหน้าเดียว
+                        พร้อมดูราคา ไซซ์ และ Stock ก่อนตัดสินใจ
                       </p>
                     </div>
 
-                    <div className="space-y-3">
-                      <p className="text-sm font-semibold text-black">
-                        เลือกกลุ่มผู้ใส่
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {audienceOptions.map((option) => (
-                          <AudienceFilterLink
-                            key={option.value}
-                            href={createHref({ audience: option.value })}
-                            active={activeAudience === option.value}
-                            compact
-                          >
-                            {option.label}
-                          </AudienceFilterLink>
-                        ))}
+                    <form
+                      action="/product"
+                      className="rounded-lg border border-black/10 bg-[#f8f7f3] p-2"
+                    >
+                      {activeAudience !== "all" && (
+                        <input type="hidden" name="audience" value={activeAudience} />
+                      )}
+                      {activeCollection && (
+                        <input type="hidden" name="collection" value={activeCollection} />
+                      )}
+                      {activeCategory && (
+                        <input type="hidden" name="category" value={activeCategory} />
+                      )}
+                      {activeBrand && (
+                        <input type="hidden" name="brand" value={activeBrand} />
+                      )}
+                      {activeSize && (
+                        <input type="hidden" name="size" value={activeSize} />
+                      )}
+                      {activeAvailability !== "all" && (
+                        <input type="hidden" name="availability" value={activeAvailability} />
+                      )}
+                      {activePriceRange !== "all" && (
+                        <input type="hidden" name="price" value={activePriceRange} />
+                      )}
+                      {activeSort !== "newest" && (
+                        <input type="hidden" name="sort" value={activeSort} />
+                      )}
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <label className="relative flex min-h-12 flex-1 items-center">
+                          <Search
+                            size={18}
+                            className="absolute left-4 text-black/45"
+                            aria-hidden="true"
+                          />
+                          <span className="sr-only">ค้นหาสินค้า</span>
+                          <input
+                            name="q"
+                            defaultValue={activeQuery}
+                            placeholder="ค้นหารุ่น แบรนด์ หรือ running"
+                            className="h-12 w-full rounded-full border border-black/10 bg-white pl-11 pr-4 text-sm text-black outline-none transition placeholder:text-black/45 focus:border-black"
+                          />
+                        </label>
+                        <button
+                          type="submit"
+                          className={`h-12 px-5 text-sm font-semibold ${uiAction.accent}`}
+                        >
+                          ค้นหา
+                        </button>
                       </div>
-                    </div>
+                    </form>
 
                     <div className="grid grid-cols-3 gap-3">
                       <StoreStat
@@ -415,27 +407,69 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       </section>
 
       <section className="px-6 pb-10 md:px-12 lg:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="rounded-lg border border-black/10 bg-white p-3 shadow-sm">
+        <div className="mx-auto grid max-w-7xl gap-4 lg:grid-cols-[1fr_1.2fr]">
+          <div className="rounded-lg border border-black/10 bg-white p-4 shadow-sm">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-sm font-semibold text-black">
                 เลือกตามกลุ่มผู้ใส่
               </h2>
               <div className="flex flex-wrap gap-2">
-                {audienceOptions.map((option) => {
-                  const isActive = activeAudience === option.value
-
-                  return (
-                    <AudienceFilterLink
-                      key={option.value}
-                      href={createHref({ audience: option.value })}
-                      active={isActive}
-                    >
-                      {option.label}
-                    </AudienceFilterLink>
-                  )
-                })}
+                {audienceOptions.map((option) => (
+                  <AudienceFilterLink
+                    key={option.value}
+                    href={createHref({ audience: option.value })}
+                    active={activeAudience === option.value}
+                  >
+                    {option.label}
+                  </AudienceFilterLink>
+                ))}
               </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-black/10 bg-white p-4 shadow-sm">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-semibold text-black">Collections</h2>
+                <p className="mt-1 text-xs text-black/50">
+                  ทางลัดสำหรับดูคู่ที่เหมาะกับสถานการณ์ต่าง ๆ
+                </p>
+              </div>
+              {activeCollection && (
+                <Link href={createHref({ collection: null })} className={`text-sm ${uiAction.ghost}`}>
+                  ล้าง collection
+                </Link>
+              )}
+            </div>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
+              {collectionOptions.map((option) => {
+                const isActive = activeCollection === option.value
+
+                return (
+                  <Link
+                    key={option.value}
+                    href={createHref({
+                      collection: isActive ? null : option.value,
+                    })}
+                    aria-current={isActive ? true : undefined}
+                    className={filterActionClass({
+                      active: isActive,
+                      className: "min-h-[88px] flex-col items-start justify-between px-4 py-3 text-left",
+                      shape: "rounded-lg",
+                    })}
+                  >
+                    <span className="flex w-full items-center justify-between gap-3">
+                      <span className="font-semibold">{option.label}</span>
+                      <span className="rounded-full bg-black/10 px-2 py-0.5 text-xs">
+                        {collectionCounts[option.value] ?? 0}
+                      </span>
+                    </span>
+                    <span className="text-xs leading-5 opacity-70">
+                      {option.description}
+                    </span>
+                  </Link>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -477,7 +511,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               </FilterGroup>
 
               <FilterGroup title="หมวดหมู่">
-                {categoryOptions.map((category) => (
+                {categories.map((category) => (
                   <FilterLink
                     key={category}
                     href={createHref({
@@ -545,11 +579,21 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   เลือกซื้อจาก vault
                 </h2>
                 <p className="mt-2 text-sm text-black/50">
-                  แสดง {filteredShoes.length} จาก {enrichedShoes.length} รายการ พร้อมป้าย Stock จริง
+                  แสดง {filteredShoes.length} จาก {enrichedShoes.length} รายการ
+                  {activeQuery ? ` สำหรับ "${activeQuery}"` : ""}
+                  {activeCollectionLabel ? ` ใน ${activeCollectionLabel}` : ""} พร้อมป้าย Stock จริง
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-2 text-xs text-black/55">
+                {activeQuery && (
+                  <Link
+                    href={createHref({ q: null })}
+                    className={`inline-flex items-center gap-1 rounded-full bg-white px-3 py-2 ${uiAction.ghost}`}
+                  >
+                    ล้างคำค้น
+                  </Link>
+                )}
                 <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-2">
                   <ShieldCheck size={14} />
                   Checkout ปลอดภัย
@@ -637,10 +681,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             ) : (
               <div className="rounded-lg border border-black/10 bg-white px-8 py-16 text-center">
                 <h3 className="text-2xl font-semibold">
-                  ไม่พบสินค้าที่ตรงกับตัวกรอง
+                  ไม่พบสินค้าที่ตรงกับเงื่อนไข
                 </h3>
                 <p className="mx-auto mt-3 max-w-md text-sm text-black/50">
-                  ลองล้างตัวกรองไซซ์ หมวดหมู่ หรือกลุ่มผู้ใส่ เพื่อดูสินค้ามากขึ้น
+                  ลองล้างคำค้น collection หรือ filter บางตัว เพื่อดูสินค้ามากขึ้น
                 </p>
                 <Link
                   href="/product"
@@ -661,12 +705,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 function AudienceFilterLink({
   href,
   active,
-  compact = false,
   children,
 }: {
   href: string
   active: boolean
-  compact?: boolean
   children: ReactNode
 }) {
   return (
@@ -675,7 +717,7 @@ function AudienceFilterLink({
       aria-current={active ? true : undefined}
       className={filterActionClass({
         active,
-        className: `${compact ? "min-h-10 px-4 py-2" : "min-h-11 px-5 py-2.5"} font-medium`,
+        className: "min-h-11 px-5 py-2.5 font-medium",
         shape: "rounded-full",
       })}
     >
