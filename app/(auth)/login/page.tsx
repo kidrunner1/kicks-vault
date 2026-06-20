@@ -1,34 +1,45 @@
 "use client"
 
 import { useState } from "react"
+import type { FormEvent } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
-import { Mail, Lock } from "lucide-react"
+import { motion, useReducedMotion } from "framer-motion"
+import { AlertCircle, ArrowRight, Lock, LogIn, Mail } from "lucide-react"
 import { z } from "zod"
 import FormInput from "../../component/ui/FormInput"
 import { useAuthStore } from "@/lib/auth-store"
 import { uiAction } from "@/lib/ui-interactions"
 
-
 const loginSchema = z.object({
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Email is required.")
+    .email("Enter a valid email address."),
+  password: z
+    .string()
+    .min(1, "Password is required.")
+    .min(6, "Password must be at least 6 characters."),
 })
+
+type LoginFieldErrors = {
+  email?: string
+  password?: string
+}
 
 export default function LoginPage() {
   const router = useRouter()
   const setUser = useAuthStore((state) => state.setUser)
+  const prefersReducedMotion = useReducedMotion()
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [formError, setFormError] = useState("")
+  const [fieldErrors, setFieldErrors] = useState<LoginFieldErrors>({})
 
-  const [fieldErrors, setFieldErrors] = useState<{
-    email?: string
-    password?: string
-  }>({})
-
-  async function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
     if (loading) return
@@ -40,11 +51,12 @@ export default function LoginPage() {
     const parsed = loginSchema.safeParse({ email, password })
 
     if (!parsed.success) {
-      const errors: Record<string, string> = {}
+      const errors: LoginFieldErrors = {}
 
-      parsed.error.issues.forEach(issue => {
+      parsed.error.issues.forEach((issue) => {
         const field = issue.path[0]
-        if (typeof field === "string") {
+
+        if (field === "email" || field === "password") {
           errors[field] = issue.message
         }
       })
@@ -59,20 +71,18 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(parsed.data),
       })
 
       const data = await res.json()
 
       if (!res.ok) {
-        setFormError(data.error || "Invalid credentials")
+        setFormError(data.error || "Email or password is incorrect.")
         return
       }
 
       setUser(data.user)
-
       router.push(data.user.role === "ADMIN" ? "/admin" : "/")
-
     } catch {
       setFormError("Unable to connect. Please try again.")
     } finally {
@@ -82,127 +92,99 @@ export default function LoginPage() {
 
   const handleEmailChange = (val: string) => {
     setEmail(val)
-    setFieldErrors(prev => ({ ...prev, email: undefined }))
+    setFieldErrors((prev) => ({ ...prev, email: undefined }))
     setFormError("")
   }
 
   const handlePasswordChange = (val: string) => {
     setPassword(val)
-    setFieldErrors(prev => ({ ...prev, password: undefined }))
+    setFieldErrors((prev) => ({ ...prev, password: undefined }))
     setFormError("")
   }
 
   return (
-    <div className="w-full">
-
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.6,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-      >
-
-        {/* Title */}
-        <div className="mb-10">
-
-          <h1 className="text-3xl font-medium tracking-tight">
-            Welcome Back
-          </h1>
-
-          <p className="text-sm text-gray-500 mt-2">
-            Sign in to access your sneaker archive.
-          </p>
-
+    <motion.div
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: prefersReducedMotion ? 0 : 0.32,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+    >
+      <div className="mb-8">
+        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-black bg-[#d8ff6a] text-black shadow-sm">
+          <LogIn size={20} />
         </div>
 
-        {/* Error */}
-        {formError && (
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="
-              mb-6
-              text-sm
-              text-red-600
-              bg-red-50
-              border border-red-200
-              rounded-xl
-              px-4 py-3
-            "
-          >
-            {formError}
-          </motion.div>
-        )}
+        <h1 className="text-4xl font-semibold leading-tight tracking-tight">
+          Welcome back
+        </h1>
+        <p className="mt-3 text-sm leading-6 text-black/65">
+          Sign in to use saved addresses, favorites, and order history.
+        </p>
+      </div>
 
-        {/* Form */}
-        <form
-          onSubmit={handleLogin}
-          className="space-y-6"
+      {formError && (
+        <motion.div
+          initial={prefersReducedMotion ? false : { opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-5 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+          role="alert"
         >
+          <AlertCircle className="mt-0.5 shrink-0" size={16} />
+          {formError}
+        </motion.div>
+      )}
 
-          <FormInput
-            type="email"
-            label="Email"
-            icon={<Mail size={18} />}
-            value={email}
-            onChange={handleEmailChange}
-            error={fieldErrors.email}
-            disabled={loading}
-          />
+      <form onSubmit={handleLogin} className="space-y-5">
+        <FormInput
+          type="email"
+          name="email"
+          label="Email"
+          icon={<Mail size={18} />}
+          value={email}
+          onChange={handleEmailChange}
+          error={fieldErrors.email}
+          disabled={loading}
+          required
+          autoComplete="email"
+        />
 
-          <FormInput
-            type="password"
-            label="Password"
-            icon={<Lock size={18} />}
-            value={password}
-            onChange={handlePasswordChange}
-            error={fieldErrors.password}
-            disabled={loading}
-          />
+        <FormInput
+          type="password"
+          name="password"
+          label="Password"
+          icon={<Lock size={18} />}
+          value={password}
+          onChange={handlePasswordChange}
+          error={fieldErrors.password}
+          disabled={loading}
+          required
+          autoComplete="current-password"
+        />
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`h-12 w-full text-sm font-medium ${uiAction.primary}`}
-          >
-            {loading ? "Signing In..." : "Sign In"}
-          </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className={`h-12 w-full px-5 text-sm font-semibold ${uiAction.accent}`}
+        >
+          <LogIn size={16} />
+          {loading ? "Signing in..." : "Sign in"}
+        </button>
+      </form>
 
-        </form>
-
-        {/* Divider */}
-        <div className="flex items-center gap-4 my-8">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-xs text-gray-400 tracking-widest">
-            OR
-          </span>
-          <div className="flex-1 h-px bg-gray-200" />
-        </div>
-
-        {/* Register */}
-        <div className="text-sm text-gray-500">
-
-          Don’t have an account?{" "}
-
-          <button
-            type="button"
-            onClick={() => router.push("/register")}
-            className="
-              text-black
-              font-medium
-              hover:underline
-            "
-          >
-            Create one
-          </button>
-
-        </div>
-
-      </motion.div>
-
-    </div>
+      <div className="mt-7 border-t border-black/10 pt-5">
+        <p className="mb-3 text-sm text-black/60">
+          New to Kicks Vault?
+        </p>
+        <Link
+          href="/register"
+          className={`h-11 w-full px-4 text-sm font-medium ${uiAction.surface}`}
+        >
+          Create account
+          <ArrowRight size={15} />
+        </Link>
+      </div>
+    </motion.div>
   )
 }

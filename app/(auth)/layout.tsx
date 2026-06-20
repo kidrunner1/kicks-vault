@@ -1,191 +1,110 @@
 "use client"
 
-import { motion } from "framer-motion"
 import Link from "next/link"
+import type { ReactNode } from "react"
+import { motion, useReducedMotion } from "framer-motion"
+import { ArrowLeft, PackageCheck, ShieldCheck, ShoppingBag } from "lucide-react"
+import AppLogo from "@/app/component/ui/AppLogo"
+import { uiAction } from "@/lib/ui-interactions"
 
 export default function AuthLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
+  const prefersReducedMotion = useReducedMotion()
+  const entranceInitial = prefersReducedMotion ? false : { opacity: 0, y: 18 }
+  const entranceTransition = {
+    duration: prefersReducedMotion ? 0 : 0.42,
+    ease: [0.22, 1, 0.36, 1] as const,
+  }
+
   return (
-    <div className="relative min-h-screen flex overflow-hidden bg-[#f6f6f4] text-black">
-
-      {/* =============================
-          BACKGROUND DECORATION
-      ============================= */}
-
-      {/* =============================
-    TOP LEFT — BACK TO LANDING
-        ============================= */}
-
-      <div className="absolute top-6 left-6 z-20">
-
-        <Link href="/">
-
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.96 }}
-            className="
-        flex items-center gap-3
-        px-4 py-2
-        rounded-full
-        bg-white/60
-        backdrop-blur-xl
-        border border-black/5
-        shadow-sm
-        hover:bg-white/80
-        transition
-        cursor-pointer
-      "
-          >
-
-            {/* Arrow */}
-            <motion.span
-              initial={{ x: 0 }}
-              whileHover={{ x: -3 }}
-              transition={{ duration: 0.2 }}
-              className="text-sm"
-            >
-              ←
-            </motion.span>
-
-            {/* Brand */}
-            <span className="text-sm font-medium tracking-wide">
-              KICKS VAULT
-            </span>
-
-          </motion.div>
-
-        </Link>
-
-      </div>
-
-      {/* Soft Gradient Base */}
-      <div className="absolute inset-0 bg-linear-to-br from-[#f8f8f6] via-[#f3f3f1] to-[#ececea]" />
-
-      {/* Radial Glow */}
-      <div className="absolute top-[-20%] left-[-10%] w-175 h-175 bg-white/40 blur-[140px] rounded-full" />
-
-      <div className="absolute bottom-[-20%] right-[-10%] w-150 h-150 bg-white/40 blur-[120px] rounded-full" />
-
-      {/* Grain */}
-      <div
-        className="absolute inset-0 opacity-[0.05] pointer-events-none"
-        style={{
-          backgroundImage:
-            "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\"><filter id=\"n\"><feTurbulence type=\"fractalNoise\" baseFrequency=\"0.65\" numOctaves=\"3\" stitchTiles=\"stitch\"/></filter><rect width=\"100%\" height=\"100%\" filter=\"url(%23n)\" opacity=\"0.4\"/></svg>')",
-        }}
-      />
-
-      {/* =============================
-          LEFT PANEL — BRANDING
-      ============================= */}
-
-      <div className="hidden lg:flex w-1/2 relative items-center justify-center px-20">
-
-        <div className="relative max-w-xl">
-
-          {/* Title Animation */}
-          <div className="overflow-hidden">
-            <motion.h1
-              initial={{ y: "100%" }}
-              animate={{ y: "0%" }}
-              transition={{
-                duration: 1,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="text-[5rem] leading-none font-semibold tracking-tight"
-            >
-              KICKS
-            </motion.h1>
-          </div>
-
-          <div className="overflow-hidden">
-            <motion.h1
-              initial={{ y: "100%" }}
-              animate={{ y: "0%" }}
-              transition={{
-                duration: 1,
-                delay: 0.15,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="text-[5rem] leading-none font-semibold tracking-tight"
-            >
-              VAULT
-            </motion.h1>
-          </div>
-
-          {/* Divider */}
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: 120 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-            className="h-0.5 bg-black/70 mt-10"
-          />
-
-          {/* Description */}
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 }}
-            className="text-gray-500 text-lg mt-8 max-w-md leading-relaxed"
-          >
-            A curated digital archive for modern sneaker collectors.
-            Discover limited releases, timeless silhouettes,
-            and the culture behind every pair.
-          </motion.p>
-
-        </div>
-
-      </div>
-
-      {/* =============================
-          RIGHT PANEL — AUTH CARD
-      ============================= */}
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="
-          w-full lg:w-1/2
-          flex items-center justify-center
-          px-6 lg:px-20
-        "
-      >
-
-        <motion.div
-          initial={{ y: 40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{
-            duration: 0.8,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="
-            w-full
-            max-w-md
-            bg-white/70
-            backdrop-blur-xl
-            border border-black/5
-            rounded-2xl
-            p-10
-            shadow-[0_20px_60px_rgba(0,0,0,0.08)]
-          "
+    <main className="relative min-h-screen overflow-hidden bg-[#f4f3ef] text-black">
+      <div className="absolute left-4 top-4 z-30 md:left-6 md:top-6">
+        <Link
+          href="/"
+          className={`h-11 px-4 text-sm font-medium ${uiAction.surface}`}
         >
-          {children}
-        </motion.div>
-
-      </motion.div>
-
-      {/* Footer */}
-      <div className="absolute bottom-6 left-0 right-0 text-center text-xs text-gray-400">
-        © {new Date().getFullYear()} Kicks Vault. All Rights Reserved
+          <ArrowLeft size={16} />
+          <AppLogo compact />
+        </Link>
       </div>
 
-    </div>
+      <div className="grid min-h-screen lg:grid-cols-[minmax(0,0.88fr)_minmax(420px,0.82fr)]">
+        <section className="relative hidden min-h-screen overflow-hidden bg-black text-white lg:block">
+          <div className="absolute inset-x-10 top-28 border-t border-white/15" />
+          <div className="absolute bottom-24 right-12 h-px w-56 bg-white/15" />
+          <div className="absolute bottom-32 right-12 h-px w-32 bg-[#d8ff6a]" />
+
+          <div className="relative z-10 flex min-h-screen flex-col justify-between p-10 pt-28 xl:p-14 xl:pt-32">
+            <AppLogo
+              inverse
+              subLabel="Member vault"
+              className="self-start"
+            />
+
+            <motion.div
+              initial={entranceInitial}
+              animate={{ opacity: 1, y: 0 }}
+              transition={entranceTransition}
+              className="max-w-xl"
+            >
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white px-4 py-2 text-sm font-semibold text-black shadow-sm">
+                <ShieldCheck size={16} />
+                Protected member access
+              </div>
+
+              <h1 className="text-6xl font-semibold leading-none tracking-tight xl:text-7xl">
+                Your vault
+                <br />
+                stays ready.
+              </h1>
+
+              <p className="mt-6 max-w-md text-base leading-7 text-white/78">
+                Keep saved addresses, favorites, order history, and checkout access in one clean member space.
+              </p>
+
+              <div className="mt-8 grid gap-3 text-sm text-white/82 sm:grid-cols-2">
+                <div className="rounded-lg border border-white/12 bg-white/8 p-4">
+                  <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-white text-black">
+                    <ShoppingBag size={16} />
+                  </span>
+                  Stock-backed checkout tied to your account.
+                </div>
+                <div className="rounded-lg border border-white/12 bg-white/8 p-4">
+                  <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-white text-black">
+                    <PackageCheck size={16} />
+                  </span>
+                  Order history kept in your member archive.
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className="flex min-h-screen items-center justify-center px-5 pb-10 pt-24 md:px-8 lg:px-12">
+          <motion.div
+            initial={entranceInitial}
+            animate={{ opacity: 1, y: 0 }}
+            transition={entranceTransition}
+            className="w-full max-w-md rounded-lg border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.08)] md:p-8"
+          >
+            <div className="mb-7 flex items-center justify-between gap-4 lg:hidden">
+              <AppLogo subLabel="Member access" />
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black bg-[#d8ff6a] text-black">
+                <ShieldCheck size={18} />
+              </span>
+            </div>
+
+            {children}
+          </motion.div>
+        </section>
+      </div>
+
+      <p className="pointer-events-none absolute bottom-4 left-0 right-0 text-center text-xs text-black/45">
+        (c) {new Date().getFullYear()} Kicks Vault
+      </p>
+    </main>
   )
 }

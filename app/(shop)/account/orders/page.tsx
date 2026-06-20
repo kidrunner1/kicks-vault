@@ -26,7 +26,7 @@ function statusClass(status: string) {
   if (status === "CANCELLED") return "bg-red-50 text-red-600"
   if (status === "SHIPPED") return "bg-blue-50 text-blue-700"
 
-  return "bg-black text-white"
+  return "border border-black bg-[#d8ff6a] text-black"
 }
 
 export default async function OrdersPage() {
@@ -78,7 +78,7 @@ export default async function OrdersPage() {
 
         <Link
           href="/product"
-          className={`h-11 px-5 text-sm font-medium lg:justify-self-end ${uiAction.primary}`}
+          className={`h-11 px-5 text-sm font-semibold lg:justify-self-end ${uiAction.accent}`}
         >
           Browse products
           <ArrowRight size={15} />
@@ -102,7 +102,7 @@ export default async function OrdersPage() {
             </p>
             <Link
               href="/product"
-              className={`mt-6 px-5 py-3 text-sm font-medium ${uiAction.primary}`}
+              className={`mt-6 px-5 py-3 text-sm font-semibold ${uiAction.accent}`}
             >
               Shop the vault
             </Link>
@@ -190,7 +190,7 @@ export default async function OrdersPage() {
                         {formatCurrency(order.total.toString())}
                       </p>
                     </div>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-black/60 transition group-hover:bg-black group-hover:text-white">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black/60 transition group-hover:border-black group-hover:bg-[#d8ff6a] group-hover:text-black">
                       <ArrowRight size={15} />
                     </span>
                   </div>

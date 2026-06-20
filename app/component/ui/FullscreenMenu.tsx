@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 import {
   ArrowUpRight,
   Heart,
@@ -19,6 +19,7 @@ import {
   UserRound,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
+import AppLogo from "./AppLogo"
 import { useAuthStore } from "@/lib/auth-store"
 import { uiAction } from "@/lib/ui-interactions"
 
@@ -31,7 +32,22 @@ type MenuItem = {
   href: string
   description: string
   icon: LucideIcon
-  emphasis?: "primary"
+}
+
+function menuCardClass(active: boolean) {
+  if (active) {
+    return "border-black bg-[#d8ff6a] shadow-sm hover:bg-[#e4ff84]"
+  }
+
+  return "border-black/10 bg-white hover:border-black/35 hover:bg-[#f8f7f3] hover:shadow-sm"
+}
+
+function menuIconClass(active: boolean) {
+  if (active) {
+    return "border-black bg-white text-black"
+  }
+
+  return "border-black/10 bg-[#f8f7f3] text-black/70 group-hover:border-black/25 group-hover:bg-white group-hover:text-black"
 }
 
 const images = [
@@ -45,7 +61,7 @@ const guestMenu: MenuItem[] = [
   {
     name: "Home",
     href: "/",
-    description: "Return to the KicksVault entrance.",
+    description: "Return to the Kicks Vault entrance.",
     icon: Home,
   },
   {
@@ -59,7 +75,6 @@ const guestMenu: MenuItem[] = [
     href: "/login",
     description: "Access saved addresses and order history.",
     icon: LogIn,
-    emphasis: "primary",
   },
   {
     name: "Register",
@@ -73,7 +88,7 @@ const userMenu: MenuItem[] = [
   {
     name: "Home",
     href: "/",
-    description: "Return to the KicksVault entrance.",
+    description: "Return to the Kicks Vault entrance.",
     icon: Home,
   },
   {
@@ -87,7 +102,6 @@ const userMenu: MenuItem[] = [
     href: "/account",
     description: "Review your member space and saved details.",
     icon: UserRound,
-    emphasis: "primary",
   },
 ]
 
@@ -112,6 +126,7 @@ const accountLinks = [
 export default function FullscreenMenu({ onClose }: Props) {
   const router = useRouter()
   const pathname = usePathname()
+  const prefersReducedMotion = useReducedMotion()
 
   const user = useAuthStore((state) => state.user)
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
@@ -132,6 +147,7 @@ export default function FullscreenMenu({ onClose }: Props) {
       ? userMenu
       : guestMenu
   const accountInitial = user?.email?.[0]?.toUpperCase() ?? "K"
+  const canUseMotion = !prefersReducedMotion
 
   const handleLogout = async () => {
     if (isLoggingOut) return
@@ -152,11 +168,11 @@ export default function FullscreenMenu({ onClose }: Props) {
 
   return (
     <motion.div
-      initial={{ y: "-100%" }}
+      initial={prefersReducedMotion ? false : { y: "-100%" }}
       animate={{ y: 0 }}
-      exit={{ y: "-100%" }}
+      exit={prefersReducedMotion ? undefined : { y: "-100%" }}
       transition={{
-        duration: 0.78,
+        duration: prefersReducedMotion ? 0 : 0.58,
         ease: [0.76, 0, 0.24, 1],
       }}
       className="fixed inset-0 z-[9999] overflow-y-auto bg-[#f4f3ef] text-black"
@@ -172,11 +188,21 @@ export default function FullscreenMenu({ onClose }: Props) {
               <motion.div
                 key={img}
                 animate={{
-                  y: imageShift ? (index % 2 === 0 ? -14 : 14) : 0,
-                  x: imageShift ? (index < 2 ? -8 : 8) : 0,
+                  y:
+                    imageShift && canUseMotion
+                      ? index % 2 === 0
+                        ? -14
+                        : 14
+                      : 0,
+                  x:
+                    imageShift && canUseMotion
+                      ? index < 2
+                        ? -8
+                        : 8
+                      : 0,
                 }}
                 transition={{
-                  duration: 0.7,
+                  duration: canUseMotion ? 0.7 : 0,
                   ease: [0.65, 0, 0.35, 1],
                 }}
                 className="relative overflow-hidden rounded-lg"
@@ -209,12 +235,7 @@ export default function FullscreenMenu({ onClose }: Props) {
 
         <div className="flex min-h-screen flex-col px-5 pb-8 pt-24 md:px-10 lg:px-12 lg:pb-12">
           <div className="mb-8 max-w-xl">
-            <p className="text-sm font-medium text-black/60">
-              Navigation
-            </p>
-            <h2 className="mt-2 text-4xl font-semibold leading-tight md:text-5xl">
-              KicksVault
-            </h2>
+            <AppLogo subLabel="Navigation" />
             <p className="mt-4 text-sm leading-7 text-black/65">
               Go straight to the store, manage your member archive, or sign in before checkout.
             </p>
@@ -241,7 +262,7 @@ export default function FullscreenMenu({ onClose }: Props) {
             ) : isAuthenticated ? (
               <div className="space-y-5">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-black text-sm font-semibold text-white">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-[#f8f7f3] text-sm font-semibold text-black shadow-sm">
                     {accountInitial}
                   </div>
                   <div className="min-w-0">
@@ -266,7 +287,7 @@ export default function FullscreenMenu({ onClose }: Props) {
                         onClick={onClose}
                         aria-current={active ? "page" : undefined}
                         className={`h-11 px-3 text-sm font-medium ${
-                          active ? uiAction.primary : uiAction.secondary
+                          active ? uiAction.accent : uiAction.surface
                         }`}
                       >
                         <Icon size={15} />
@@ -297,7 +318,7 @@ export default function FullscreenMenu({ onClose }: Props) {
                 <Link
                   href="/login"
                   onClick={onClose}
-                  className={`h-11 px-5 text-sm font-medium ${uiAction.primary}`}
+                  className={`h-11 px-5 text-sm font-semibold ${uiAction.accent}`}
                 >
                   <LogIn size={16} />
                   Login
@@ -323,50 +344,45 @@ function MenuLink({
   onClose: () => void
 }) {
   const Icon = item.icon
+  const prefersReducedMotion = useReducedMotion()
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 + index * 0.06, duration: 0.36 }}
+      whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+      whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
+      transition={{
+        delay: prefersReducedMotion ? 0 : 0.08 + index * 0.05,
+        duration: prefersReducedMotion ? 0 : 0.28,
+        ease: [0.22, 1, 0.36, 1],
+      }}
     >
       <Link
         href={item.href}
         onClick={onClose}
         aria-current={active ? "page" : undefined}
-        className={`group grid grid-cols-[44px_1fr_auto] items-center gap-4 rounded-lg border p-4 transition md:p-5 ${
+        className={`group grid grid-cols-[44px_1fr_auto] items-center gap-4 rounded-lg border p-4 transition-colors duration-200 ease-out md:p-5 ${menuCardClass(
           active
-            ? "border-black bg-black"
-            : item.emphasis === "primary"
-              ? "border-black bg-white hover:bg-black"
-              : "border-black/10 bg-white hover:border-black hover:bg-black"
-        }`}
+        )}`}
       >
         <span
-          className={`flex h-11 w-11 items-center justify-center rounded-full transition ${
+          className={`flex h-11 w-11 items-center justify-center rounded-full border transition-colors duration-200 ease-out ${menuIconClass(
             active
-              ? "bg-white text-black"
-            : item.emphasis === "primary"
-                ? "bg-black text-white group-hover:bg-white group-hover:text-black"
-                : "bg-[#f4f3ef] text-black group-hover:bg-white group-hover:text-black"
-          }`}
+          )}`}
         >
           <Icon size={18} />
         </span>
 
         <span className="min-w-0">
-          <span
-            className={`block text-2xl font-semibold leading-tight transition md:text-3xl ${
-              active ? "text-white" : "text-black group-hover:text-white"
-            }`}
-          >
+          <span className="block text-2xl font-semibold leading-tight text-black transition md:text-3xl">
             {item.name}
           </span>
           <span
             className={`mt-1 block text-sm leading-6 transition ${
               active
-                ? "text-white/70"
-                : "text-black/60 group-hover:text-white/70"
+                ? "text-black/70"
+                : "text-black/60"
             }`}
           >
             {item.description}
@@ -377,8 +393,8 @@ function MenuLink({
           size={18}
           className={
             active
-              ? "text-white"
-              : "text-black/45 transition group-hover:text-white"
+              ? "text-black"
+              : "text-black/45 transition duration-200 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-black/70"
           }
         />
       </Link>

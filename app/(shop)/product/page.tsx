@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import Image from "next/image"
+import AppLogo from "@/app/component/ui/AppLogo"
 import { normalizeImagePath } from "@/lib/image"
 import type { ReactNode } from "react"
 import {
@@ -12,6 +13,7 @@ import {
 import { filterActionClass, uiAction } from "@/lib/ui-interactions"
 import {
   Check,
+  Eye,
   RotateCcw,
   ShieldCheck,
   SlidersHorizontal,
@@ -236,6 +238,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     activeSort !== "newest",
   ].filter(Boolean).length
   const heroImage = normalizeImagePath(heroShoe?.images[0]?.url)
+  const heroAudienceLabel = heroShoe
+    ? audienceOptions.find((option) => option.value === heroShoe.meta.audience)?.label
+    : null
+  const heroAudienceActive = heroShoe
+    ? activeAudience === heroShoe.meta.audience
+    : false
 
   return (
     <main className="min-h-screen bg-[#f4f3ef] text-black">
@@ -245,17 +253,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             href="/"
             className={`text-sm ${uiAction.ghost}`}
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-black/20 text-xs font-semibold tracking-widest">
-              KV
-            </span>
-            <span className="leading-tight">
-              <span className="block font-medium tracking-wide text-black">
-                KICKS VAULT
-              </span>
-              <span className="block text-xs">
-                Back to Home
-              </span>
-            </span>
+            <AppLogo compact subLabel="Back to Home" />
           </Link>
         </div>
       </section>
@@ -263,86 +261,145 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       <section className="px-6 pb-10 pt-10 md:px-12 lg:px-16">
         <div className="mx-auto max-w-7xl">
           {heroShoe ? (
-            <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-              <div className="relative min-h-[500px] overflow-hidden rounded-lg bg-black text-white">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_25%,rgba(255,255,255,0.22),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.08),transparent_45%)]" />
-                <div className="absolute inset-y-8 right-0 w-full md:w-[56%]">
-                  <Image
-                    src={heroImage}
-                    alt={heroShoe.name}
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 90vw, 660px"
-                    className="object-contain p-8"
-                  />
-                </div>
+            <div className="overflow-hidden rounded-lg border border-black/10 bg-white shadow-sm">
+              <div className="grid lg:grid-cols-[minmax(0,1fr)_360px]">
+                <div className="grid gap-8 p-6 md:p-8 lg:grid-cols-[0.9fr_1.1fr] lg:p-10">
+                  <div className="flex flex-col justify-between gap-8">
+                    <div>
+                      <span className="inline-flex rounded-full border border-black bg-[#d8ff6a] px-4 py-2 text-sm font-semibold text-black">
+                        Store for every rotation
+                      </span>
+                      <h1 className="mt-5 max-w-xl text-4xl font-semibold leading-none md:text-6xl">
+                        Find the pair that fits the whole lineup.
+                      </h1>
+                      <p className="mt-5 max-w-md text-sm leading-7 text-black/60 md:text-base">
+                        Browse real inventory by audience, category, size, brand, and price before choosing the pair that fits.
+                      </p>
+                    </div>
 
-                <div className="relative z-10 flex min-h-[500px] max-w-xl flex-col justify-end p-8 md:p-12">
-                  <p className="mb-4 text-sm text-white/60">
-                    Store for every rotation
-                  </p>
-                  <h1 className="text-5xl font-semibold leading-[0.9] md:text-7xl">
-                    Men, women, kids. One live vault.
-                  </h1>
-                  <p className="mt-6 max-w-md text-sm leading-7 text-white/70 md:text-base">
-                    Browse real inventory by audience, category, size, brand, and price before choosing the pair that fits.
-                  </p>
-                  <div className="mt-8 flex flex-wrap gap-3 text-sm">
-                    <span className="rounded-full bg-white px-5 py-3 font-medium text-black">
-                      {enrichedShoes.length} products
-                    </span>
-                    <span className="rounded-full border border-white/20 px-5 py-3 text-white/75">
-                      {totalAvailablePairs} pairs available
-                    </span>
+                    <div className="space-y-3">
+                      <p className="text-sm font-semibold text-black">
+                        Quick audience
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {audienceOptions.map((option) => (
+                          <AudienceFilterLink
+                            key={option.value}
+                            href={createHref({ audience: option.value })}
+                            active={activeAudience === option.value}
+                            compact
+                          >
+                            {option.label}
+                          </AudienceFilterLink>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3">
+                      <StoreStat
+                        label="Products"
+                        value={enrichedShoes.length}
+                        tone="accent"
+                      />
+                      <StoreStat
+                        label="Pairs"
+                        value={totalAvailablePairs}
+                      />
+                      <StoreStat
+                        label="Filters"
+                        value={activeFiltersCount}
+                      />
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              <aside className="rounded-lg border border-black/10 bg-white p-6">
-                <div className="flex h-full flex-col justify-between gap-8">
-                  <div>
-                    <p className="text-sm text-black/50">Featured from the vault</p>
-                    <h2 className="mt-3 text-3xl font-semibold leading-tight">
-                      {heroShoe.name}
-                    </h2>
-                    <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                      <span className="rounded-full bg-black px-3 py-1.5 text-white">
+                  <div className="relative min-h-[360px] overflow-hidden rounded-lg border border-black/10 bg-[#f4f3ef]">
+                    <div className="absolute left-5 top-5 z-10 flex flex-wrap gap-2 text-xs">
+                      <span className="rounded-full border border-black bg-[#d8ff6a] px-3 py-1.5 font-semibold text-black">
                         {heroShoe.meta.badge}
                       </span>
-                      <span className="rounded-full bg-black/5 px-3 py-1.5 text-black/60">
-                        {heroShoe.meta.category}
-                      </span>
-                      <span className="rounded-full bg-black/5 px-3 py-1.5 text-black/60">
-                        {heroShoe.meta.delivery}
+                      <span className="rounded-full border border-black/10 bg-white px-3 py-1.5 text-black/65">
+                        {heroAudienceLabel ?? heroShoe.meta.audience}
                       </span>
                     </div>
-                  </div>
-
-                  <div className="grid gap-4">
-                    <div className="grid grid-cols-3 gap-3 text-sm">
-                      <div className="rounded-lg bg-[#f4f3ef] p-4">
-                        <p className="text-2xl font-semibold">{heroShoe.meta.rating}</p>
-                        <p className="mt-1 text-black/50">Rating</p>
-                      </div>
-                      <div className="rounded-lg bg-[#f4f3ef] p-4">
-                        <p className="text-2xl font-semibold">{heroShoe.meta.reviews}</p>
-                        <p className="mt-1 text-black/50">Reviews</p>
-                      </div>
-                      <div className="rounded-lg bg-[#f4f3ef] p-4">
-                        <p className="text-2xl font-semibold">{totalStock(heroShoe.sizes)}</p>
-                        <p className="mt-1 text-black/50">Pairs</p>
-                      </div>
-                    </div>
-
-                    <Link
-                      href={`/product/${heroShoe.slug}`}
-                      className={`px-6 py-3 text-sm font-medium ${uiAction.primary}`}
-                    >
-                      View featured pair
-                    </Link>
+                    <div className="absolute inset-x-8 top-1/2 h-24 -translate-y-1/2 rounded-lg bg-[#d8ff6a]" />
+                    <Image
+                      src={heroImage}
+                      alt={heroShoe.name}
+                      fill
+                      priority
+                      sizes="(max-width: 768px) 90vw, 620px"
+                      className="z-10 object-contain p-8 md:p-10"
+                    />
                   </div>
                 </div>
-              </aside>
+
+                <aside className="border-t border-black/10 bg-[#f8f7f3] p-6 md:p-8 lg:border-l lg:border-t-0">
+                  <div className="flex h-full flex-col justify-between gap-8">
+                    <div>
+                      <p className="text-sm text-black/55">Featured from the vault</p>
+                      <h2 className="mt-3 text-3xl font-semibold leading-tight">
+                        {heroShoe.name}
+                      </h2>
+                      <p className="mt-3 text-xl font-semibold">
+                        {formatCurrency(heroShoe.price)}
+                      </p>
+                      <div className="mt-5 flex flex-wrap gap-2 text-xs">
+                        <span className="rounded-full border border-black/10 bg-white px-3 py-1.5 text-black/65">
+                          {heroShoe.meta.category}
+                        </span>
+                        <span className="rounded-full border border-black/10 bg-white px-3 py-1.5 text-black/65">
+                          {heroShoe.meta.delivery}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-5">
+                      <div className="grid grid-cols-3 gap-3">
+                        <StoreStat
+                          label="Rating"
+                          value={heroShoe.meta.rating}
+                        />
+                        <StoreStat
+                          label="Reviews"
+                          value={heroShoe.meta.reviews}
+                        />
+                        <StoreStat
+                          label="Pairs"
+                          value={totalStock(heroShoe.sizes)}
+                          tone="accent"
+                        />
+                      </div>
+
+                      <div className="grid gap-3">
+                        <Link
+                          href={`/product/${heroShoe.slug}`}
+                          className={`px-6 py-3 text-sm font-semibold ${uiAction.accent}`}
+                        >
+                          <Eye size={16} />
+                          View featured pair
+                        </Link>
+                        <Link
+                          href={createHref({ audience: heroShoe.meta.audience })}
+                          aria-current={heroAudienceActive ? true : undefined}
+                          className={filterActionClass({
+                            active: heroAudienceActive,
+                            className: "min-h-11 justify-center px-5 py-3 font-medium",
+                            shape: "rounded-full",
+                          })}
+                        >
+                          {heroAudienceActive && (
+                            <span
+                              aria-hidden="true"
+                              className="h-2 w-2 rounded-full bg-black"
+                            />
+                          )}
+                          Shop {heroAudienceLabel ?? heroShoe.meta.audience}
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </aside>
+              </div>
             </div>
           ) : (
             <div className="rounded-lg border border-black/10 bg-white px-8 py-16 text-center">
@@ -369,24 +426,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   const isActive = activeAudience === option.value
 
                   return (
-                    <Link
+                    <AudienceFilterLink
                       key={option.value}
                       href={createHref({ audience: option.value })}
-                      aria-current={isActive ? true : undefined}
-                      className={filterActionClass({
-                        active: isActive,
-                        className: "min-h-11 px-5 py-2.5 font-medium",
-                        shape: "rounded-full",
-                      })}
+                      active={isActive}
                     >
-                      {isActive && (
-                        <span
-                          aria-hidden="true"
-                          className="h-2 w-2 rounded-full bg-black"
-                        />
-                      )}
                       {option.label}
-                    </Link>
+                    </AudienceFilterLink>
                   )
                 })}
               </div>
@@ -598,8 +644,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 </p>
                 <Link
                   href="/product"
-                  className={`mt-6 px-5 py-3 text-sm font-medium ${uiAction.primary}`}
+                  className={`mt-6 px-5 py-3 text-sm font-semibold ${uiAction.accent}`}
                 >
+                  <RotateCcw size={16} />
                   Clear filters
                 </Link>
               </div>
@@ -608,6 +655,64 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </div>
       </section>
     </main>
+  )
+}
+
+function AudienceFilterLink({
+  href,
+  active,
+  compact = false,
+  children,
+}: {
+  href: string
+  active: boolean
+  compact?: boolean
+  children: ReactNode
+}) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? true : undefined}
+      className={filterActionClass({
+        active,
+        className: `${compact ? "min-h-10 px-4 py-2" : "min-h-11 px-5 py-2.5"} font-medium`,
+        shape: "rounded-full",
+      })}
+    >
+      {active && (
+        <span
+          aria-hidden="true"
+          className="h-2 w-2 rounded-full bg-black"
+        />
+      )}
+      {children}
+    </Link>
+  )
+}
+
+function StoreStat({
+  label,
+  value,
+  tone = "neutral",
+}: {
+  label: string
+  value: ReactNode
+  tone?: "accent" | "neutral"
+}) {
+  const toneClass =
+    tone === "accent"
+      ? "border-black bg-[#d8ff6a] text-black"
+      : "border-black/10 bg-white text-black"
+
+  return (
+    <div className={`rounded-lg border p-4 ${toneClass}`}>
+      <p className="text-2xl font-semibold leading-none">
+        {value}
+      </p>
+      <p className="mt-2 text-xs text-black/65">
+        {label}
+      </p>
+    </div>
   )
 }
 

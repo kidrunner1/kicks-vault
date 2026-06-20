@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import MegaMenu from "@/app/component/ui/MegaMenu"
+import AppLogo from "@/app/component/ui/AppLogo"
 import { Menu, X } from "lucide-react"
 
 export default function Navbar() {
@@ -33,9 +34,7 @@ export default function Navbar() {
 
           {/* Logo */}
 
-          <div className="font-semibold text-lg">
-            KicksVault
-          </div>
+          <AppLogo compact />
 
         </div>
 

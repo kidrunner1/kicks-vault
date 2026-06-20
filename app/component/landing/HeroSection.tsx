@@ -1,7 +1,7 @@
 "use client"
 
 import dynamic from "next/dynamic"
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 
 const Model3D = dynamic(
   () => import("../3D/Model3D"),
@@ -12,156 +12,57 @@ const Model3D = dynamic(
 )
 
 export default function HeroSection() {
+  const prefersReducedMotion = useReducedMotion()
 
   return (
-
-    <section
-      className="
-        relative
-        h-screen
-        overflow-hidden
-        bg-neutral-100
-      "
-    >
-
-      {/* Ambient Light */}
-
-      <div className="absolute inset-0 pointer-events-none">
-
-        <div
-          className="
-            absolute
-            -top-40
-            left-1/3
-            w-[600px]
-            h-[600px]
-            bg-white/60
-            blur-[120px]
-            rounded-full
-          "
-        />
-
-      </div>
-
-      {/* TEXT BLOCK */}
-
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.9,
-          ease: [0.22, 1, 0.36, 1]
-        }}
-        className="
-          absolute
-          top-24
-          left-6
-          sm:left-10
-          lg:left-20
-          z-10
-          max-w-sm
-          sm:max-w-md
-          lg:max-w-xl
-          will-change-transform
-        "
-      >
-
-        {/* Small Label */}
-
-        <div
-          className="
-            uppercase
-            tracking-[0.5em]
-            text-xs
-            text-neutral-500
-            mb-6
-          "
-        >
-          Premium Sneaker Archive
-        </div>
-
-        {/* Heading */}
-
-        <h1
-          className="
-            font-bold
-            tracking-tight
-            text-neutral-900
-            leading-[0.9]
-
-            text-5xl
-            sm:text-6xl
-            md:text-7xl
-            lg:text-[5.5rem]
-          "
-        >
-          KICKSVAULT
-        </h1>
-
-        {/* Divider */}
-
-        <div className="w-20 h-[1px] bg-neutral-300 my-8" />
-
-        {/* Tagline */}
-
-        <p
-          className="
-            text-neutral-600
-            leading-relaxed
-            text-base
-            sm:text-lg
-          "
-        >
-          Discover the future of sneaker culture —
-          curated silhouettes crafted for modern collectors.
-        </p>
-
-      </motion.div>
-
-      {/* 3D MODEL */}
-
+    <section className="relative h-screen overflow-hidden bg-neutral-100 text-black">
       <Model3D />
 
-      {/* Scroll Indicator */}
+      <motion.div
+        initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: prefersReducedMotion ? 0 : 0.75,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        className="pointer-events-none absolute left-6 top-24 z-20 max-w-sm sm:left-10 sm:max-w-md lg:left-20 lg:max-w-xl"
+      >
+        <p className="mb-6 text-xs font-medium uppercase tracking-[0.35em] text-neutral-500">
+          Premium Sneaker Archive
+        </p>
+
+        <h1 className="text-5xl font-bold leading-[0.9] tracking-tight text-neutral-900 sm:text-6xl md:text-7xl lg:text-[5.5rem]">
+          KICKS VAULT
+        </h1>
+
+        <div className="my-8 h-px w-20 bg-neutral-300" />
+
+        <p className="max-w-md text-base leading-8 text-neutral-600 sm:text-lg">
+          Curated silhouettes for collectors, built around real product detail,
+          size stock, and a calmer path into the store.
+        </p>
+      </motion.div>
 
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={prefersReducedMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="
-          absolute
-          bottom-10
-          left-1/2
-          -translate-x-1/2
-          flex
-          flex-col
-          items-center
-          text-neutral-500
-          text-xs
-          tracking-widest
-        "
+        transition={{
+          delay: prefersReducedMotion ? 0 : 0.9,
+          duration: prefersReducedMotion ? 0 : 0.35,
+        }}
+        className="pointer-events-none absolute bottom-10 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center text-xs font-medium tracking-widest text-neutral-500"
       >
-
         Scroll
 
         <motion.div
-          animate={{ y: [0, 10, 0] }}
+          animate={prefersReducedMotion ? undefined : { y: [0, 10, 0] }}
           transition={{
             duration: 2,
-            repeat: Infinity
+            repeat: Infinity,
           }}
-          className="
-            w-[1px]
-            h-8
-            bg-neutral-400
-            mt-2
-            will-change-transform
-          "
+          className="mt-2 h-8 w-px bg-neutral-400"
         />
-
       </motion.div>
-
     </section>
-
   )
 }

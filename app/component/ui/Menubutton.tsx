@@ -26,7 +26,7 @@ export default function MenuButton({ open, toggle }: Props) {
         p-0
         shadow-sm
         duration-200
-        ${uiAction.primary}
+        ${uiAction.accent}
       `}
     >
       <svg

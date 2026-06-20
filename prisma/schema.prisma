@@ -16,7 +16,7 @@ model User {
 
   favorites Favorite[]
   addresses UserAddress[]
-  orders    Order[] // ✅ เพิ่มบรรทัดนี้
+  orders    Order[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -28,10 +28,9 @@ enum Role {
 }
 
 model Brand {
-  id   String  @id @default(uuid())
-  name String  @unique
-  slug String  @unique
-  logo String?
+  id   String @id @default(uuid())
+  name String @unique
+  slug String @unique
 
   shoes Shoe[]
 
@@ -43,11 +42,10 @@ model Shoe {
   id String @id @default(uuid())
 
   name        String
-  slug        String    @unique
+  slug        String   @unique
   description String
-  price       Decimal?  @db.Decimal(10, 2)
-  releaseDate DateTime?
-  featured    Boolean   @default(false)
+  price       Decimal? @db.Decimal(10, 2)
+  featured    Boolean  @default(false)
 
   brandId String
   brand   Brand  @relation(fields: [brandId], references: [id])
@@ -56,8 +54,8 @@ model Shoe {
   specs     ShoeSpec[]
   favorites Favorite[]
 
-  orderItems OrderItem[] // ✅ เพิ่ม
-  sizes      ShoeSize[] // ✅ เพิ่ม
+  orderItems OrderItem[]
+  sizes      ShoeSize[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -95,7 +93,7 @@ model Favorite {
 
   createdAt DateTime @default(now())
 
-  @@unique([userId, shoeId], name: "userId_shoeId") 
+  @@unique([userId, shoeId], name: "userId_shoeId")
 }
 
 model UserAddress {
@@ -154,22 +152,21 @@ model Order {
 }
 
 model OrderItem {
-  id       String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  orderId  String
-  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  shoeId   String
-  shoe     Shoe     @relation(fields: [shoeId], references: [id])
+  shoeId String
+  shoe   Shoe   @relation(fields: [shoeId], references: [id])
 
-  size     String?   // ต้องมีบรรทัดนี้
+  size String?
 
   quantity Int
-  price    Decimal  @db.Decimal(10, 2)
+  price    Decimal @db.Decimal(10, 2)
 
   createdAt DateTime @default(now())
 }
-
 
 enum OrderStatus {
   PENDING

@@ -1,29 +1,83 @@
 "use client"
 
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Shoe, Brand, ShoeImage, ShoeSpec } from "@prisma/client"
+import { ArrowRight, ChevronLeft, ChevronRight, PackageCheck } from "lucide-react"
+import {
+  availabilityLabel,
+  formatCurrency,
+  normalizeStockRows,
+  totalStock,
+} from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
+import { uiAction } from "@/lib/ui-interactions"
 
-type ShoeWithRelations = Shoe & {
-  brand: Brand
-  images: ShoeImage[]
-  specs: ShoeSpec[]
+type ShowcaseShoe = {
+  id: string
+  name: string
+  slug: string
+  description: string
   price: string | null
+  brand: {
+    name: string
+  }
+  images: {
+    id: string
+    url: string
+    order: number
+  }[]
+  sizes: {
+    id: string
+    size: string
+    stock: number
+  }[]
+  specs: {
+    id: string
+    label: string
+    value: string
+  }[]
 }
 
 interface Props {
-  shoes: (Omit<ShoeWithRelations, "price"> & {
-    price: string | null
-  })[]
+  shoes: ShowcaseShoe[]
 }
 
 export default function ShowcaseSlider({ shoes }: Props) {
-
   const [index, setIndex] = useState(0)
+  const prefersReducedMotion = useReducedMotion()
+
+  if (shoes.length === 0) {
+    return (
+      <section className="bg-[#f4f3ef] px-6 py-24 text-black md:px-12 lg:px-20">
+        <div className="mx-auto max-w-7xl rounded-lg border border-black/10 bg-white p-8 md:p-12">
+          <PackageCheck size={28} />
+          <h2 className="mt-6 max-w-2xl text-4xl font-semibold leading-tight md:text-5xl">
+            The featured rotation is being prepared.
+          </h2>
+          <p className="mt-4 max-w-xl text-base leading-7 text-black/62">
+            Add shoes from the admin area and they will appear here with images,
+            prices, and size availability.
+          </p>
+          <Link
+            href="/admin/shoes"
+            className={`mt-8 px-6 py-3 text-sm font-semibold ${uiAction.accent}`}
+          >
+            Manage products
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+      </section>
+    )
+  }
+
+  const safeIndex = Math.min(index, shoes.length - 1)
+  const shoe = shoes[safeIndex]
+  const stockRows = normalizeStockRows(shoe.sizes)
+  const availableSizes = stockRows.filter((row) => row.stock > 0).slice(0, 5)
+  const stockTotal = totalStock(stockRows)
+  const featuredSpecs = shoe.specs.slice(0, 2)
 
   const next = () => {
     setIndex((prev) => (prev + 1) % shoes.length)
@@ -33,105 +87,183 @@ export default function ShowcaseSlider({ shoes }: Props) {
     setIndex((prev) => (prev - 1 + shoes.length) % shoes.length)
   }
 
-  const shoe = shoes[index]
-
   return (
-    <section className="relative h-screen bg-black text-white overflow-hidden">
-
-      <AnimatePresence mode="wait">
-
-        <motion.div
-          key={shoe.id}
-          initial={{ opacity: 0, x: 80 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -80 }}
-          transition={{ duration: 0.6 }}
-          className="absolute inset-0 flex items-center justify-center px-6 md:px-16"
-        >
+    <section className="relative overflow-hidden bg-[#f4f3ef] px-6 py-24 text-black md:px-12 lg:px-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 className="max-w-3xl text-4xl font-semibold leading-[0.95] md:text-6xl">
+              Store rotation, ready to inspect.
+            </h2>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-black/62">
+              Featured pairs now carry the same product signals as the shop:
+              brand, price, size stock, and a direct path to detail.
+            </p>
+          </div>
 
           <Link
-            href={`/product/${shoe.slug}`}
-            className="flex flex-col md:flex-row items-center gap-10 md:gap-24 group"
+            href="/product"
+            className={`shrink-0 px-6 py-3 text-sm font-semibold ${uiAction.surface}`}
           >
+            View all products
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+      </div>
 
-            {/* IMAGE */}
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-lg border border-black/10 bg-black text-white">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={shoe.id}
+            initial={prefersReducedMotion ? false : { opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: -50 }}
+            transition={{
+              duration: prefersReducedMotion ? 0 : 0.4,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="grid min-h-[720px] gap-8 px-6 py-12 md:px-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(360px,0.98fr)] lg:items-center lg:px-16"
+          >
+            <div className="flex min-h-[300px] items-center justify-center lg:min-h-[520px]">
+              <motion.div
+                whileHover={prefersReducedMotion ? undefined : { y: -8 }}
+                className="relative flex h-[300px] w-full max-w-[620px] items-center justify-center sm:h-[380px] lg:h-[520px]"
+              >
+                <Image
+                  src={normalizeImagePath(shoe.images[0]?.url)}
+                  alt={shoe.name}
+                  fill
+                  priority={safeIndex === 0}
+                  sizes="(max-width: 1024px) 90vw, 560px"
+                  className="object-contain drop-shadow-2xl"
+                />
+              </motion.div>
+            </div>
 
-            <motion.div
-              whileHover={{ y: -8 }}
-              className="w-65 sm:w-85 md:w-125 flex justify-center will-change-transform"
-            >
+            <div className="max-w-xl">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2 text-sm font-medium text-white/72">
+                  {shoe.brand.name}
+                </span>
+                <span className="rounded-full border border-white/12 bg-white px-4 py-2 text-sm font-semibold text-black">
+                  {formatCurrency(shoe.price)}
+                </span>
+              </div>
 
-              <Image
-                src={normalizeImagePath(shoe.images[0]?.url)}
-                alt={shoe.name}
-                width={500}
-                height={500}
-                priority={index === 0}
-                sizes="(max-width:768px) 80vw, 500px"
-                className="object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-105"
-              />
-
-            </motion.div>
-
-            {/* TEXT */}
-
-            <div className="max-w-md md:max-w-xl text-center md:text-left">
-
-              <p className="uppercase tracking-[0.4em] text-xs text-neutral-500 mb-4">
-                {shoe.brand.name}
-              </p>
-
-              <h2 className="text-4xl sm:text-5xl md:text-[6rem] leading-[0.9] font-(--font-bebas) tracking-tight mb-6">
+              <h3 className="mt-6 text-4xl font-semibold leading-[0.95] sm:text-5xl md:text-6xl">
                 {shoe.name}
-              </h2>
+              </h3>
 
-              <div className="w-16 h-px bg-neutral-700 mb-6 mx-auto md:mx-0" />
-
-              <p className="text-neutral-400 leading-relaxed text-sm md:text-lg">
+              <p className="mt-5 text-base leading-8 text-white/66">
                 {shoe.description}
               </p>
 
+              <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-lg border border-white/12 bg-white/8 p-4">
+                  <p className="text-sm text-white/55">Availability</p>
+                  <p className="mt-2 text-lg font-semibold text-white">
+                    {availabilityLabel(stockRows)}
+                  </p>
+                  <p className="mt-1 text-sm text-white/55">
+                    {stockTotal === 0 ? "No size available" : `${stockTotal} pairs across sizes`}
+                  </p>
+                </div>
+
+                <div className="rounded-lg border border-white/12 bg-white/8 p-4">
+                  <p className="text-sm text-white/55">Sizes ready</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {availableSizes.length > 0 ? (
+                      availableSizes.map((row) => (
+                        <span
+                          key={row.size}
+                          className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-black"
+                        >
+                          {row.size}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-sm text-white/65">
+                        Restock needed
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {featuredSpecs.length > 0 && (
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {featuredSpecs.map((spec) => (
+                    <div
+                      key={spec.id}
+                      className="border-t border-white/12 pt-4"
+                    >
+                      <p className="text-sm text-white/48">{spec.label}</p>
+                      <p className="mt-1 text-sm font-medium text-white/82">
+                        {spec.value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href={`/product/${shoe.slug}`}
+                  className={`px-6 py-3 text-sm font-semibold ${uiAction.accent}`}
+                >
+                  View featured pair
+                  <ArrowRight size={16} />
+                </Link>
+                <Link
+                  href="/product"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/18 bg-white/8 px-6 py-3 text-sm font-medium text-white transition hover:border-white/35 hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                >
+                  Compare more
+                </Link>
+              </div>
             </div>
+          </motion.div>
+        </AnimatePresence>
 
-          </Link>
+        <div className="flex flex-col gap-4 border-t border-white/12 px-6 py-5 sm:flex-row sm:items-center sm:justify-between md:px-10 lg:px-16">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={prev}
+              aria-label="Previous featured product"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-white/8 text-white transition hover:border-white/35 hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            >
+              <ChevronLeft size={20} />
+            </button>
 
-        </motion.div>
+            <button
+              type="button"
+              onClick={next}
+              aria-label="Next featured product"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/18 bg-white/8 text-white transition hover:border-white/35 hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
 
-      </AnimatePresence>
-
-      {/* NAVIGATION */}
-
-      <button
-        onClick={prev}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 p-3 border border-white/20 rounded-full hover:bg-white/10 transition"
-      >
-        <ChevronLeft size={22} />
-      </button>
-
-      <button
-        onClick={next}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 p-3 border border-white/20 rounded-full hover:bg-white/10 transition"
-      >
-        <ChevronRight size={22} />
-      </button>
-
-      {/* DOTS */}
-
-      <div className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 flex gap-3">
-
-        {shoes.map((_, i) => (
-
-          <button
-            key={i}
-            onClick={() => setIndex(i)}
-            className={`h-2 rounded-full transition-all ${i === index ? "w-8 bg-white" : "w-2 bg-white/40"
-              }`}
-          />
-
-        ))}
-
+          <div className="flex items-center gap-2">
+            {shoes.map((item, itemIndex) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setIndex(itemIndex)}
+                aria-label={`Show ${item.name}`}
+                aria-current={itemIndex === safeIndex}
+                className={`h-2 rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                  itemIndex === safeIndex
+                    ? "w-8 bg-[#d8ff6a]"
+                    : "w-2 bg-white/35 hover:bg-white"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
-
     </section>
   )
 }

@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
+import AppLogo from "@/app/component/ui/AppLogo"
 
 export default function AdminShell({
   children,
@@ -41,10 +42,7 @@ export default function AdminShell({
     <div className="min-h-screen bg-gray-950 text-gray-100 flex">
       <aside className="w-64 bg-gray-900 border-r border-gray-800 p-6 hidden md:block">
         <div className="mb-10">
-          <h1 className="text-xl font-semibold tracking-wide">
-            KicksVault
-          </h1>
-          <p className="text-sm text-gray-400">Admin Panel</p>
+          <AppLogo inverse subLabel="Admin Panel" />
         </div>
 
         <nav className="space-y-2">

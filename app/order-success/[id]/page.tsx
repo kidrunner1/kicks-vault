@@ -11,6 +11,7 @@ import {
   Truck,
 } from "lucide-react"
 import { getCurrentUser } from "@/lib/auth"
+import AppLogo from "@/app/component/ui/AppLogo"
 import { formatAddress } from "@/lib/address"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
@@ -94,17 +95,7 @@ export default async function OrderSuccessPage({ params }: Props) {
             href="/product"
             className={`text-sm ${uiAction.ghost}`}
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-black/20 text-xs font-semibold tracking-widest">
-              KV
-            </span>
-            <span className="leading-tight">
-              <span className="block font-medium tracking-wide text-black">
-                KICKS VAULT
-              </span>
-              <span className="block text-xs">
-                Continue shopping
-              </span>
-            </span>
+            <AppLogo compact subLabel="Continue shopping" />
           </Link>
 
           <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm text-[#1f6a3a]">

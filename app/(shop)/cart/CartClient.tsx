@@ -22,6 +22,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { createOrder } from "@/app/actions/create-order"
+import AppLogo from "@/app/component/ui/AppLogo"
 import { useCartStore } from "@/app/store/cart-store"
 import { formatAddress } from "@/lib/address"
 import { formatCurrency } from "@/lib/commerce"
@@ -130,17 +131,8 @@ export default function CartClient({
             href="/product"
             className={`text-sm ${uiAction.ghost}`}
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-black/20">
-              <ArrowLeft size={15} />
-            </span>
-            <span className="leading-tight">
-              <span className="block font-medium tracking-wide text-black">
-                KICKS VAULT
-              </span>
-              <span className="block text-xs">
-                Back to Store
-              </span>
-            </span>
+            <ArrowLeft size={16} />
+            <AppLogo compact subLabel="Back to Store" />
           </Link>
 
           <div className="flex flex-wrap gap-2 text-xs text-black/55">

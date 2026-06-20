@@ -198,7 +198,7 @@ export default function AddressBookClient({
         <button
           type="button"
           onClick={openCreateForm}
-          className={`h-11 px-5 text-sm font-medium ${uiAction.primary}`}
+          className={`h-11 px-5 text-sm font-semibold ${uiAction.accent}`}
         >
           <Plus size={16} />
           Add address
@@ -219,7 +219,7 @@ export default function AddressBookClient({
             <button
               type="button"
               onClick={closeForm}
-              className={`px-4 py-2 text-sm ${uiAction.secondary}`}
+              className={`px-4 py-2 text-sm ${uiAction.surface}`}
             >
               Cancel
             </button>
@@ -314,7 +314,7 @@ export default function AddressBookClient({
             type="button"
             onClick={submitForm}
             disabled={isPending}
-            className={`mt-5 h-11 px-5 text-sm font-medium ${uiAction.primary}`}
+            className={`mt-5 h-11 px-5 text-sm font-semibold ${uiAction.accent}`}
           >
             {isPending && <Loader2 size={16} className="animate-spin" />}
             {editingAddress ? "Save address" : "Create address"}
@@ -382,7 +382,7 @@ export default function AddressBookClient({
                       type="button"
                       onClick={() => handleSetDefault(address.id)}
                       disabled={isPending}
-                      className={`h-10 px-4 text-sm ${uiAction.secondary}`}
+                      className={`h-10 px-4 text-sm ${uiAction.surface}`}
                     >
                       <Star size={15} />
                       Set default
@@ -391,7 +391,7 @@ export default function AddressBookClient({
                   <button
                     type="button"
                     onClick={() => openEditForm(address)}
-                    className={`h-10 px-4 text-sm ${uiAction.secondary}`}
+                    className={`h-10 px-4 text-sm ${uiAction.surface}`}
                   >
                     <Pencil size={15} />
                     Edit

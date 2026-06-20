@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { useStore } from "../../store/store"
+import AppLogo from "../ui/AppLogo"
 
 export default function ProductOverlay() {
 
@@ -40,9 +41,7 @@ export default function ProductOverlay() {
         "
             >
 
-                <h1 className="text-3xl md:text-5xl font-semibold tracking-wide">
-                    KicksVault
-                </h1>
+                <AppLogo inverse subLabel="Premium Sneaker Platform" />
 
                 <div className="space-y-1 text-lg md:text-xl font-medium">
 
@@ -56,10 +55,6 @@ export default function ProductOverlay() {
                     </h3>
 
                 </div>
-
-                <h4 className="text-sm md:text-base text-white/70">
-                    Premium Sneaker Platform
-                </h4>
 
                 <span
                     className="
@@ -83,7 +78,7 @@ export default function ProductOverlay() {
           text-white/70
           leading-relaxed
         ">
-                    Welcome to KicksVault — your destination for exploring the
+                    Welcome to Kicks Vault, your destination for exploring the
                     world of sneakers. Discover iconic designs, modern releases,
                     and timeless classics all in one place.
                 </p>

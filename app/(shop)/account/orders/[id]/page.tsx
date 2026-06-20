@@ -34,7 +34,7 @@ function statusClass(status: string) {
   if (status === "CANCELLED") return "bg-red-50 text-red-600"
   if (status === "SHIPPED") return "bg-blue-50 text-blue-700"
 
-  return "bg-black text-white"
+  return "border border-black bg-[#d8ff6a] text-black"
 }
 
 export default async function OrderDetailPage({ params }: Props) {
@@ -261,14 +261,14 @@ export default async function OrderDetailPage({ params }: Props) {
           <div className="grid gap-3">
             <Link
               href="/product"
-              className={`h-12 px-5 text-sm font-medium ${uiAction.primary}`}
+              className={`h-12 px-5 text-sm font-semibold ${uiAction.accent}`}
             >
               Continue shopping
               <ArrowRight size={15} />
             </Link>
             <Link
               href="/account"
-              className={`h-12 px-5 text-sm font-medium ${uiAction.secondary}`}
+              className={`h-12 px-5 text-sm font-medium ${uiAction.surface}`}
             >
               Account overview
             </Link>
@@ -313,7 +313,9 @@ function TrailItem({
     <div className="flex gap-3">
       <span
         className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-          active ? "bg-black text-white" : "bg-[#f4f3ef] text-black/55"
+          active
+            ? "border border-black bg-[#d8ff6a] text-black"
+            : "bg-[#f4f3ef] text-black/55"
         }`}
       >
         <Icon size={16} />

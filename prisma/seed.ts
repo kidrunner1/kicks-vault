@@ -33,14 +33,13 @@ interface ShoeSeed {
 const brands: {
   name: string
   slug: BrandSlug
-  logo?: string
 }[] = [
-  { name: "Nike", slug: "nike", logo: "/images/shoes/nike.png" },
-  { name: "Jordan", slug: "jordan", logo: "/images/shoes/nike-icon.png" },
-  { name: "Adidas", slug: "adidas", logo: "/images/shoes/adidas.png" },
+  { name: "Nike", slug: "nike" },
+  { name: "Jordan", slug: "jordan" },
+  { name: "Adidas", slug: "adidas" },
   { name: "New Balance", slug: "new-balance" },
-  { name: "Puma", slug: "puma", logo: "/images/shoes/Puma-icon.jpg" },
-  { name: "Converse", slug: "converse", logo: "/images/shoes/convers-icon.jpg" },
+  { name: "Puma", slug: "puma" },
+  { name: "Converse", slug: "converse" },
   { name: "ASICS", slug: "asics" },
   { name: "Vans", slug: "vans" },
 ]
@@ -500,12 +499,10 @@ async function main() {
       where: { slug: brand.slug },
       update: {
         name: brand.name,
-        logo: brand.logo ?? null,
       },
       create: {
         name: brand.name,
         slug: brand.slug,
-        logo: brand.logo,
       },
     })
 

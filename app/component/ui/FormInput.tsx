@@ -1,17 +1,21 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Eye, EyeOff } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useEffect, useId, useState } from "react"
+import type { HTMLInputTypeAttribute, ReactNode } from "react"
+import { AlertCircle, Eye, EyeOff } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
 
 interface FormInputProps {
-  type: string
+  type: HTMLInputTypeAttribute
   label: string
-  icon?: React.ReactNode
+  icon?: ReactNode
   value: string
   onChange: (value: string) => void
   error?: string
   disabled?: boolean
+  required?: boolean
+  name?: string
+  autoComplete?: string
 }
 
 export default function FormInput({
@@ -22,14 +26,16 @@ export default function FormInput({
   onChange,
   error,
   disabled,
+  required = false,
+  name,
+  autoComplete,
 }: FormInputProps) {
-
+  const inputId = useId()
   const [showPassword, setShowPassword] = useState(false)
   const [localError, setLocalError] = useState<string | undefined>(error)
 
   const isPassword = type === "password"
 
-  // sync error from parent
   useEffect(() => {
     setLocalError(error)
   }, [error])
@@ -37,106 +43,89 @@ export default function FormInput({
   const handleChange = (val: string) => {
     onChange(val)
 
-    // remove error when user types
     if (localError) {
       setLocalError(undefined)
     }
   }
 
   return (
-    <div className="relative">
-
-      {icon && (
-        <div className="absolute left-3 top-3.5 text-gray-400">
-          {icon}
-        </div>
-      )}
-
-      <input
-        type={
-          isPassword
-            ? showPassword ? "text" : "password"
-            : type
-        }
-        placeholder=" "
-        value={value}
-        onChange={(e) => handleChange(e.target.value)}
-        disabled={disabled}
-        aria-invalid={!!localError}
-        className={`
-          peer w-full
-          pl-10 pr-10 pt-5 pb-2
-          rounded-xl
-          bg-gray-100
-          border
-          ${localError
-            ? "border-red-400 bg-red-50"
-            : "border-transparent focus:border-gray-300 focus:bg-white"}
-          outline-none
-          transition
-          text-gray-700
-        `}
-      />
-
+    <div>
       <label
-        className="
-          absolute left-10
-          text-gray-500 text-sm
-          top-3.5
-          transition-all
-
-          peer-focus:-top-2
-          peer-focus:text-xs
-          peer-focus:bg-white
-          peer-focus:px-1
-
-          peer-not-placeholder-shown:-top-2
-          peer-not-placeholder-shown:text-xs
-          peer-not-placeholder-shown:bg-white
-          peer-not-placeholder-shown:px-1
-        "
+        htmlFor={inputId}
+        className="mb-2 flex items-center gap-1 text-sm font-medium text-black"
       >
         {label}
+        {required && (
+          <span className="text-red-600" aria-hidden="true">
+            *
+          </span>
+        )}
       </label>
 
-      {isPassword && (
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="
-            absolute right-3 top-3.5
-            text-gray-400
-            hover:text-gray-600
-            transition-colors
-          "
-        >
-          {showPassword
-            ? <EyeOff size={18} />
-            : <Eye size={18} />
-          }
-        </button>
-      )}
+      <div
+        className={`group relative rounded-lg border transition duration-200 ease-out ${
+          localError
+            ? "border-red-400 bg-red-50/80"
+            : "border-black/10 bg-white hover:border-black/35 focus-within:border-black focus-within:ring-2 focus-within:ring-black focus-within:ring-offset-2 focus-within:ring-offset-white"
+        } ${disabled ? "opacity-70" : ""}`}
+      >
+        {icon && (
+          <div className="pointer-events-none absolute left-4 top-1/2 flex -translate-y-1/2 text-black/45 transition group-focus-within:text-black">
+            {icon}
+          </div>
+        )}
 
-      {/* Error Message */}
-      <AnimatePresence>
+        <input
+          id={inputId}
+          name={name}
+          autoComplete={autoComplete}
+          type={
+            isPassword
+              ? showPassword ? "text" : "password"
+              : type
+          }
+          value={value}
+          onChange={(e) => handleChange(e.target.value)}
+          disabled={disabled}
+          aria-required={required}
+          aria-invalid={!!localError}
+          aria-describedby={localError ? `${inputId}-error` : undefined}
+          className={`h-14 w-full rounded-lg bg-transparent py-3 text-sm text-black outline-none placeholder:text-black/35 disabled:cursor-not-allowed disabled:text-black/45 ${
+            icon ? "pl-11" : "pl-4"
+          } ${isPassword ? "pr-12" : "pr-4"}`}
+        />
+
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            disabled={disabled}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-black/45 transition hover:bg-[#f8f7f3] hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-black disabled:cursor-not-allowed disabled:text-black/30"
+          >
+            {showPassword
+              ? <EyeOff size={18} />
+              : <Eye size={18} />
+            }
+          </button>
+        )}
+      </div>
+
+      <AnimatePresence initial={false}>
         {localError && (
           <motion.p
+            id={`${inputId}-error`}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.2 }}
-            className="
-              mt-2
-              text-xs
-              text-red-500
-              tracking-wide
-            "
+            transition={{ duration: 0.18 }}
+            className="mt-2 flex items-center gap-1.5 text-xs font-medium text-red-600"
           >
+            <AlertCircle size={13} />
             {localError}
           </motion.p>
         )}
       </AnimatePresence>
-
     </div>
   )
 }

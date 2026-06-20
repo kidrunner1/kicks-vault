@@ -5,21 +5,27 @@ import FeatureSection from "../component/landing/FeatureSection"
 import CinematicSection from "../component/landing/CinematicSection"
 
 export default async function LandingPage() {
-
   const shoes = await prisma.shoe.findMany({
+    take: 8,
+    orderBy: [
+      { featured: "desc" },
+      { createdAt: "desc" },
+    ],
     include: {
       brand: true,
       images: {
-        orderBy: { order: "asc" }
+        orderBy: { order: "asc" },
       },
-      specs: true
-    }
+      specs: true,
+      sizes: {
+        orderBy: { size: "asc" },
+      },
+    },
   })
 
-  // 🔥 FIX: Convert Decimal → string
-  const formattedShoes = shoes.map(shoe => ({
+  const formattedShoes = shoes.map((shoe) => ({
     ...shoe,
-    price: shoe.price ? shoe.price.toString() : null
+    price: shoe.price == null ? null : shoe.price.toString(),
   }))
 
   return (
@@ -29,7 +35,5 @@ export default async function LandingPage() {
       <ShowcaseSectionDatabase shoes={formattedShoes} />
       <FeatureSection />
     </main>
-
-    
   )
 }

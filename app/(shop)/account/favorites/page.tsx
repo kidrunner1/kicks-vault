@@ -50,6 +50,7 @@ export default async function FavoritesPage() {
                         <div
                             key={favorite.id}
                             className="
+                relative
                 bg-white
                 border
                 border-black/10

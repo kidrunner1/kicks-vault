@@ -48,9 +48,12 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  canvas {
+}
+
+canvas {
   display: block;
   touch-action: none;
+  animation: canvasFadeIn 1.2s ease forwards;
 }
 
 /* optional fade-in animation */
@@ -61,10 +64,6 @@ body {
   to {
     opacity: 1;
   }
-}
-
-canvas {
-  animation: canvasFadeIn 1.2s ease forwards;
 }
 
 .info {
@@ -101,24 +100,6 @@ canvas {
 
 .info p {
   font-size: 0.95rem;
-}
-
-/* Accent text */
-.accent {
-  -webkit-text-stroke: 1px white;
-  color: transparent;
-}
-
-
-/* Price badge */
-.price {
-  display: inline-block;
-  font-family: 'Major Mono Display', monospace;
-  background: black;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
 }
 
 /* ==============================
@@ -164,15 +145,6 @@ li {
 }
 
 /* ==============================
-   CANVAS
-============================== */
-
-canvas {
-  display: block;
-  touch-action: none;
-}
-
-/* ==============================
    LENIS SMOOTH SCROLL
 ============================== */
 
@@ -201,6 +173,7 @@ html.lenis body {
 
 /* Mono price badge */
 .price {
+  display: inline-block;
   font-family: monospace;
   background: black;
   color: white;

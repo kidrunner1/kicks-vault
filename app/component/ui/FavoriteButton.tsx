@@ -86,8 +86,8 @@ export default function FavoriteButton({
         group
         h-11 w-11 p-0
         ${isFavorited
-                    ? uiAction.primary
-                    : uiAction.secondary}
+                    ? uiAction.accent
+                    : uiAction.surface}
         ${isPending ? "opacity-60 pointer-events-none" : ""}
       `}
         >
@@ -106,8 +106,8 @@ export default function FavoriteButton({
             w-5 h-5
             transition-all duration-300
             ${isFavorited
-                            ? "fill-white text-white group-hover:fill-black group-hover:text-black"
-                            : "text-black/60 group-hover:text-white"}
+                            ? "fill-black text-black"
+                            : "text-black/60 group-hover:text-black"}
           `}
                 />
             </motion.div>

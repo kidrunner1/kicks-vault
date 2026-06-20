@@ -5,7 +5,7 @@ import { Toaster } from "sonner"
 import AuthProvider from "@/app/component/auth/AuthProvider"
 
 export const metadata: Metadata = {
-  title: "KicksVault",
+  title: "Kicks Vault",
   description: "Your trusted destination for premium sneakers.",
 }
 

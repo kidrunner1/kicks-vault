@@ -20,8 +20,9 @@ import {
   formatCurrency,
   totalStock,
 } from "@/lib/commerce"
-import { uiAction } from "@/lib/ui-interactions"
+import { filterActionClass, uiAction } from "@/lib/ui-interactions"
 import FloatingCartButton from "../cart/FloatingCartButton"
+import AppLogo from "../ui/AppLogo"
 import SizeChart from "../ui/SizeChart"
 import FavoriteButton from "../ui/FavoriteButton"
 
@@ -176,22 +177,12 @@ export default function ProductDetail({ product, isFavorited }: Props) {
             href="/product"
             className={`text-sm ${uiAction.ghost}`}
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-black/20 text-xs font-semibold tracking-widest">
-              KV
-            </span>
-            <span className="leading-tight">
-              <span className="block font-medium tracking-wide text-black">
-                KICKS VAULT
-              </span>
-              <span className="block text-xs">
-                Back to Store
-              </span>
-            </span>
+            <AppLogo compact subLabel="Back to Store" />
           </Link>
 
           <Link
             href="/cart"
-            className={`px-5 py-2.5 text-sm ${uiAction.secondary}`}
+            className={`px-5 py-2.5 text-sm ${uiAction.surface}`}
           >
             View cart
           </Link>
@@ -201,10 +192,10 @@ export default function ProductDetail({ product, isFavorited }: Props) {
           <div className="space-y-4">
             <div className="relative min-h-[520px] overflow-hidden rounded-lg bg-white">
               <div className="absolute left-5 top-5 z-10 flex flex-wrap gap-2">
-                <span className="rounded-full bg-black px-4 py-2 text-xs font-medium text-white">
+                <span className="rounded-full border border-black bg-[#d8ff6a] px-4 py-2 text-xs font-semibold text-black">
                   {productMeta.badge}
                 </span>
-                <span className="rounded-full bg-[#f4f3ef] px-4 py-2 text-xs text-black/60">
+                <span className="rounded-full border border-black/10 bg-white px-4 py-2 text-xs text-black/65">
                   {productMeta.category}
                 </span>
               </div>
@@ -234,8 +225,8 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                       onClick={() => setActiveImage(image.url)}
                       className={`relative aspect-square overflow-hidden rounded-lg border bg-white transition ${
                         isActive
-                          ? "border-black"
-                          : "border-black/10 hover:border-black/30"
+                          ? "border-black bg-[#d8ff6a]"
+                          : "border-black/10 hover:border-black/30 hover:bg-[#f8f7f3]"
                       }`}
                       aria-label={`View ${product.name} image`}
                     >
@@ -324,11 +315,14 @@ export default function ProductDetail({ product, isFavorited }: Props) {
                         setSelectedSize(size.size)
                         setQuantity(1)
                       }}
-                      className={`rounded-lg border px-3 py-3 text-left transition ${
-                        isActive
-                          ? "border-black bg-black text-white hover:bg-white hover:text-black"
-                          : "border-black/10 bg-[#f4f3ef] text-black hover:border-black hover:bg-black hover:text-white"
-                      } ${isOutOfStock ? "cursor-not-allowed opacity-35" : ""}`}
+                      className={`${filterActionClass({
+                        active: isActive,
+                        className: "min-h-[72px] flex-col items-start justify-center px-3 py-3 text-left font-medium",
+                      })} ${
+                        isOutOfStock
+                          ? "cursor-not-allowed border-black/10 bg-white text-black/35 opacity-100 hover:border-black/10 hover:bg-white hover:text-black/35"
+                          : ""
+                      }`}
                     >
                       <span className="block text-sm font-semibold">
                         {size.size}
@@ -370,7 +364,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
               <button
                 onClick={handleAddToCart}
                 disabled={!canRequestAddToCart}
-                className={`h-12 flex-1 px-6 text-sm font-medium ${uiAction.primary}`}
+                className={`h-12 flex-1 px-6 text-sm font-semibold ${uiAction.accent}`}
               >
                 {hasAvailableStock ? "Add to cart" : "Out of stock"}
               </button>
@@ -436,7 +430,7 @@ export default function ProductDetail({ product, isFavorited }: Props) {
 
             <Link
               href="/product"
-              className={`mt-6 w-full px-5 py-3 text-sm font-medium ${uiAction.secondary}`}
+              className={`mt-6 w-full px-5 py-3 text-sm font-medium ${uiAction.surface}`}
             >
               Continue browsing
             </Link>

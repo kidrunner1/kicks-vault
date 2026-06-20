@@ -28,21 +28,21 @@ export default function FavoriteRemoveButton({ shoeId }: Props) {
             onClick={handleRemove}
             disabled={isPending}
             className="
-        bg-black/60
-        backdrop-blur-md
-        border border-white/20
-        text-white
-        p-3
         rounded-full
-        hover:bg-red-600
-        hover:border-red-600
-        hover:text-white
+        border border-black/10
+        bg-white
+        p-3
+        text-red-600
+        shadow-sm
         transition
+        hover:border-red-200
+        hover:bg-red-50
+        hover:text-red-700
         disabled:cursor-not-allowed
         disabled:opacity-70
       "
         >
-            <Heart size={18} className="fill-red-500 text-red-500" />
+            <Heart size={18} className="fill-current" />
         </button>
     )
 }

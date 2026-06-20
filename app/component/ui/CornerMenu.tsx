@@ -8,7 +8,7 @@ import { LogIn, ShoppingBag, UserRound } from "lucide-react"
 import MenuButton from "./Menubutton"
 import FullscreenMenu from "./FullscreenMenu"
 import { useAuthStore } from "@/lib/auth-store"
-import { uiAction } from "@/lib/ui-interactions"
+import { filterActionClass } from "@/lib/ui-interactions"
 
 export default function CornerMenu() {
   const [open, setOpen] = useState(false)
@@ -49,9 +49,19 @@ export default function CornerMenu() {
           <Link
             href="/product"
             aria-current={storeActive ? "page" : undefined}
-            className={`group h-11 px-3 text-sm font-medium sm:px-4 ${uiAction.primary}`}
+            className={filterActionClass({
+              active: Boolean(storeActive),
+              className: "group h-11 justify-center px-3 font-medium sm:px-4",
+              shape: "rounded-full",
+            })}
           >
             <ShoppingBag size={17} className="transition" />
+            {storeActive && (
+              <span
+                aria-hidden="true"
+                className="h-2 w-2 rounded-full bg-black"
+              />
+            )}
             <span className="hidden transition sm:inline">Store</span>
           </Link>
         </motion.div>
@@ -60,24 +70,26 @@ export default function CornerMenu() {
           <Link
             href={accountHref}
             aria-current={accountActive ? "page" : undefined}
-            className={`group h-11 min-w-11 px-1.5 pr-3 text-sm md:min-w-[176px] ${uiAction.secondary} ${
-              accountActive ? "border-black/15 bg-[#f4f3ef] text-black" : ""
-            }`}
+            className={filterActionClass({
+              active: accountActive,
+              className: "group h-11 min-w-11 px-1.5 pr-3 md:min-w-[176px]",
+              shape: "rounded-full",
+            })}
           >
             <span
-              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition ${
                 isAuthenticated
-                  ? "bg-black text-white group-hover:bg-white group-hover:text-black"
-                  : "bg-black/10 text-black group-hover:bg-white group-hover:text-black"
+                  ? "border-black bg-black text-white"
+                  : "border-black/10 bg-white text-black"
               }`}
             >
               {isAuthenticated ? accountInitial : <AccountIcon size={15} />}
             </span>
             <span className="hidden min-w-0 flex-col leading-tight md:flex">
-              <span className="font-medium text-black transition group-hover:text-white">
+              <span className="font-medium text-black transition">
                 {accountLabel}
               </span>
-              <span className="max-w-[118px] truncate text-xs text-black/60 transition group-hover:text-white/70">
+              <span className="max-w-[118px] truncate text-xs text-black/65 transition">
                 {accountDetail}
               </span>
             </span>

@@ -1,8 +1,6 @@
-import Link from "next/link"
 import { getCurrentUser } from "@/lib/auth"
 import { redirect } from "next/navigation"
-import { headers } from "next/headers"
-import { uiAction } from "@/lib/ui-interactions"
+import AccountNav from "./AccountNav"
 
 export default async function AccountLayout({
   children,
@@ -11,15 +9,6 @@ export default async function AccountLayout({
 }) {
   const user = await getCurrentUser()
   if (!user) redirect("/login")
-
-  const pathname = (await headers()).get("x-next-pathname") ?? ""
-
-  const navItems = [
-    { name: "Overview", href: "/account" },
-    { name: "Orders", href: "/account/orders" },
-    { name: "Addresses", href: "/account/addresses" },
-    { name: "Favorites", href: "/account/favorites" },
-  ]
 
   return (
     <main className="min-h-screen bg-[#f3f3f1] text-black pt-24 pb-32 px-6">
@@ -50,33 +39,7 @@ export default async function AccountLayout({
 
             <div className="h-px bg-black/10 my-6" />
 
-            {/* NAVIGATION */}
-            <nav className="flex flex-col gap-2">
-
-              {navItems.map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== "/account" &&
-                    pathname.startsWith(item.href))
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`px-4 py-3 text-sm ${
-                      isActive ? uiAction.navActive : uiAction.navItem
-                    }`}
-                  >
-                    {item.name}
-
-                    {isActive && (
-                      <span className="w-2 h-2 rounded-full bg-white" />
-                    )}
-                  </Link>
-                )
-              })}
-
-            </nav>
+            <AccountNav />
 
           </div>
 

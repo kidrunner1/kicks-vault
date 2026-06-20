@@ -136,7 +136,7 @@ export default async function AccountPage() {
                 </p>
                 <Link
                   href="/account/addresses"
-                  className={`mt-5 px-4 py-2 text-sm ${uiAction.primary}`}
+                  className={`mt-5 px-4 py-2 text-sm font-semibold ${uiAction.accent}`}
                 >
                   Add address
                 </Link>
