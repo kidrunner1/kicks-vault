@@ -16,9 +16,23 @@ export default function AdminShell({
 
   const navItems = [
     { name: "Dashboard", href: "/admin" },
+    { name: "Orders", href: "/admin/orders" },
     { name: "Shoes", href: "/admin/shoes" },
     { name: "Add Shoe", href: "/admin/shoes/new" },
   ]
+
+  const activeHref = navItems.reduce<string | undefined>((current, item) => {
+    const matches =
+      item.href === "/admin"
+        ? pathname === item.href
+        : pathname === item.href || pathname.startsWith(`${item.href}/`)
+
+    if (!matches) {
+      return current
+    }
+
+    return !current || item.href.length > current.length ? item.href : current
+  }, undefined)
 
   async function handleLogout() {
     try {
@@ -47,12 +61,13 @@ export default function AdminShell({
 
         <nav className="space-y-2">
           {navItems.map((item) => {
-            const active = pathname === item.href
+            const active = item.href === activeHref
 
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={active ? "page" : undefined}
                 className={`
                   block px-4 py-2 rounded-lg transition
                   ${
