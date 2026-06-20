@@ -27,6 +27,11 @@ import { useCartStore } from "@/app/store/cart-store"
 import { formatAddress } from "@/lib/address"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
+import {
+  checkoutPaymentOptions,
+  paymentMethodLabels,
+  type CheckoutPaymentMethod,
+} from "@/lib/payment"
 import { uiAction } from "@/lib/ui-interactions"
 
 export interface CheckoutAddress {
@@ -50,6 +55,12 @@ const trustItems: { label: string; icon: LucideIcon }[] = [
   { label: "Fast dispatch", icon: Truck },
 ]
 
+const paymentIcons: Record<CheckoutPaymentMethod, LucideIcon> = {
+  MANUAL: CreditCard,
+  BANK_TRANSFER: BadgeCheck,
+  COD: Truck,
+}
+
 export default function CartClient({
   addresses,
   isSignedIn,
@@ -62,6 +73,8 @@ export default function CartClient({
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
     addresses.find((address) => address.isDefault)?.id ?? addresses[0]?.id ?? null
   )
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<CheckoutPaymentMethod>("MANUAL")
 
   const {
     items,
@@ -79,6 +92,9 @@ export default function CartClient({
   const total = subtotal + shipping
   const selectedAddress = addresses.find(
     (address) => address.id === selectedAddressId
+  )
+  const selectedPaymentOption = checkoutPaymentOptions.find(
+    (option) => option.method === selectedPaymentMethod
   )
   const checkoutReady = Boolean(selectedAddressId)
   const isCheckoutDisabled = loading || items.length === 0 || !checkoutReady
@@ -102,6 +118,7 @@ export default function CartClient({
     try {
       const orderId = await createOrder({
         addressId: selectedAddressId,
+        paymentMethod: selectedPaymentMethod,
         items: items.map((item) => ({
           shoeId: item.shoeId,
           size: item.size,
@@ -419,6 +436,71 @@ export default function CartClient({
               </div>
 
               <div className="rounded-lg border border-black/10 bg-white p-5">
+                <div className="mb-5 flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    <CreditCard size={18} />
+                    <h2 className="text-lg font-semibold">
+                      Payment method
+                    </h2>
+                  </div>
+                  <span className="rounded-full bg-[#f4f3ef] px-3 py-1 text-xs text-black/55">
+                    Mock only
+                  </span>
+                </div>
+
+                <div className="space-y-3">
+                  {checkoutPaymentOptions.map((option) => {
+                    const selected = selectedPaymentMethod === option.method
+                    const Icon = paymentIcons[option.method]
+
+                    return (
+                      <button
+                        key={option.method}
+                        type="button"
+                        onClick={() => setSelectedPaymentMethod(option.method)}
+                        className={`w-full rounded-lg border p-4 text-left transition ${
+                          selected
+                            ? "border-black bg-[#f4f3ef]"
+                            : "border-black/10 bg-white hover:border-black/25"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <span
+                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                              selected
+                                ? "border border-black bg-[#d8ff6a] text-black"
+                                : "bg-[#f4f3ef] text-black/60"
+                            }`}
+                          >
+                            <Icon size={18} />
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <p className="font-medium">
+                                {option.title}
+                              </p>
+                              <span
+                                className={`rounded-full px-3 py-1 text-xs font-medium ${
+                                  selected
+                                    ? "bg-black text-white"
+                                    : "bg-[#f4f3ef] text-black/55"
+                                }`}
+                              >
+                                {option.badge}
+                              </span>
+                            </div>
+                            <p className="mt-2 text-sm leading-6 text-black/55">
+                              {option.description}
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-black/10 bg-white p-5">
                 <div className="mb-5 flex items-center gap-2">
                   <CreditCard size={18} />
                   <h2 className="text-lg font-semibold">
@@ -431,10 +513,10 @@ export default function CartClient({
                     <BadgeCheck size={18} className="mt-0.5 text-[#1f6a3a]" />
                     <div>
                       <p className="text-sm font-medium">
-                        No card charged today
+                        {paymentMethodLabels[selectedPaymentMethod]}
                       </p>
                       <p className="mt-1 text-sm leading-6 text-black/55">
-                        The order is created from live stock, database prices, and the selected saved address.
+                        {selectedPaymentOption?.description}
                       </p>
                     </div>
                   </div>
@@ -452,6 +534,10 @@ export default function CartClient({
                       value={`${selectedAddress.province} ${selectedAddress.postalCode}`}
                     />
                   )}
+                  <SummaryRow
+                    label="Payment"
+                    value={paymentMethodLabels[selectedPaymentMethod]}
+                  />
                   <div className="border-t border-black/10 pt-4">
                     <SummaryRow
                       label="Total"

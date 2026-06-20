@@ -5,9 +5,11 @@ import { z } from "zod"
 import { getCurrentUser } from "@/lib/auth"
 import { PaymentMethod, PaymentStatus, Prisma } from "@prisma/client"
 import { toOrderShippingSnapshot } from "@/lib/address"
+import { type CheckoutPaymentMethod } from "@/lib/payment"
 
 interface CreateOrderInput {
   addressId: string
+  paymentMethod?: CheckoutPaymentMethod
   items: {
     shoeId: string
     size: string
@@ -17,6 +19,7 @@ interface CreateOrderInput {
 
 const orderSchema = z.object({
   addressId: z.string().uuid(),
+  paymentMethod: z.enum(["MANUAL", "BANK_TRANSFER", "COD"]).default("MANUAL"),
   items: z.array(
     z.object({
       shoeId: z.string().uuid(),
@@ -44,6 +47,36 @@ function normalizeOrderItems(items: CreateOrderInput["items"]) {
   return Array.from(normalizedItems.values())
 }
 
+function createPaymentSnapshot(paymentMethod: PaymentMethod) {
+  if (paymentMethod === PaymentMethod.MANUAL) {
+    return {
+      paymentStatus: PaymentStatus.PAID,
+      paymentMethod,
+      paidAt: new Date(),
+      paymentNote:
+        "Mock instant payment approved from customer checkout. No real payment was processed.",
+    }
+  }
+
+  if (paymentMethod === PaymentMethod.BANK_TRANSFER) {
+    return {
+      paymentStatus: PaymentStatus.UNPAID,
+      paymentMethod,
+      paidAt: null,
+      paymentNote:
+        "Customer selected bank transfer mock payment. Awaiting admin verification.",
+    }
+  }
+
+  return {
+    paymentStatus: PaymentStatus.UNPAID,
+    paymentMethod,
+    paidAt: null,
+    paymentNote:
+      "Customer selected cash on delivery mock payment. Payment will be confirmed later.",
+  }
+}
+
 export async function createOrder(data: CreateOrderInput) {
   const parsed = orderSchema.safeParse(data)
 
@@ -58,6 +91,9 @@ export async function createOrder(data: CreateOrderInput) {
   }
 
   const items = normalizeOrderItems(parsed.data.items)
+  const paymentSnapshot = createPaymentSnapshot(
+    parsed.data.paymentMethod as PaymentMethod,
+  )
 
   const orderId = await prisma.$transaction(async (tx) => {
     const shippingAddress = await tx.userAddress.findFirst({
@@ -133,8 +169,7 @@ export async function createOrder(data: CreateOrderInput) {
         userId: user.id,
         ...shippingSnapshot,
         total,
-        paymentStatus: PaymentStatus.UNPAID,
-        paymentMethod: PaymentMethod.MANUAL,
+        ...paymentSnapshot,
         items: {
           create: orderItems,
         },

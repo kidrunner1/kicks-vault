@@ -4,7 +4,7 @@ import { redirect } from "next/navigation"
 import {
   ArrowRight,
   Clock3,
-  PackageCheck,
+  CreditCard,
   ReceiptText,
   ShoppingBag,
   type LucideIcon,
@@ -12,6 +12,11 @@ import {
 import { getCurrentUser } from "@/lib/auth"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
+import {
+  paymentMethodLabels,
+  paymentStatusLabels,
+  paymentStatusToneClass,
+} from "@/lib/payment"
 import { prisma } from "@/lib/prisma"
 import { uiAction } from "@/lib/ui-interactions"
 
@@ -59,6 +64,7 @@ export default async function OrdersPage() {
   const activeOrders = orders.filter((order) =>
     ["PENDING", "PROCESSING", "SHIPPED"].includes(order.status)
   ).length
+  const paidOrders = orders.filter((order) => order.paymentStatus === "PAID").length
   const totalSpent = orders.reduce((sum, order) => sum + Number(order.total), 0)
 
   return (
@@ -85,10 +91,11 @@ export default async function OrdersPage() {
         </Link>
       </header>
 
-      <section className="grid gap-3 sm:grid-cols-3">
+      <section className="grid gap-3 sm:grid-cols-4">
         <StatCard icon={ReceiptText} label="Orders" value={orders.length.toString()} />
         <StatCard icon={ShoppingBag} label="Pairs" value={totalPairs.toString()} />
         <StatCard icon={Clock3} label="Active" value={activeOrders.toString()} />
+        <StatCard icon={CreditCard} label="Paid" value={paidOrders.toString()} />
       </section>
 
       {orders.length === 0 ? (
@@ -167,6 +174,9 @@ export default async function OrdersPage() {
                         <span className={`rounded-full px-3 py-1 text-[11px] font-medium ${statusClass(order.status)}`}>
                           {order.status}
                         </span>
+                        <span className={`rounded-full px-3 py-1 text-[11px] font-medium ${paymentStatusToneClass[order.paymentStatus]}`}>
+                          {paymentStatusLabels[order.paymentStatus]}
+                        </span>
                       </div>
                       <p className="mt-2 truncate text-sm text-black/55">
                         {previewNames}
@@ -179,8 +189,8 @@ export default async function OrdersPage() {
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-black/55">
-                    <PackageCheck size={16} />
-                    Receipt ready
+                    <CreditCard size={16} />
+                    {paymentMethodLabels[order.paymentMethod]}
                   </div>
 
                   <div className="flex items-center justify-between gap-3 lg:justify-end">

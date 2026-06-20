@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
+  CreditCard,
   MapPin,
   PackageCheck,
   ReceiptText,
@@ -15,6 +16,12 @@ import { getCurrentUser } from "@/lib/auth"
 import { formatAddress } from "@/lib/address"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
+import {
+  paymentMethodLabels,
+  paymentStatusDescriptions,
+  paymentStatusLabels,
+  paymentStatusToneClass,
+} from "@/lib/payment"
 import { prisma } from "@/lib/prisma"
 import { uiAction } from "@/lib/ui-interactions"
 
@@ -81,6 +88,8 @@ export default async function OrderDetailPage({ params }: Props) {
         postalCode: order.shippingPostalCode ?? "",
       })
     : null
+  const paymentStatusLabel = paymentStatusLabels[order.paymentStatus]
+  const paymentMethodLabel = paymentMethodLabels[order.paymentMethod]
 
   return (
     <div className="space-y-8">
@@ -198,6 +207,7 @@ export default async function OrderDetailPage({ params }: Props) {
               <SummaryRow label="Items subtotal" value={formatCurrency(lineSubtotal)} />
               <SummaryRow label="Shipping" value="Free" />
               <SummaryRow label="Status" value={order.status} />
+              <SummaryRow label="Payment" value={paymentStatusLabel} />
               <div className="border-t border-black/10 pt-4">
                 <SummaryRow
                   label="Total"
@@ -205,6 +215,37 @@ export default async function OrderDetailPage({ params }: Props) {
                   strong
                 />
               </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-black/10 bg-white p-5">
+            <div className="mb-5 flex items-center gap-2">
+              <CreditCard size={18} />
+              <h2 className="text-lg font-semibold">
+                Payment
+              </h2>
+            </div>
+
+            <div className="rounded-lg bg-[#f4f3ef] p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm text-black/50">Method</p>
+                  <p className="mt-1 font-medium">{paymentMethodLabel}</p>
+                </div>
+                <span
+                  className={`rounded-full px-3 py-1.5 text-xs font-medium ${paymentStatusToneClass[order.paymentStatus]}`}
+                >
+                  {paymentStatusLabel}
+                </span>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-black/55">
+                {paymentStatusDescriptions[order.paymentStatus]}
+              </p>
+              {order.paidAt && (
+                <p className="mt-3 text-xs text-black/45">
+                  Mock paid at {formatOrderDate(order.paidAt)}
+                </p>
+              )}
             </div>
           </div>
 
@@ -242,6 +283,12 @@ export default async function OrderDetailPage({ params }: Props) {
                 icon={CheckCircle2}
                 title="Order created"
                 detail="Database price and size stock were confirmed."
+              />
+              <TrailItem
+                active={order.paymentStatus === "PAID"}
+                icon={CreditCard}
+                title={paymentStatusLabel}
+                detail={paymentStatusDescriptions[order.paymentStatus]}
               />
               <TrailItem
                 active={order.status !== "PENDING"}

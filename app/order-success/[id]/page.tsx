@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation"
 import {
   ArrowRight,
   CheckCircle2,
+  CreditCard,
   MapPin,
   PackageCheck,
   ReceiptText,
@@ -15,6 +16,12 @@ import AppLogo from "@/app/component/ui/AppLogo"
 import { formatAddress } from "@/lib/address"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
+import {
+  paymentMethodLabels,
+  paymentStatusDescriptions,
+  paymentStatusLabels,
+  paymentStatusToneClass,
+} from "@/lib/payment"
 import { prisma } from "@/lib/prisma"
 import { uiAction } from "@/lib/ui-interactions"
 
@@ -86,6 +93,8 @@ export default async function OrderSuccessPage({ params }: Props) {
         postalCode: order.shippingPostalCode ?? "",
       })
     : null
+  const paymentStatusLabel = paymentStatusLabels[order.paymentStatus]
+  const paymentMethodLabel = paymentMethodLabels[order.paymentMethod]
 
   return (
     <main className="min-h-screen bg-[#f4f3ef] px-6 pb-24 pt-8 text-black md:px-12 lg:px-16">
@@ -122,7 +131,7 @@ export default async function OrderSuccessPage({ params }: Props) {
                 </p>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid gap-3 sm:grid-cols-4">
                 <div className="rounded-lg border border-white/10 p-4">
                   <p className="text-sm text-white/45">Placed</p>
                   <p className="mt-2 text-sm font-medium">{placedAt}</p>
@@ -135,6 +144,12 @@ export default async function OrderSuccessPage({ params }: Props) {
                   <p className="text-sm text-white/45">Total</p>
                   <p className="mt-2 text-sm font-medium">
                     {formatCurrency(order.total.toString())}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-white/10 p-4">
+                  <p className="text-sm text-white/45">Payment</p>
+                  <p className="mt-2 text-sm font-medium">
+                    {paymentStatusLabel}
                   </p>
                 </div>
               </div>
@@ -190,6 +205,36 @@ export default async function OrderSuccessPage({ params }: Props) {
                 <div className="flex items-center justify-between font-semibold">
                   <span>Total</span>
                   <span>{formatCurrency(order.total.toString())}</span>
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-lg bg-[#f4f3ef] p-4">
+                <div className="flex items-start gap-3">
+                  <CreditCard size={18} className="mt-0.5" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="text-sm font-medium">
+                        {paymentMethodLabel}
+                      </p>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-medium ${paymentStatusToneClass[order.paymentStatus]}`}
+                      >
+                        {paymentStatusLabel}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-black/55">
+                      {paymentStatusDescriptions[order.paymentStatus]}
+                    </p>
+                    {order.paidAt && (
+                      <p className="mt-2 text-xs text-black/45">
+                        Mock paid at{" "}
+                        {new Intl.DateTimeFormat("en-US", {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        }).format(order.paidAt)}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 
