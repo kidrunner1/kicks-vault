@@ -267,7 +267,7 @@ export default function FullscreenMenu({ onClose }: Props) {
                         className={`flex h-11 items-center justify-center gap-2 rounded-full border px-3 text-sm font-medium transition ${
                           active
                             ? "border-black bg-black text-white"
-                            : "border-black/10 text-black/70 hover:border-black/25 hover:text-black"
+                            : "border-black/10 text-black/70 hover:border-black hover:bg-black hover:text-white"
                         }`}
                       >
                         <Icon size={15} />
@@ -337,35 +337,37 @@ function MenuLink({
         aria-current={active ? "page" : undefined}
         className={`group grid grid-cols-[44px_1fr_auto] items-center gap-4 rounded-lg border p-4 transition md:p-5 ${
           active
-            ? "border-black bg-black text-white"
+            ? "border-black bg-black"
             : item.emphasis === "primary"
-              ? "border-black bg-white text-black hover:bg-black hover:text-white"
-              : "border-black/10 bg-white text-black hover:border-black/25 hover:bg-[#f4f3ef]"
+              ? "border-black bg-white hover:bg-black"
+              : "border-black/10 bg-white hover:border-black hover:bg-black"
         }`}
       >
         <span
           className={`flex h-11 w-11 items-center justify-center rounded-full transition ${
             active
               ? "bg-white text-black"
-              : item.emphasis === "primary"
+            : item.emphasis === "primary"
                 ? "bg-black text-white group-hover:bg-white group-hover:text-black"
-                : "bg-[#f4f3ef] text-black group-hover:bg-black group-hover:text-white"
+                : "bg-[#f4f3ef] text-black group-hover:bg-white group-hover:text-black"
           }`}
         >
           <Icon size={18} />
         </span>
 
         <span className="min-w-0">
-          <span className="block text-2xl font-semibold leading-tight md:text-3xl">
+          <span
+            className={`block text-2xl font-semibold leading-tight transition md:text-3xl ${
+              active ? "text-white" : "text-black group-hover:text-white"
+            }`}
+          >
             {item.name}
           </span>
           <span
-            className={`mt-1 block text-sm leading-6 ${
+            className={`mt-1 block text-sm leading-6 transition ${
               active
                 ? "text-white/70"
-                : item.emphasis === "primary"
-                  ? "text-black/65 group-hover:text-white/70"
-                  : "text-black/60"
+                : "text-black/60 group-hover:text-white/70"
             }`}
           >
             {item.description}
@@ -377,7 +379,7 @@ function MenuLink({
           className={
             active
               ? "text-white"
-              : "text-black/40 transition group-hover:text-current"
+              : "text-black/45 transition group-hover:text-white"
           }
         />
       </Link>
