@@ -7,6 +7,15 @@ const disabledPrimary =
 const disabledSecondary =
   "disabled:cursor-not-allowed disabled:border-neutral-200 disabled:bg-neutral-100 disabled:text-black/45 disabled:opacity-100 disabled:hover:border-neutral-200 disabled:hover:bg-neutral-100 disabled:hover:text-black/45"
 
+const filterControl =
+  `inline-flex items-center gap-2 border text-sm transition ${focusRing}`
+
+const filterSelected =
+  "border-black bg-[#d8ff6a] text-black shadow-sm hover:bg-[#e4ff84] hover:text-black"
+
+const filterIdle =
+  "border-black/10 bg-[#f8f7f3] text-black/70 hover:border-black/35 hover:bg-white hover:text-black"
+
 export const uiAction = {
   primary:
     `inline-flex items-center justify-center gap-2 rounded-full border border-black bg-black text-white transition hover:bg-white hover:text-black ${focusRing} ${disabledPrimary}`,
@@ -24,4 +33,16 @@ export const uiAction = {
     `flex items-center justify-between rounded-xl border border-black bg-black text-white transition hover:bg-white hover:text-black ${focusRing}`,
   navItem:
     `flex items-center justify-between rounded-xl border border-transparent text-black/70 transition hover:border-black hover:bg-black hover:text-white ${focusRing}`,
+}
+
+export function filterActionClass({
+  active,
+  className = "",
+  shape = "rounded-lg",
+}: {
+  active: boolean
+  className?: string
+  shape?: string
+}) {
+  return `${filterControl} ${shape} ${active ? filterSelected : filterIdle} ${className}`.trim()
 }

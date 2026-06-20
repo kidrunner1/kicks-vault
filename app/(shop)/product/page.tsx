@@ -9,7 +9,7 @@ import {
   normalizeStockRows,
   totalStock,
 } from "@/lib/commerce"
-import { uiAction } from "@/lib/ui-interactions"
+import { filterActionClass, uiAction } from "@/lib/ui-interactions"
 import {
   Check,
   RotateCcw,
@@ -359,30 +359,46 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
       <section className="px-6 pb-10 md:px-12 lg:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-wrap gap-2 border-y border-black/10 py-4">
-            {audienceOptions.map((option) => {
-              const isActive = activeAudience === option.value
+          <div className="rounded-lg border border-black/10 bg-white p-3 shadow-sm">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <h2 className="text-sm font-semibold text-black">
+                Shop by audience
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {audienceOptions.map((option) => {
+                  const isActive = activeAudience === option.value
 
-              return (
-                <Link
-                  key={option.value}
-                  href={createHref({ audience: option.value })}
-                  className={`px-5 py-2.5 text-sm font-medium ${
-                    isActive ? uiAction.primary : uiAction.secondary
-                  }`}
-                >
-                  {option.label}
-                </Link>
-              )
-            })}
+                  return (
+                    <Link
+                      key={option.value}
+                      href={createHref({ audience: option.value })}
+                      aria-current={isActive ? true : undefined}
+                      className={filterActionClass({
+                        active: isActive,
+                        className: "min-h-11 px-5 py-2.5 font-medium",
+                        shape: "rounded-full",
+                      })}
+                    >
+                      {isActive && (
+                        <span
+                          aria-hidden="true"
+                          className="h-2 w-2 rounded-full bg-black"
+                        />
+                      )}
+                      {option.label}
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="px-6 pb-32 md:px-12 lg:px-16">
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[280px_1fr]">
-          <aside className="h-fit rounded-lg border border-black/10 bg-white p-5 lg:sticky lg:top-6">
-            <div className="mb-6 flex items-center justify-between gap-4">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[304px_1fr]">
+          <aside className="h-fit rounded-lg border border-black/10 bg-white p-6 shadow-sm lg:sticky lg:top-6">
+            <div className="flex items-center justify-between gap-4 border-b border-black/10 pb-5">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal size={18} />
                 <h2 className="font-semibold">Shop filters</h2>
@@ -394,7 +410,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               )}
             </div>
 
-            <div className="space-y-7">
+            <div className="divide-y divide-black/10">
               <FilterGroup title="Price range">
                 <PriceRangeFilter
                   activePriceRange={activePriceRange}
@@ -450,11 +466,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                       href={createHref({
                         size: activeSize === size ? null : size,
                       })}
-                      className={`h-10 px-3 text-center text-sm ${
-                        activeSize === size
-                          ? uiAction.primaryPanel
-                          : uiAction.secondaryPanel
-                      }`}
+                      aria-current={activeSize === size ? true : undefined}
+                      className={filterActionClass({
+                        active: activeSize === size,
+                        className: "h-11 justify-center px-3 text-center font-medium",
+                      })}
                     >
                       {size}
                     </Link>
@@ -607,42 +623,49 @@ function PriceRangeFilter({
     priceRangeOptions.findIndex((option) => option.value === activePriceRange)
   )
   const activeOption = priceRangeOptions[activeIndex]
+  const priceProgressPercent =
+    (activeIndex / (priceRangeOptions.length - 1)) * 100
 
   return (
     <div>
-      <div className="mb-3 flex items-center justify-between text-xs text-black/60">
+      <div className="mb-4 flex items-center justify-between text-xs text-black/60">
         <span>Low</span>
         <span>High</span>
       </div>
-      <div className="relative px-1 pb-8 pt-3">
-        <div className="absolute left-3 right-3 top-5 h-1 rounded-full bg-black/10" />
+      <div className="relative px-2 pb-10 pt-4">
+        <div className="absolute left-4 right-4 top-7 h-1.5 rounded-full bg-black/10" />
         <div
-          className="absolute left-3 top-5 h-1 rounded-full bg-black"
+          className="absolute left-4 top-7 h-1.5 rounded-full bg-[#d8ff6a] ring-1 ring-inset ring-black/20"
           style={{
-            right: `${100 - (activeIndex / (priceRangeOptions.length - 1)) * 100}%`,
+            right: `${100 - priceProgressPercent}%`,
           }}
         />
         <div className="relative flex items-start justify-between">
-          {priceRangeOptions.map((option) => {
-            const optionIndex = priceRangeOptions.findIndex(
-              (range) => range.value === option.value
-            )
+          {priceRangeOptions.map((option, optionIndex) => {
             const isActive = option.value === activeOption.value
 
             return (
               <Link
                 key={option.value}
                 href={createHref(option.value)}
-                className="group flex w-10 flex-col items-center gap-2 text-center"
+                aria-current={isActive ? true : undefined}
+                className="group flex w-12 flex-col items-center gap-2.5 text-center"
                 aria-label={`Filter price ${option.label}`}
               >
                 <span
-                  className={`relative z-10 h-5 w-5 rounded-full border-2 transition ${
+                  className={`relative z-10 flex h-6 w-6 items-center justify-center rounded-full border-2 transition ${
                     optionIndex <= activeIndex
-                      ? "border-black bg-black"
+                      ? "border-black bg-[#d8ff6a] shadow-sm"
                       : "border-black/20 bg-white group-hover:border-black/45"
                   }`}
-                />
+                >
+                  {isActive && (
+                    <span
+                      aria-hidden="true"
+                      className="h-2 w-2 rounded-full bg-black"
+                    />
+                  )}
+                </span>
                 <span
                   className={`text-[11px] leading-tight ${
                     isActive ? "font-semibold text-black" : "text-black/60"
@@ -655,7 +678,7 @@ function PriceRangeFilter({
           })}
         </div>
       </div>
-      <p className="rounded-lg bg-[#f4f3ef] px-3 py-2 text-sm text-black/60">
+      <p className="rounded-lg border border-black/10 bg-white px-3 py-2.5 text-sm text-black/60">
         {activeOption.value === "all" ? "All prices" : activeOption.label}
       </p>
     </div>
@@ -670,11 +693,11 @@ function FilterGroup({
   children: ReactNode
 }) {
   return (
-    <div>
-      <h3 className="mb-3 text-sm font-semibold text-black">
+    <div className="py-5 first:pt-0 last:pb-0">
+      <h3 className="mb-4 text-sm font-semibold text-black">
         {title}
       </h3>
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {children}
       </div>
     </div>
@@ -693,12 +716,14 @@ function FilterLink({
   return (
     <Link
       href={href}
-      className={`h-10 justify-between px-3 py-2 text-sm ${
-        active ? uiAction.primaryPanel : uiAction.secondaryPanel
-      }`}
+      aria-current={active ? true : undefined}
+      className={filterActionClass({
+        active,
+        className: "min-h-11 w-full justify-between px-4 py-3 font-medium",
+      })}
     >
       <span>{children}</span>
-      {active && <Check size={14} />}
+      {active && <Check size={14} className="shrink-0" />}
     </Link>
   )
 }
