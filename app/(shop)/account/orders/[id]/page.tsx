@@ -10,12 +10,19 @@ import {
   PackageCheck,
   ReceiptText,
   Truck,
+  XCircle,
   type LucideIcon,
 } from "lucide-react"
 import { getCurrentUser } from "@/lib/auth"
 import { formatAddress } from "@/lib/address"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
+import {
+  buildFulfillmentTimeline,
+  orderFulfillmentStatusLabels,
+  type FulfillmentTimelineStepState,
+  type OrderFulfillmentStatus,
+} from "@/lib/order-fulfillment"
 import {
   paymentMethodLabels,
   paymentStatusDescriptions,
@@ -99,6 +106,14 @@ export default async function OrderDetailPage({ params }: Props) {
     : null
   const paymentStatusLabel = paymentStatusLabels[order.paymentStatus]
   const paymentMethodLabel = paymentMethodLabels[order.paymentMethod]
+  const fulfillmentTimeline = buildFulfillmentTimeline({
+    status: order.status as OrderFulfillmentStatus,
+    createdAt: order.createdAt,
+    shippedAt: order.shippedAt,
+    deliveredAt: order.deliveredAt,
+    cancelledAt: order.cancelledAt,
+    cancelReason: order.cancelReason,
+  })
 
   return (
     <div className="space-y-8">
@@ -215,7 +230,14 @@ export default async function OrderDetailPage({ params }: Props) {
             <div className="space-y-4 text-sm">
               <SummaryRow label="ยอดสินค้า" value={formatCurrency(lineSubtotal)} />
               <SummaryRow label="ค่าจัดส่ง" value="ฟรี" />
-              <SummaryRow label="สถานะ" value={orderStatusLabel(order.status)} />
+              <SummaryRow
+                label="สถานะ"
+                value={
+                  orderFulfillmentStatusLabels[
+                    order.status as OrderFulfillmentStatus
+                  ]
+                }
+              />
               <SummaryRow label="ชำระเงิน" value={paymentStatusLabel} />
               <div className="border-t border-black/10 pt-4">
                 <SummaryRow
@@ -278,6 +300,27 @@ export default async function OrderDetailPage({ params }: Props) {
             </div>
           )}
 
+          {(order.shippingCarrier || order.trackingNumber) && (
+            <div className="rounded-lg border border-black/10 bg-white p-5">
+              <div className="mb-5 flex items-center gap-2">
+                <Truck size={18} />
+                <h2 className="text-lg font-semibold">
+                  ข้อมูลจัดส่ง
+                </h2>
+              </div>
+              <div className="space-y-3 text-sm">
+                <SummaryRow
+                  label="บริษัทขนส่ง"
+                  value={order.shippingCarrier ?? "-"}
+                />
+                <SummaryRow
+                  label="Tracking"
+                  value={order.trackingNumber ?? "-"}
+                />
+              </div>
+            </div>
+          )}
+
           <div className="rounded-lg border border-black/10 bg-white p-5">
             <div className="mb-5 flex items-center gap-2">
               <Truck size={18} />
@@ -287,30 +330,28 @@ export default async function OrderDetailPage({ params }: Props) {
             </div>
 
             <div className="space-y-4">
-              <TrailItem
-                active
-                icon={CheckCircle2}
-                title="สร้างออเดอร์แล้ว"
-                detail="ยืนยันราคาจาก Database และ Stock ของไซซ์ที่เลือกแล้ว"
-              />
-              <TrailItem
-                active={order.paymentStatus === "PAID"}
-                icon={CreditCard}
-                title={paymentStatusLabel}
-                detail={paymentStatusDescriptions[order.paymentStatus]}
-              />
-              <TrailItem
-                active={order.status !== "PENDING"}
-                icon={PackageCheck}
-                title="กำลังเตรียมสินค้า"
-                detail="Admin พร้อมตรวจสอบ Stock และข้อมูลสินค้า"
-              />
-              <TrailItem
-                active={["SHIPPED", "DELIVERED"].includes(order.status)}
-                icon={Truck}
-                title="จัดส่ง"
-                detail="สถานะจัดส่งจะแสดงที่นี่เมื่อมีการอัปเดต"
-              />
+              {fulfillmentTimeline.map((step) => (
+                <TrailItem
+                  key={step.key}
+                  active={step.state === "complete" || step.state === "current"}
+                  state={step.state}
+                  icon={
+                    step.state === "cancelled"
+                      ? XCircle
+                      : step.key === "shipped"
+                        ? Truck
+                        : step.key === "delivered"
+                          ? CheckCircle2
+                          : PackageCheck
+                  }
+                  title={step.title}
+                  detail={
+                    step.date
+                      ? `${step.detail} (${formatOrderDate(step.date)})`
+                      : step.detail
+                  }
+                />
+              ))}
             </div>
           </div>
 
@@ -356,11 +397,13 @@ function SummaryRow({
 
 function TrailItem({
   active,
+  state,
   icon: Icon,
   title,
   detail,
 }: {
   active: boolean
+  state: FulfillmentTimelineStepState
   icon: LucideIcon
   title: string
   detail: string
@@ -369,9 +412,11 @@ function TrailItem({
     <div className="flex gap-3">
       <span
         className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-          active
-            ? "border border-black bg-[#d8ff6a] text-black"
-            : "bg-[#f4f3ef] text-black/55"
+          state === "cancelled"
+            ? "border border-red-200 bg-red-50 text-red-600"
+            : active
+              ? "border border-black bg-[#d8ff6a] text-black"
+              : "bg-[#f4f3ef] text-black/55"
         }`}
       >
         <Icon size={16} />
