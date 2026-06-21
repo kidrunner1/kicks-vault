@@ -29,6 +29,9 @@ export type OrderFulfillmentTargetStatus =
 export type FulfillmentPaymentStatus =
   (typeof FULFILLMENT_PAYMENT_STATUSES)[number]
 
+export const USER_CANCEL_WINDOW_MINUTES = 30
+export const USER_CANCEL_WINDOW_MS = USER_CANCEL_WINDOW_MINUTES * 60 * 1000
+
 export type FulfillmentTimelineStepState =
   | "complete"
   | "current"
@@ -63,6 +66,20 @@ export interface FulfillmentTransitionInput {
 export type FulfillmentValidationResult =
   | { ok: true }
   | { ok: false; message: string }
+
+export interface UserCancelEligibilityOrder {
+  status: OrderFulfillmentStatus
+  createdAt: Date
+  cancelledAt: Date | null
+  stockRestoredAt: Date | null
+}
+
+export interface UserCancelEligibility {
+  canCancel: boolean
+  reason: string
+  deadline: Date
+  remainingMs: number
+}
 
 const allowedTransitions: Record<
   OrderFulfillmentStatus,
@@ -143,6 +160,85 @@ export function paymentStatusAfterCancellation(
   currentStatus: FulfillmentPaymentStatus,
 ): FulfillmentPaymentStatus {
   return currentStatus === "PAID" ? "REFUNDED" : currentStatus
+}
+
+export function getUserCancelDeadline(createdAt: Date) {
+  return new Date(createdAt.getTime() + USER_CANCEL_WINDOW_MS)
+}
+
+export function getUserCancelEligibility(
+  order: UserCancelEligibilityOrder,
+  now = new Date(),
+): UserCancelEligibility {
+  const deadline = getUserCancelDeadline(order.createdAt)
+  const remainingMs = Math.max(0, deadline.getTime() - now.getTime())
+
+  if (order.status === "CANCELLED" || order.cancelledAt) {
+    return {
+      canCancel: false,
+      reason: "ออเดอร์นี้ถูกยกเลิกแล้ว",
+      deadline,
+      remainingMs,
+    }
+  }
+
+  if (order.stockRestoredAt) {
+    return {
+      canCancel: false,
+      reason: "ออเดอร์นี้คืน stock แล้ว",
+      deadline,
+      remainingMs,
+    }
+  }
+
+  if (order.status === "PROCESSING") {
+    return {
+      canCancel: false,
+      reason: "ออเดอร์กำลังเตรียมสินค้าแล้ว",
+      deadline,
+      remainingMs,
+    }
+  }
+
+  if (order.status === "SHIPPED") {
+    return {
+      canCancel: false,
+      reason: "ออเดอร์จัดส่งแล้ว",
+      deadline,
+      remainingMs,
+    }
+  }
+
+  if (order.status === "DELIVERED") {
+    return {
+      canCancel: false,
+      reason: "ออเดอร์ส่งสำเร็จแล้ว",
+      deadline,
+      remainingMs,
+    }
+  }
+
+  if (remainingMs <= 0) {
+    return {
+      canCancel: false,
+      reason: "หมดเวลายกเลิกเองแล้ว",
+      deadline,
+      remainingMs,
+    }
+  }
+
+  const remainingMinutes = Math.max(1, Math.ceil(remainingMs / 60_000))
+
+  return {
+    canCancel: true,
+    reason: `ยกเลิกเองได้อีก ${remainingMinutes} นาที`,
+    deadline,
+    remainingMs,
+  }
+}
+
+export function formatCustomerCancelReason(reason: string) {
+  return `ลูกค้ายกเลิก: ${reason.trim()}`
 }
 
 export function buildFulfillmentTimeline(
