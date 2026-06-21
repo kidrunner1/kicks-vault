@@ -23,14 +23,6 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   [OrderStatus.CANCELLED]: "ยกเลิกแล้ว",
 }
 
-export const ORDER_STATUS_TONES: Record<OrderStatus, string> = {
-  [OrderStatus.PENDING]: "border-amber-400/30 bg-amber-400/10 text-amber-100",
-  [OrderStatus.PROCESSING]: "border-sky-400/30 bg-sky-400/10 text-sky-100",
-  [OrderStatus.SHIPPED]: "border-indigo-400/30 bg-indigo-400/10 text-indigo-100",
-  [OrderStatus.DELIVERED]: "border-emerald-400/30 bg-emerald-400/10 text-emerald-100",
-  [OrderStatus.CANCELLED]: "border-red-400/30 bg-red-400/10 text-red-100",
-}
-
 export const PAYMENT_STATUS_ORDER: PaymentStatus[] = [
   PaymentStatus.UNPAID,
   PaymentStatus.PAID,
@@ -45,7 +37,14 @@ export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   [PaymentStatus.REFUNDED]: "คืนเงินแล้ว",
 }
 
-export type AdminMetricTone = "neutral" | "accent" | "warning" | "danger"
+export type AdminMetricTone =
+  | "neutral"
+  | "accent"
+  | "warning"
+  | "danger"
+  | "success"
+  | "info"
+  | "refund"
 
 export interface AdminMetric {
   label: string
@@ -62,11 +61,19 @@ export interface AdminDashboardData {
     label: string
     count: number
   }[]
+  fulfillmentSummary: {
+    status: OrderStatus
+    label: string
+    count: number
+    percent: number
+    tone: AdminMetricTone
+  }[]
   recentOrders: {
     id: string
     shortId: string
     customerEmail: string
     status: OrderStatus
+    paymentStatus: PaymentStatus
     total: string
     itemCount: number
     createdAt: Date
@@ -123,6 +130,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     totalRevenue,
     ordersToday,
     pendingOrders,
+    unpaidOrders,
     soldOutSizes,
     productsWithoutPrice,
     productsWithoutImages,
@@ -160,6 +168,11 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     prisma.order.count({
       where: {
         status: OrderStatus.PENDING,
+      },
+    }),
+    prisma.order.count({
+      where: {
+        paymentStatus: PaymentStatus.UNPAID,
       },
     }),
     prisma.shoeSize.count({
@@ -256,13 +269,17 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
   ])
 
   const pipelineByStatus = new Map(
-    pipelineGroups.map((group) => [group.status, group._count._all])
+    pipelineGroups.map((group) => [group.status, group._count._all]),
   )
   const paymentByStatus = new Map(
-    paymentGroups.map((group) => [group.paymentStatus, group])
+    paymentGroups.map((group) => [group.paymentStatus, group]),
   )
   const highestPaymentCount = Math.max(
     ...paymentGroups.map((group) => group._count._all),
+    0,
+  )
+  const highestPipelineCount = Math.max(
+    ...ORDER_STATUS_ORDER.map((status) => pipelineByStatus.get(status) ?? 0),
     0,
   )
   const topProductIds = topProductGroups.map((group) => group.shoeId)
@@ -285,7 +302,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       })
     : []
   const topProductById = new Map(
-    topProductShoes.map((shoe) => [shoe.id, shoe])
+    topProductShoes.map((shoe) => [shoe.id, shoe]),
   )
   const highestProductQuantity = Math.max(
     ...topProductGroups.map((group) => group._sum.quantity ?? 0),
@@ -307,10 +324,18 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
         tone: ordersToday > 0 ? "accent" : "neutral",
       },
       {
-        label: "ออเดอร์รอดำเนินการ",
+        label: "รอดำเนินการ",
         value: pendingOrders.toString(),
         helper: "ต้องการการตรวจจาก Admin",
+        href: "/admin/orders?status=PENDING",
         tone: pendingOrders > 0 ? "warning" : "neutral",
+      },
+      {
+        label: "ยังไม่ชำระเงิน",
+        value: unpaidOrders.toString(),
+        helper: "ออเดอร์ที่ต้องตรวจ payment mock",
+        href: "/admin/orders?payment=UNPAID",
+        tone: unpaidOrders > 0 ? "warning" : "neutral",
       },
       {
         label: "สินค้า",
@@ -320,16 +345,16 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
         tone: "neutral",
       },
       {
-        label: "ไซซ์ที่ Stock เหลือน้อย",
+        label: "ไซซ์ stock ต่ำ",
         value: lowStockSizes.length.toString(),
         helper: `${LOW_STOCK_THRESHOLD} คู่หรือน้อยกว่า`,
         href: "/admin/shoes",
         tone: lowStockSizes.length > 0 ? "warning" : "neutral",
       },
       {
-        label: "ไซซ์ที่สินค้าหมด",
+        label: "ไซซ์สินค้าหมด",
         value: soldOutSizes.toString(),
-        helper: "จำนวน Stock เป็นศูนย์",
+        helper: "จำนวน stock เป็นศูนย์",
         href: "/admin/shoes",
         tone: soldOutSizes > 0 ? "danger" : "neutral",
       },
@@ -339,11 +364,26 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       label: ORDER_STATUS_LABELS[status],
       count: pipelineByStatus.get(status) ?? 0,
     })),
+    fulfillmentSummary: ORDER_STATUS_ORDER.map((status) => {
+      const count = pipelineByStatus.get(status) ?? 0
+
+      return {
+        status,
+        label: ORDER_STATUS_LABELS[status],
+        count,
+        percent:
+          highestPipelineCount > 0
+            ? Math.round((count / highestPipelineCount) * 100)
+            : 0,
+        tone: orderStatusTone(status),
+      }
+    }),
     recentOrders: recentOrders.map((order) => ({
       id: order.id,
       shortId: shortOrderId(order.id),
       customerEmail: order.user.email,
       status: order.status,
+      paymentStatus: order.paymentStatus,
       total: formatCurrency(order.total.toString()),
       itemCount: order.items.reduce((sum, item) => sum + item.quantity, 0),
       createdAt: order.createdAt,
@@ -431,7 +471,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
 
 function paymentTone(status: PaymentStatus): AdminMetricTone {
   if (status === PaymentStatus.PAID) {
-    return "accent"
+    return "success"
   }
 
   if (status === PaymentStatus.UNPAID) {
@@ -442,5 +482,25 @@ function paymentTone(status: PaymentStatus): AdminMetricTone {
     return "danger"
   }
 
-  return "neutral"
+  return "refund"
+}
+
+function orderStatusTone(status: OrderStatus): AdminMetricTone {
+  if (status === OrderStatus.PENDING) {
+    return "warning"
+  }
+
+  if (status === OrderStatus.PROCESSING) {
+    return "info"
+  }
+
+  if (status === OrderStatus.SHIPPED) {
+    return "refund"
+  }
+
+  if (status === OrderStatus.DELIVERED) {
+    return "success"
+  }
+
+  return "danger"
 }
