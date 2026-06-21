@@ -3,6 +3,10 @@
 import Image from "next/image"
 import { ImagePlus, Link as LinkIcon, Trash2, Upload } from "lucide-react"
 import { useRef, useState } from "react"
+import {
+  SHOE_IMAGE_ACCEPT,
+  validateShoeImageBatch,
+} from "@/lib/admin-upload"
 import { normalizeImagePath } from "@/lib/image"
 import { adminButtonClass, adminInputClass, cn } from "../admin-ui"
 
@@ -45,8 +49,19 @@ export default function ShoeImageManager({
   async function uploadFiles(files: FileList | null) {
     if (!files || files.length === 0) return
 
+    const selectedFiles = Array.from(files)
+    const validation = validateShoeImageBatch(selectedFiles)
+
+    if (!validation.ok) {
+      setUploadError(validation.message)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
+      return
+    }
+
     const formData = new FormData()
-    Array.from(files).forEach((file) => {
+    selectedFiles.forEach((file) => {
       formData.append("files", file)
     })
 
@@ -94,7 +109,7 @@ export default function ShoeImageManager({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp,image/avif"
+            accept={SHOE_IMAGE_ACCEPT}
             multiple
             className="sr-only"
             onChange={(event) => uploadFiles(event.target.files)}
@@ -120,7 +135,10 @@ export default function ShoeImageManager({
       </div>
 
       {uploadError && (
-        <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p
+          aria-live="polite"
+          className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+        >
           {uploadError}
         </p>
       )}

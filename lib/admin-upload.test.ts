@@ -2,8 +2,11 @@ import test from "node:test"
 import assert from "node:assert/strict"
 import {
   MAX_SHOE_IMAGE_BYTES,
+  MAX_SHOE_IMAGE_FILES,
+  SHOE_IMAGE_ACCEPT,
   buildShoeImageFileName,
   getShoeImageExtension,
+  validateShoeImageBatch,
   validateShoeImageFile,
 } from "./admin-upload"
 
@@ -36,6 +39,25 @@ test("shoe image upload rejects files larger than the limit", () => {
       message: "ไฟล์รูปภาพต้องมีขนาดไม่เกิน 5MB",
     },
   )
+})
+
+test("shoe image upload exposes a browser accept string", () => {
+  assert.equal(
+    SHOE_IMAGE_ACCEPT,
+    "image/jpeg,image/png,image/webp,image/avif",
+  )
+})
+
+test("shoe image upload rejects too many files at once", () => {
+  const files = Array.from({ length: MAX_SHOE_IMAGE_FILES + 1 }, () => ({
+    type: "image/png",
+    size: 10,
+  }))
+
+  assert.deepEqual(validateShoeImageBatch(files), {
+    ok: false,
+    message: `อัปโหลดได้ครั้งละไม่เกิน ${MAX_SHOE_IMAGE_FILES} รูป`,
+  })
 })
 
 test("shoe image upload creates a safe deterministic file name", () => {

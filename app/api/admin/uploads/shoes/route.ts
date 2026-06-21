@@ -5,7 +5,7 @@ import { NextResponse } from "next/server"
 import { requireAdmin } from "@/lib/auth"
 import {
   buildShoeImageFileName,
-  validateShoeImageFile,
+  validateShoeImageBatch,
 } from "@/lib/admin-upload"
 import { AuthError } from "@/lib/errors/auth-error"
 
@@ -27,9 +27,11 @@ export async function POST(request: Request) {
       .getAll("files")
       .filter((value): value is File => value instanceof File)
 
-    if (files.length === 0) {
+    const validation = validateShoeImageBatch(files)
+
+    if (!validation.ok) {
       return NextResponse.json(
-        { error: "กรุณาเลือกไฟล์รูปภาพอย่างน้อย 1 ไฟล์" },
+        { error: validation.message },
         { status: 400 },
       )
     }
@@ -39,18 +41,6 @@ export async function POST(request: Request) {
     const uploadedPaths: string[] = []
 
     for (const file of files) {
-      const validation = validateShoeImageFile({
-        type: file.type,
-        size: file.size,
-      })
-
-      if (!validation.ok) {
-        return NextResponse.json(
-          { error: validation.message },
-          { status: 400 },
-        )
-      }
-
       const fileName = buildShoeImageFileName({
         mimeType: file.type,
         now: new Date(),
