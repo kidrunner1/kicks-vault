@@ -4,6 +4,14 @@ import { ArrowRight, RotateCcw, Search } from "lucide-react"
 import { formatCurrency } from "@/lib/commerce"
 import { prisma } from "@/lib/prisma"
 import {
+  AdminPageHeader,
+  AdminStatusBadge,
+  adminButtonClass,
+  adminInputClass,
+  adminSelectClass,
+  cn,
+} from "../admin-ui"
+import {
   formatAdminDate,
   isOrderStatus,
   isPaymentStatus,
@@ -81,35 +89,31 @@ export default async function AdminOrdersPage({
   })
 
   return (
-    <div className="space-y-6 text-gray-100">
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">ออเดอร์</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-400">
-            ตรวจสอบลูกค้า ที่อยู่จัดส่ง สินค้า และสถานะ Mock payment จากหน้า Admin เดียว
-          </p>
-        </div>
-      </header>
+    <div className="space-y-6">
+      <AdminPageHeader
+        title="ออเดอร์"
+        description="ตรวจสอบลูกค้า ที่อยู่จัดส่ง สถานะ fulfillment และ mock payment จากหน้าเดียว"
+      />
 
-      <form className="grid gap-3 rounded-lg border border-gray-800 bg-gray-900 p-4 lg:grid-cols-[1fr_180px_180px_auto_auto]">
+      <form className="grid gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm lg:grid-cols-[1fr_180px_180px_auto_auto]">
         <label className="relative block">
           <span className="sr-only">ค้นหาออเดอร์</span>
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
             size={17}
           />
           <input
             name="q"
             defaultValue={query}
             aria-label="ค้นหาด้วย id, email, ชื่อ หรือเบอร์โทร"
-            className="h-11 w-full rounded-lg border border-gray-700 bg-gray-950 pl-10 pr-3 text-sm text-white outline-none transition focus:border-white"
+            className={cn(adminInputClass, "mt-0 h-11 pl-10")}
           />
         </label>
 
         <select
           name="status"
           defaultValue={activeStatus}
-          className="h-11 rounded-lg border border-gray-700 bg-gray-950 px-3 text-sm text-white outline-none transition focus:border-white"
+          className={cn(adminSelectClass, "mt-0")}
         >
           <option value="all">ทุกสถานะ</option>
           {ORDER_STATUSES.map((status) => (
@@ -122,7 +126,7 @@ export default async function AdminOrdersPage({
         <select
           name="payment"
           defaultValue={activePayment}
-          className="h-11 rounded-lg border border-gray-700 bg-gray-950 px-3 text-sm text-white outline-none transition focus:border-white"
+          className={cn(adminSelectClass, "mt-0")}
         >
           <option value="all">ทุกสถานะ Payment</option>
           {PAYMENT_STATUSES.map((status) => (
@@ -132,32 +136,26 @@ export default async function AdminOrdersPage({
           ))}
         </select>
 
-        <button
-          type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-lg border border-black bg-[#d8ff6a] px-4 text-sm font-semibold text-black transition hover:bg-white hover:text-black"
-        >
+        <button type="submit" className={adminButtonClass.primary}>
           ใช้ตัวกรอง
         </button>
 
-        <Link
-          href="/admin/orders"
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-950 px-4 text-sm font-medium text-gray-200 transition hover:bg-gray-800 hover:text-white"
-        >
+        <Link href="/admin/orders" className={adminButtonClass.secondary}>
           <RotateCcw size={16} />
           รีเซ็ต
         </Link>
       </form>
 
-      <section className="overflow-hidden rounded-lg border border-gray-800 bg-gray-900">
+      <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
         {orders.length === 0 ? (
           <div className="p-8 text-center">
-            <p className="font-medium text-gray-200">ไม่พบออเดอร์</p>
-            <p className="mt-2 text-sm text-gray-500">
-              ออเดอร์จะแสดงที่นี่หลัง Checkout หรือเมื่อล้างตัวกรองแล้ว
+            <p className="font-semibold text-slate-800">ไม่พบออเดอร์</p>
+            <p className="mt-2 text-sm text-slate-500">
+              ออเดอร์จะแสดงที่นี่หลัง Checkout หรือล้างตัวกรองแล้ว
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-800">
+          <div className="divide-y divide-slate-200">
             {orders.map((order) => {
               const itemCount = order.items.reduce(
                 (sum, item) => sum + item.quantity,
@@ -168,23 +166,23 @@ export default async function AdminOrdersPage({
                 <Link
                   key={order.id}
                   href={`/admin/orders/${order.id}`}
-                  className="grid gap-4 p-5 transition hover:bg-gray-800/60 lg:grid-cols-[1fr_1fr_140px_140px_140px_auto] lg:items-center"
+                  className="grid gap-4 p-5 transition hover:bg-slate-50 lg:grid-cols-[1fr_1fr_140px_140px_140px_auto] lg:items-center"
                 >
                   <div>
-                    <p className="font-semibold text-white">
+                    <p className="font-semibold text-slate-950">
                       {shortOrderId(order.id)}
                     </p>
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-slate-500">
                       {formatAdminDate(order.createdAt)}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-sm font-medium text-gray-200">
+                    <p className="text-sm font-semibold text-slate-800">
                       {order.user.email}
                     </p>
-                    <p className="mt-1 text-xs text-gray-500">
-                      {order.shippingRecipientName ?? "ไม่มีชื่อผู้รับ"} -{" "}
+                    <p className="mt-1 text-xs text-slate-500">
+                      {order.shippingRecipientName ?? "ไม่มีชื่อผู้รับ"} ·{" "}
                       {order.shippingPhone ?? "ไม่มีเบอร์โทร"}
                     </p>
                   </div>
@@ -199,16 +197,16 @@ export default async function AdminOrdersPage({
                   />
 
                   <div>
-                    <p className="text-sm font-semibold text-white">
+                    <p className="text-sm font-semibold text-slate-950">
                       {formatCurrency(order.total.toString())}
                     </p>
-                    <p className="mt-1 text-xs text-gray-500">
-                      {itemCount} รายการ -{" "}
+                    <p className="mt-1 text-xs text-slate-500">
+                      {itemCount} รายการ ·{" "}
                       {paymentMethodLabels[order.paymentMethod]}
                     </p>
                   </div>
 
-                  <span className="inline-flex items-center justify-end gap-1 text-sm font-medium text-[#ecff9c]">
+                  <span className="inline-flex items-center justify-end gap-1 text-sm font-semibold text-slate-900">
                     รายละเอียด
                     <ArrowRight size={15} />
                   </span>
@@ -229,11 +227,5 @@ function StatusBadge({
   label: string
   className: string
 }) {
-  return (
-    <span
-      className={`inline-flex w-fit rounded-full border px-3 py-1 text-xs font-semibold ${className}`}
-    >
-      {label}
-    </span>
-  )
+  return <AdminStatusBadge className={className} label={label} />
 }

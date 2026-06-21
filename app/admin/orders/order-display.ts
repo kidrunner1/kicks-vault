@@ -41,18 +41,18 @@ export const paymentMethodLabels: Record<PaymentMethodValue, string> = {
 }
 
 export const orderStatusTones: Record<OrderStatusValue, string> = {
-  PENDING: "border-amber-400/30 bg-amber-400/10 text-amber-100",
-  PROCESSING: "border-sky-400/30 bg-sky-400/10 text-sky-100",
-  SHIPPED: "border-indigo-400/30 bg-indigo-400/10 text-indigo-100",
-  DELIVERED: "border-emerald-400/30 bg-emerald-400/10 text-emerald-100",
-  CANCELLED: "border-red-400/30 bg-red-400/10 text-red-100",
+  PENDING: "border-amber-200 bg-amber-50 text-amber-800",
+  PROCESSING: "border-sky-200 bg-sky-50 text-sky-800",
+  SHIPPED: "border-indigo-200 bg-indigo-50 text-indigo-800",
+  DELIVERED: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  CANCELLED: "border-red-200 bg-red-50 text-red-700",
 }
 
 export const paymentStatusTones: Record<PaymentStatusValue, string> = {
-  UNPAID: "border-amber-400/30 bg-amber-400/10 text-amber-100",
-  PAID: "border-emerald-400/30 bg-emerald-400/10 text-emerald-100",
-  FAILED: "border-red-400/30 bg-red-400/10 text-red-100",
-  REFUNDED: "border-violet-400/30 bg-violet-400/10 text-violet-100",
+  UNPAID: "border-amber-200 bg-amber-50 text-amber-800",
+  PAID: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  FAILED: "border-red-200 bg-red-50 text-red-700",
+  REFUNDED: "border-violet-200 bg-violet-50 text-violet-800",
 }
 
 type ShippingAddressSource = {
