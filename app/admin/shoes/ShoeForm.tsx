@@ -69,6 +69,14 @@ const emptyValues: ShoeFormValues = {
   sizes: createDefaultStockRows(),
 }
 
+function RequiredMark() {
+  return (
+    <span aria-hidden="true" className="text-red-600">
+      *
+    </span>
+  )
+}
+
 export default function ShoeForm({
   mode,
   brands,
@@ -246,7 +254,10 @@ export default function ShoeForm({
 
       <div className="space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
         {message && (
-          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div
+            aria-live="polite"
+            className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          >
             {message}
           </div>
         )}
@@ -255,7 +266,7 @@ export default function ShoeForm({
           <div className="space-y-5">
             <div>
               <label className="text-sm font-medium text-slate-700">
-                ชื่อสินค้า
+                ชื่อสินค้า <RequiredMark />
               </label>
               <input
                 value={values.name}
@@ -305,7 +316,7 @@ export default function ShoeForm({
 
             <div>
               <label className="text-sm font-medium text-slate-700">
-                แบรนด์
+                แบรนด์ <RequiredMark />
               </label>
               <select
                 value={values.brandId}
@@ -322,7 +333,9 @@ export default function ShoeForm({
             </div>
 
             <div>
-              <label className="text-sm font-medium text-slate-700">ราคา</label>
+              <label className="text-sm font-medium text-slate-700">
+                ราคา <RequiredMark />
+              </label>
               <input
                 type="number"
                 min="0"
@@ -359,7 +372,7 @@ export default function ShoeForm({
             {values.specs.map((spec, index) => (
               <div
                 key={`spec-${index}`}
-                className="grid gap-3 md:grid-cols-[0.8fr_1fr_auto]"
+                className="grid gap-3 sm:grid-cols-[0.8fr_1fr_auto]"
               >
                 <input
                   value={spec.label}
@@ -380,7 +393,7 @@ export default function ShoeForm({
                 <button
                   type="button"
                   onClick={() => removeSpecRow(index)}
-                  className={adminButtonClass.danger}
+                  className={cn(adminButtonClass.danger, "w-full sm:w-auto")}
                 >
                   ลบ
                 </button>
@@ -412,30 +425,40 @@ export default function ShoeForm({
             {values.sizes.map((row, index) => (
               <div
                 key={`${row.size}-${index}`}
-                className="grid grid-cols-[1fr_1fr_auto] gap-3"
+                className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]"
               >
-                <input
-                  value={row.size}
-                  onChange={(event) =>
-                    updateSize(index, "size", event.target.value)
-                  }
-                  placeholder="ไซซ์"
-                  className={cn(adminInputClass, "mt-0")}
-                />
-                <input
-                  type="number"
-                  min="0"
-                  value={row.stock}
-                  onChange={(event) =>
-                    updateSize(index, "stock", event.target.value)
-                  }
-                  placeholder="Stock"
-                  className={cn(adminInputClass, "mt-0")}
-                />
+                <label className="block">
+                  <span className="text-sm font-medium text-slate-700">
+                    ไซซ์ <RequiredMark />
+                  </span>
+                  <input
+                    value={row.size}
+                    onChange={(event) =>
+                      updateSize(index, "size", event.target.value)
+                    }
+                    placeholder="ไซซ์"
+                    className={adminInputClass}
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-medium text-slate-700">
+                    Stock <RequiredMark />
+                  </span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={row.stock}
+                    onChange={(event) =>
+                      updateSize(index, "stock", event.target.value)
+                    }
+                    placeholder="Stock"
+                    className={adminInputClass}
+                  />
+                </label>
                 <button
                   type="button"
                   onClick={() => removeSizeRow(index)}
-                  className={adminButtonClass.danger}
+                  className={cn(adminButtonClass.danger, "w-full sm:w-auto")}
                 >
                   ลบ
                 </button>
