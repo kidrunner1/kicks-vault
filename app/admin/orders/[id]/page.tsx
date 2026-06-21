@@ -1,7 +1,19 @@
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ArrowLeft, CreditCard, MapPin, PackageCheck, Truck, User } from "lucide-react"
+import {
+  ArrowLeft,
+  CreditCard,
+  MapPin,
+  PackageCheck,
+  Truck,
+  User,
+} from "lucide-react"
+import {
+  AdminPageHeader,
+  AdminPanel,
+  AdminStatusBadge,
+} from "../../admin-ui"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
 import {
@@ -75,50 +87,48 @@ export default async function AdminOrderDetailPage({
   const itemCount = order.items.reduce((sum, item) => sum + item.quantity, 0)
 
   return (
-    <div className="space-y-6 text-gray-100">
+    <div className="space-y-6">
       <Link
         href="/admin/orders"
-        className="inline-flex items-center gap-2 text-sm font-medium text-gray-300 transition hover:text-white"
+        className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-black"
       >
         <ArrowLeft size={16} />
         กลับไปหน้าออเดอร์
       </Link>
 
-      <header className="grid gap-5 lg:grid-cols-[1fr_280px] lg:items-end">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-3xl font-semibold tracking-tight">
-              {shortOrderId(order.id)}
-            </h1>
-            <StatusBadge
+      <AdminPageHeader
+        title={shortOrderId(order.id)}
+        description={`ID เต็ม: ${order.id}`}
+        actions={
+          <>
+            <AdminStatusBadge
               className={orderStatusTones[order.status]}
               label={orderStatusLabels[order.status]}
             />
-            <StatusBadge
+            <AdminStatusBadge
               className={paymentStatusTones[order.paymentStatus]}
               label={paymentStatusLabels[order.paymentStatus]}
             />
-          </div>
-          <p className="mt-2 break-all text-sm text-gray-500">
-            ID เต็ม: {order.id}
-          </p>
-        </div>
-
-        <div className="rounded-lg border border-[#d8ff6a]/30 bg-[#d8ff6a]/10 p-4">
-          <p className="text-sm text-[#ecff9c]">ยอดรวมออเดอร์</p>
-          <p className="mt-2 text-3xl font-semibold text-white">
-            {formatCurrency(order.total.toString())}
-          </p>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px] xl:items-start">
         <div className="space-y-6">
-          <Panel
+          <AdminPanel
             title="สรุปออเดอร์"
             description={`ออเดอร์นี้มี ${itemCount} รายการ`}
             icon={<PackageCheck size={18} />}
           >
+            <div className="mb-5 rounded-lg border border-lime-200 bg-lime-50 p-4">
+              <p className="text-sm font-semibold text-lime-900">
+                ยอดรวมออเดอร์
+              </p>
+              <p className="mt-2 text-3xl font-semibold text-slate-950">
+                {formatCurrency(order.total.toString())}
+              </p>
+            </div>
+
             <div className="grid gap-3 sm:grid-cols-2">
               <InfoRow label="สร้างเมื่อ" value={formatAdminDate(order.createdAt)} />
               <InfoRow label="อัปเดตล่าสุด" value={formatAdminDate(order.updatedAt)} />
@@ -138,10 +148,7 @@ export default async function AdminOrderDetailPage({
                 label="บริษัทขนส่ง"
                 value={order.shippingCarrier ?? "-"}
               />
-              <InfoRow
-                label="Tracking"
-                value={order.trackingNumber ?? "-"}
-              />
+              <InfoRow label="Tracking" value={order.trackingNumber ?? "-"} />
               <InfoRow
                 label="สถานะ Payment"
                 value={paymentStatusLabels[order.paymentStatus]}
@@ -152,14 +159,14 @@ export default async function AdminOrderDetailPage({
               />
               <InfoRow label="ชำระเมื่อ" value={formatAdminDate(order.paidAt)} />
             </div>
-          </Panel>
+          </AdminPanel>
 
-          <Panel
+          <AdminPanel
             title="สินค้าที่สั่งซื้อ"
             description="ราคาถูกบันทึกเป็น snapshot ตอน Checkout"
             icon={<PackageCheck size={18} />}
           >
-            <div className="divide-y divide-gray-800">
+            <div className="divide-y divide-slate-200">
               {order.items.map((item) => {
                 const imageUrl = normalizeImagePath(item.shoe.images[0]?.url)
                 const lineTotal = Number(item.price) * item.quantity
@@ -169,7 +176,7 @@ export default async function AdminOrderDetailPage({
                     key={item.id}
                     className="grid gap-4 py-5 first:pt-0 last:pb-0 md:grid-cols-[88px_1fr_auto] md:items-center"
                   >
-                    <div className="relative aspect-square overflow-hidden rounded-lg border border-gray-800 bg-white">
+                    <div className="relative aspect-square overflow-hidden rounded-lg border border-slate-200 bg-white">
                       <Image
                         src={imageUrl}
                         alt={item.shoe.name}
@@ -180,28 +187,28 @@ export default async function AdminOrderDetailPage({
                     </div>
 
                     <div className="min-w-0">
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-slate-500">
                         {item.shoe.brand.name}
                       </p>
-                      <h2 className="mt-1 font-semibold text-white">
+                      <h2 className="mt-1 font-semibold text-slate-950">
                         {item.shoe.name}
                       </h2>
-                      <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-300">
-                        <span className="rounded-full border border-gray-700 bg-gray-950 px-3 py-1">
+                      <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
+                        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
                           ไซซ์ {item.size ?? "-"}
                         </span>
-                        <span className="rounded-full border border-gray-700 bg-gray-950 px-3 py-1">
+                        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
                           จำนวน {item.quantity}
                         </span>
-                        <span className="rounded-full border border-gray-700 bg-gray-950 px-3 py-1">
+                        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
                           ราคาต่อคู่ {formatCurrency(item.price.toString())}
                         </span>
                       </div>
                     </div>
 
                     <div className="md:text-right">
-                      <p className="text-xs text-gray-500">รวมรายการนี้</p>
-                      <p className="mt-1 text-lg font-semibold text-white">
+                      <p className="text-xs text-slate-500">รวมรายการนี้</p>
+                      <p className="mt-1 text-lg font-semibold text-slate-950">
                         {formatCurrency(lineTotal)}
                       </p>
                     </div>
@@ -209,11 +216,11 @@ export default async function AdminOrderDetailPage({
                 )
               })}
             </div>
-          </Panel>
+          </AdminPanel>
         </div>
 
-        <aside className="space-y-6 xl:sticky xl:top-6">
-          <Panel
+        <aside className="space-y-6 xl:sticky xl:top-24">
+          <AdminPanel
             title="ลูกค้า"
             description="บัญชีผู้ซื้อและผู้รับจากออเดอร์นี้"
             icon={<User size={18} />}
@@ -226,9 +233,9 @@ export default async function AdminOrderDetailPage({
               />
               <InfoRow label="เบอร์โทร" value={order.shippingPhone ?? "-"} />
             </div>
-          </Panel>
+          </AdminPanel>
 
-          <Panel
+          <AdminPanel
             title="ที่อยู่จัดส่ง"
             description="snapshot ที่บันทึกไว้ตอน Checkout"
             icon={<MapPin size={18} />}
@@ -236,20 +243,20 @@ export default async function AdminOrderDetailPage({
             <div className="space-y-3">
               <InfoRow label="ชื่อที่อยู่" value={order.shippingLabel ?? "-"} />
               {addressLines.length === 0 ? (
-                <p className="rounded-lg border border-dashed border-gray-800 bg-gray-950/60 p-4 text-sm text-gray-500">
+                <p className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500">
                   ออเดอร์นี้ไม่มี snapshot ที่อยู่จัดส่ง
                 </p>
               ) : (
-                <div className="rounded-lg border border-gray-800 bg-gray-950/60 p-4 text-sm leading-6 text-gray-300">
-                  {addressLines.map((line) => (
-                    <p key={line}>{line}</p>
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+                  {addressLines.map((line, index) => (
+                    <p key={`address-line-${index}`}>{line}</p>
                   ))}
                 </div>
               )}
             </div>
-          </Panel>
+          </AdminPanel>
 
-          <Panel
+          <AdminPanel
             title="Fulfillment"
             description="อัปเดตการเตรียมสินค้า การจัดส่ง และการยกเลิกออเดอร์"
             icon={<Truck size={18} />}
@@ -288,9 +295,9 @@ export default async function AdminOrderDetailPage({
               trackingNumber={order.trackingNumber}
               cancelReason={order.cancelReason}
             />
-          </Panel>
+          </AdminPanel>
 
-          <Panel
+          <AdminPanel
             title="Mock payment"
             description="สถานะจำลองสำหรับ phase นี้ ไม่มีการชำระเงินจริง"
             icon={<CreditCard size={18} />}
@@ -301,65 +308,20 @@ export default async function AdminOrderDetailPage({
               paymentMethod={order.paymentMethod}
               paymentNote={order.paymentNote}
             />
-          </Panel>
+          </AdminPanel>
         </aside>
       </section>
     </div>
   )
 }
 
-function Panel({
-  title,
-  description,
-  icon,
-  children,
-}: {
-  title: string
-  description: string
-  icon: React.ReactNode
-  children: React.ReactNode
-}) {
-  return (
-    <section className="rounded-lg border border-gray-800 bg-gray-900 p-5">
-      <div className="mb-5 flex items-start gap-3">
-        <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-700 bg-gray-950 text-gray-300">
-          {icon}
-        </span>
-        <div>
-          <h2 className="text-lg font-semibold text-white">{title}</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-500">
-            {description}
-          </p>
-        </div>
-      </div>
-      {children}
-    </section>
-  )
-}
-
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-gray-800 bg-gray-950/60 p-4">
-      <p className="text-xs font-medium uppercase text-gray-500">{label}</p>
-      <p className="mt-2 break-words text-sm font-medium text-gray-100">
+    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+      <p className="text-xs font-medium uppercase text-slate-500">{label}</p>
+      <p className="mt-2 break-words text-sm font-semibold text-slate-950">
         {value}
       </p>
     </div>
-  )
-}
-
-function StatusBadge({
-  label,
-  className,
-}: {
-  label: string
-  className: string
-}) {
-  return (
-    <span
-      className={`inline-flex w-fit rounded-full border px-3 py-1 text-xs font-semibold ${className}`}
-    >
-      {label}
-    </span>
   )
 }

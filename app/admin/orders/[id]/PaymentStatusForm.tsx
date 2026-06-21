@@ -2,6 +2,12 @@
 
 import { useActionState } from "react"
 import {
+  adminButtonClass,
+  adminSelectClass,
+  adminTextareaClass,
+  cn,
+} from "../../admin-ui"
+import {
   PAYMENT_METHODS,
   PAYMENT_STATUSES,
   paymentMethodLabels,
@@ -41,7 +47,7 @@ export default function PaymentStatusForm({
 
       <div>
         <label
-          className="text-sm font-medium text-gray-300"
+          className="text-sm font-medium text-slate-700"
           htmlFor="paymentMethod"
         >
           วิธีชำระเงิน
@@ -50,7 +56,7 @@ export default function PaymentStatusForm({
           id="paymentMethod"
           name="paymentMethod"
           defaultValue={paymentMethod}
-          className="mt-2 h-11 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 text-sm text-white outline-none transition focus:border-white"
+          className={adminSelectClass}
         >
           {PAYMENT_METHODS.map((method) => (
             <option key={method} value={method}>
@@ -62,7 +68,7 @@ export default function PaymentStatusForm({
 
       <div>
         <label
-          className="text-sm font-medium text-gray-300"
+          className="text-sm font-medium text-slate-700"
           htmlFor="paymentNote"
         >
           หมายเหตุ Payment
@@ -73,7 +79,7 @@ export default function PaymentStatusForm({
           defaultValue={paymentNote ?? ""}
           maxLength={500}
           rows={4}
-          className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-3 text-sm text-white outline-none transition focus:border-white"
+          className={adminTextareaClass}
         />
       </div>
 
@@ -85,11 +91,12 @@ export default function PaymentStatusForm({
             name="paymentStatus"
             value={status}
             disabled={pending}
-            className={`rounded-lg border px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+            className={cn(
               status === paymentStatus
-                ? "border-[#d8ff6a] bg-[#d8ff6a] text-black hover:bg-white hover:text-black"
-                : "border-gray-700 bg-gray-950 text-gray-200 hover:bg-gray-800 hover:text-white"
-            }`}
+                ? adminButtonClass.primary
+                : adminButtonClass.secondary,
+              "w-full",
+            )}
           >
             ตั้งเป็น {paymentStatusLabels[status]}
           </button>
@@ -98,11 +105,12 @@ export default function PaymentStatusForm({
 
       {state.message && (
         <p
-          className={`rounded-lg border px-4 py-3 text-sm ${
+          className={cn(
+            "rounded-lg border px-4 py-3 text-sm",
             state.ok
-              ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100"
-              : "border-red-400/30 bg-red-400/10 text-red-100"
-          }`}
+              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+              : "border-red-200 bg-red-50 text-red-700",
+          )}
         >
           {state.message}
         </p>

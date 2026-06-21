@@ -8,6 +8,12 @@ import {
   type OrderFulfillmentTargetStatus,
 } from "@/lib/order-fulfillment"
 import {
+  adminButtonClass,
+  adminInputClass,
+  adminTextareaClass,
+  cn,
+} from "../../admin-ui"
+import {
   updateOrderFulfillmentState,
   type FulfillmentActionState,
 } from "../actions"
@@ -38,8 +44,8 @@ export default function FulfillmentStatusForm({
 
   if (status === "CANCELLED") {
     return (
-      <div className="rounded-lg border border-red-400/30 bg-red-400/10 p-4 text-sm text-red-100">
-        <p className="font-medium">ออเดอร์นี้ถูกยกเลิกแล้ว</p>
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <p className="font-semibold">ออเดอร์นี้ถูกยกเลิกแล้ว</p>
         <p className="mt-2 leading-6">
           {cancelReason ||
             "ไม่สามารถเปลี่ยนสถานะกลับได้ เพื่อป้องกัน stock เพี้ยน"}
@@ -54,32 +60,32 @@ export default function FulfillmentStatusForm({
 
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
-          <span className="text-sm font-medium text-gray-300">
+          <span className="text-sm font-medium text-slate-700">
             บริษัทขนส่ง
           </span>
           <input
             name="shippingCarrier"
             defaultValue={shippingCarrier ?? ""}
             placeholder="เช่น Kerry Express"
-            className="mt-2 h-11 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-white"
+            className={adminInputClass}
           />
         </label>
 
         <label className="block">
-          <span className="text-sm font-medium text-gray-300">
+          <span className="text-sm font-medium text-slate-700">
             Tracking number
           </span>
           <input
             name="trackingNumber"
             defaultValue={trackingNumber ?? ""}
             placeholder="เช่น KRY123456"
-            className="mt-2 h-11 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-white"
+            className={adminInputClass}
           />
         </label>
       </div>
 
       <label className="block">
-        <span className="text-sm font-medium text-gray-300">
+        <span className="text-sm font-medium text-slate-700">
           เหตุผลในการยกเลิก
         </span>
         <textarea
@@ -88,7 +94,7 @@ export default function FulfillmentStatusForm({
           rows={3}
           maxLength={500}
           placeholder="ต้องกรอกเมื่อกดตั้งเป็นยกเลิก"
-          className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-3 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-white"
+          className={adminTextareaClass}
         />
       </label>
 
@@ -104,11 +110,12 @@ export default function FulfillmentStatusForm({
 
       {state.message && (
         <p
-          className={`rounded-lg border px-4 py-3 text-sm ${
+          className={cn(
+            "rounded-lg border px-4 py-3 text-sm",
             state.ok
-              ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100"
-              : "border-red-400/30 bg-red-400/10 text-red-100"
-          }`}
+              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+              : "border-red-200 bg-red-50 text-red-700",
+          )}
         >
           {state.message}
         </p>
@@ -132,11 +139,10 @@ function FulfillmentButton({
       name="status"
       value={status}
       disabled={pending}
-      className={`rounded-lg border px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-        isCancel
-          ? "border-red-400/40 bg-red-400/10 text-red-100 hover:bg-red-400/20"
-          : "border-[#d8ff6a] bg-[#d8ff6a] text-black hover:bg-white hover:text-black"
-      }`}
+      className={cn(
+        isCancel ? adminButtonClass.danger : adminButtonClass.primary,
+        "w-full",
+      )}
     >
       ตั้งเป็น {orderFulfillmentStatusLabels[status]}
     </button>
