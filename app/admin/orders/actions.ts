@@ -9,10 +9,9 @@ import {
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { requireAdmin } from "@/lib/auth"
+import { cancelOrderAndRestoreStock } from "@/lib/order-cancellation"
 import {
-  paymentStatusAfterCancellation,
   validateFulfillmentTransition,
-  type FulfillmentPaymentStatus,
   type OrderFulfillmentStatus,
   type OrderFulfillmentTargetStatus,
 } from "@/lib/order-fulfillment"
@@ -42,18 +41,6 @@ const fulfillmentUpdateSchema = z.object({
   trackingNumber: z.string().trim().max(120).optional(),
   cancelReason: z.string().trim().max(500).optional(),
 })
-
-type OrderForCancellation = {
-  id: string
-  status: OrderStatus
-  paymentStatus: PaymentStatus
-  cancelledAt: Date | null
-  items: Array<{
-    shoeId: string
-    size: string | null
-    quantity: number
-  }>
-}
 
 function optionalText(value: FormDataEntryValue | null) {
   return typeof value === "string" && value.trim() ? value.trim() : undefined
@@ -242,61 +229,5 @@ export async function updateOrderFulfillmentState(
   return {
     ok: true,
     message: "อัปเดต Fulfillment แล้ว",
-  }
-}
-
-async function cancelOrderAndRestoreStock({
-  tx,
-  order,
-  cancelReason,
-}: {
-  tx: Prisma.TransactionClient
-  order: OrderForCancellation
-  cancelReason: string
-}) {
-  const now = new Date()
-  const paymentStatus = paymentStatusAfterCancellation(
-    order.paymentStatus as FulfillmentPaymentStatus,
-  ) as PaymentStatus
-
-  const claimed = await tx.order.updateMany({
-    where: {
-      id: order.id,
-      status: order.status,
-      stockRestoredAt: null,
-    },
-    data: {
-      status: OrderStatus.CANCELLED,
-      cancelledAt: order.cancelledAt ?? now,
-      cancelReason,
-      stockRestoredAt: now,
-      paymentStatus,
-    },
-  })
-
-  if (claimed.count !== 1) {
-    throw new Error("ออเดอร์นี้ถูกยกเลิกหรือคืน stock ไปแล้ว")
-  }
-
-  for (const item of order.items) {
-    if (!item.size) {
-      throw new Error("ไม่พบ size ของสินค้าในออเดอร์ จึงคืน stock ไม่ได้")
-    }
-
-    const restored = await tx.shoeSize.updateMany({
-      where: {
-        shoeId: item.shoeId,
-        size: item.size,
-      },
-      data: {
-        stock: {
-          increment: item.quantity,
-        },
-      },
-    })
-
-    if (restored.count !== 1) {
-      throw new Error(`ไม่พบ stock สำหรับ size ${item.size}`)
-    }
   }
 }
