@@ -1,9 +1,22 @@
 "use client"
 
-import { createDefaultStockRows, normalizeStockRows, type StockRow } from "@/lib/commerce"
+import {
+  createDefaultStockRows,
+  normalizeStockRows,
+  type StockRow,
+} from "@/lib/commerce"
 import { useRouter } from "next/navigation"
 import { useMemo, useState } from "react"
 import { Skeleton } from "@/app/component/ui/Skeleton"
+import {
+  AdminPageHeader,
+  adminButtonClass,
+  adminInputClass,
+  adminSelectClass,
+  adminTextareaClass,
+  cn,
+} from "../admin-ui"
+import ShoeImageManager from "./ShoeImageManager"
 
 export interface BrandOption {
   id: string
@@ -70,8 +83,11 @@ export default function ShoeForm({
   const slug = useMemo(() => generateSlug(values.name), [values.name])
 
   function updateField(
-    field: keyof Pick<ShoeFormValues, "name" | "description" | "brandId" | "price">,
-    value: string
+    field: keyof Pick<
+      ShoeFormValues,
+      "name" | "description" | "brandId" | "price"
+    >,
+    value: string,
   ) {
     setValues((current) => ({
       ...current,
@@ -79,36 +95,22 @@ export default function ShoeForm({
     }))
   }
 
-  function updateImage(index: number, value: string) {
+  function updateImages(images: string[]) {
     setValues((current) => ({
       ...current,
-      images: current.images.map((image, imageIndex) =>
-        imageIndex === index ? value : image
-      ),
+      images,
     }))
   }
 
-  function addImageRow() {
-    setValues((current) => ({
-      ...current,
-      images: [...current.images, ""],
-    }))
-  }
-
-  function removeImageRow(index: number) {
-    setValues((current) => ({
-      ...current,
-      images: current.images.length === 1
-        ? [""]
-        : current.images.filter((_, imageIndex) => imageIndex !== index),
-    }))
-  }
-
-  function updateSpec(index: number, field: keyof ShoeSpecFormValue, value: string) {
+  function updateSpec(
+    index: number,
+    field: keyof ShoeSpecFormValue,
+    value: string,
+  ) {
     setValues((current) => ({
       ...current,
       specs: current.specs.map((spec, specIndex) =>
-        specIndex === index ? { ...spec, [field]: value } : spec
+        specIndex === index ? { ...spec, [field]: value } : spec,
       ),
     }))
   }
@@ -123,9 +125,10 @@ export default function ShoeForm({
   function removeSpecRow(index: number) {
     setValues((current) => ({
       ...current,
-      specs: current.specs.length === 1
-        ? [{ label: "", value: "" }]
-        : current.specs.filter((_, specIndex) => specIndex !== index),
+      specs:
+        current.specs.length === 1
+          ? [{ label: "", value: "" }]
+          : current.specs.filter((_, specIndex) => specIndex !== index),
     }))
   }
 
@@ -160,7 +163,12 @@ export default function ShoeForm({
   async function handleSubmit() {
     const numericPrice = Number(values.price)
 
-    if (!values.name.trim() || !values.brandId || !Number.isFinite(numericPrice) || numericPrice < 0) {
+    if (
+      !values.name.trim() ||
+      !values.brandId ||
+      !Number.isFinite(numericPrice) ||
+      numericPrice < 0
+    ) {
       setMessage("กรุณาระบุชื่อสินค้า แบรนด์ และราคาที่ถูกต้อง")
       return
     }
@@ -192,9 +200,7 @@ export default function ShoeForm({
       setMessage(null)
 
       const endpoint =
-        mode === "create"
-          ? "/api/admin/shoes"
-          : `/api/admin/shoes/${shoeId}`
+        mode === "create" ? "/api/admin/shoes" : `/api/admin/shoes/${shoeId}`
 
       const res = await fetch(endpoint, {
         method: mode === "create" ? "POST" : "PUT",
@@ -232,19 +238,15 @@ export default function ShoeForm({
   }
 
   return (
-    <div className="max-w-5xl space-y-6 text-gray-100">
-      <div>
-        <h1 className="text-3xl font-semibold">
-          {mode === "create" ? "เพิ่มสินค้า" : "แก้ไขสินค้า"}
-        </h1>
-        <p className="mt-2 text-sm text-gray-400">
-          จัดการข้อมูลที่ลูกค้าเห็นใน Store, Product Detail, recommendation และ Checkout
-        </p>
-      </div>
+    <div className="max-w-5xl space-y-6">
+      <AdminPageHeader
+        title={mode === "create" ? "เพิ่มสินค้า" : "แก้ไขสินค้า"}
+        description="จัดการข้อมูลที่ลูกค้าเห็นใน Store, Product Detail, recommendation และ Checkout"
+      />
 
-      <div className="space-y-6 rounded-xl border border-gray-800 bg-gray-900 p-6">
+      <div className="space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
         {message && (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {message}
           </div>
         )}
@@ -252,32 +254,34 @@ export default function ShoeForm({
         <section className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-5">
             <div>
-              <label className="text-sm text-gray-400">ชื่อสินค้า</label>
+              <label className="text-sm font-medium text-slate-700">
+                ชื่อสินค้า
+              </label>
               <input
                 value={values.name}
                 onChange={(event) => updateField("name", event.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 p-2 text-white focus:border-blue-500 focus:outline-none"
+                className={adminInputClass}
               />
-              {slug && (
-                <p className="mt-2 text-xs text-gray-500">
-                  Slug: {slug}
-                </p>
-              )}
+              {slug && <p className="mt-2 text-xs text-slate-500">Slug: {slug}</p>}
             </div>
 
             <div>
-              <label className="text-sm text-gray-400">รายละเอียด</label>
+              <label className="text-sm font-medium text-slate-700">
+                รายละเอียด
+              </label>
               <textarea
                 value={values.description}
-                onChange={(event) => updateField("description", event.target.value)}
+                onChange={(event) =>
+                  updateField("description", event.target.value)
+                }
                 rows={5}
-                className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 p-2 text-white focus:border-blue-500 focus:outline-none"
+                className={adminTextareaClass}
               />
             </div>
           </div>
 
-          <div className="space-y-5 rounded-lg border border-gray-800 bg-gray-950/50 p-4">
-            <label className="flex items-start gap-3 rounded-lg border border-gray-800 bg-gray-900 p-4">
+          <div className="space-y-5 rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <label className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-4">
               <input
                 type="checkbox"
                 checked={values.featured}
@@ -287,24 +291,26 @@ export default function ShoeForm({
                     featured: event.target.checked,
                   }))
                 }
-                className="mt-1 h-4 w-4"
+                className="mt-1 h-4 w-4 accent-black"
               />
               <span>
-                <span className="block text-sm font-medium text-gray-100">
+                <span className="block text-sm font-semibold text-slate-950">
                   Featured product
                 </span>
-                <span className="mt-1 block text-xs leading-5 text-gray-500">
+                <span className="mt-1 block text-xs leading-5 text-slate-600">
                   ใช้ดันสินค้าใน Store, หน้าแรก และ collection ทีมคัดให้
                 </span>
               </span>
             </label>
 
             <div>
-              <label className="text-sm text-gray-400">แบรนด์</label>
+              <label className="text-sm font-medium text-slate-700">
+                แบรนด์
+              </label>
               <select
                 value={values.brandId}
                 onChange={(event) => updateField("brandId", event.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 p-2 text-white focus:border-blue-500 focus:outline-none"
+                className={adminSelectClass}
               >
                 <option value="">เลือกแบรนด์</option>
                 {brands.map((brand) => (
@@ -316,69 +322,34 @@ export default function ShoeForm({
             </div>
 
             <div>
-              <label className="text-sm text-gray-400">ราคา</label>
+              <label className="text-sm font-medium text-slate-700">ราคา</label>
               <input
                 type="number"
                 min="0"
                 step="0.01"
                 value={values.price}
                 onChange={(event) => updateField("price", event.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 p-2 text-white focus:border-blue-500 focus:outline-none"
+                className={adminInputClass}
               />
             </div>
           </div>
         </section>
 
-        <section>
-          <div className="mb-3 flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-medium">รูปสินค้า</h2>
-              <p className="text-sm text-gray-500">
-                รูปแรกจะใช้เป็นรูปหลักใน Store และ recommendation
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={addImageRow}
-              className="rounded-lg border border-gray-700 px-3 py-2 text-sm text-gray-200 hover:bg-gray-800"
-            >
-              เพิ่มรูป
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {values.images.map((image, index) => (
-              <div key={`image-${index}`} className="grid gap-3 md:grid-cols-[1fr_auto]">
-                <input
-                  value={image}
-                  onChange={(event) => updateImage(index, event.target.value)}
-                  placeholder={index === 0 ? "URL รูปหลัก" : "URL รูปเพิ่มเติม"}
-                  className="rounded-lg border border-gray-700 bg-gray-800 p-2 text-white focus:border-blue-500 focus:outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeImageRow(index)}
-                  className="rounded-lg px-3 py-2 text-sm text-red-300 hover:bg-red-500/10"
-                >
-                  ลบ
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
+        <ShoeImageManager images={values.images} onImagesChange={updateImages} />
 
         <section>
           <div className="mb-3 flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-medium">Specs</h2>
-              <p className="text-sm text-gray-500">
-                ใช้แสดงจุดเด่นในหน้า Product Detail เช่น Style, Cushion, Upper, Fit
+              <h2 className="text-lg font-semibold text-slate-950">Specs</h2>
+              <p className="text-sm text-slate-600">
+                ใช้แสดงจุดเด่นในหน้า Product Detail เช่น Style, Cushion,
+                Upper, Fit
               </p>
             </div>
             <button
               type="button"
               onClick={addSpecRow}
-              className="rounded-lg border border-gray-700 px-3 py-2 text-sm text-gray-200 hover:bg-gray-800"
+              className={adminButtonClass.secondary}
             >
               เพิ่ม spec
             </button>
@@ -386,23 +357,30 @@ export default function ShoeForm({
 
           <div className="space-y-3">
             {values.specs.map((spec, index) => (
-              <div key={`spec-${index}`} className="grid gap-3 md:grid-cols-[0.8fr_1fr_auto]">
+              <div
+                key={`spec-${index}`}
+                className="grid gap-3 md:grid-cols-[0.8fr_1fr_auto]"
+              >
                 <input
                   value={spec.label}
-                  onChange={(event) => updateSpec(index, "label", event.target.value)}
+                  onChange={(event) =>
+                    updateSpec(index, "label", event.target.value)
+                  }
                   placeholder="ชื่อ spec"
-                  className="rounded-lg border border-gray-700 bg-gray-800 p-2 text-white focus:border-blue-500 focus:outline-none"
+                  className={cn(adminInputClass, "mt-0")}
                 />
                 <input
                   value={spec.value}
-                  onChange={(event) => updateSpec(index, "value", event.target.value)}
+                  onChange={(event) =>
+                    updateSpec(index, "value", event.target.value)
+                  }
                   placeholder="รายละเอียด"
-                  className="rounded-lg border border-gray-700 bg-gray-800 p-2 text-white focus:border-blue-500 focus:outline-none"
+                  className={cn(adminInputClass, "mt-0")}
                 />
                 <button
                   type="button"
                   onClick={() => removeSpecRow(index)}
-                  className="rounded-lg px-3 py-2 text-sm text-red-300 hover:bg-red-500/10"
+                  className={adminButtonClass.danger}
                 >
                   ลบ
                 </button>
@@ -414,15 +392,17 @@ export default function ShoeForm({
         <section>
           <div className="mb-3 flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-medium">Stock ตามไซซ์</h2>
-              <p className="text-sm text-gray-500">
-                ข้อมูลนี้ใช้จำกัดจำนวนใน Cart และแสดงสถานะพร้อมขายหน้าร้าน
+              <h2 className="text-lg font-semibold text-slate-950">
+                Stock ตามไซซ์
+              </h2>
+              <p className="text-sm text-slate-600">
+                ใช้จำกัดจำนวนใน Cart และแสดงสถานะพร้อมขายหน้าร้าน
               </p>
             </div>
             <button
               type="button"
               onClick={addSizeRow}
-              className="rounded-lg border border-gray-700 px-3 py-2 text-sm text-gray-200 hover:bg-gray-800"
+              className={adminButtonClass.secondary}
             >
               เพิ่มไซซ์
             </button>
@@ -430,25 +410,32 @@ export default function ShoeForm({
 
           <div className="space-y-3">
             {values.sizes.map((row, index) => (
-              <div key={`${row.size}-${index}`} className="grid grid-cols-[1fr_1fr_auto] gap-3">
+              <div
+                key={`${row.size}-${index}`}
+                className="grid grid-cols-[1fr_1fr_auto] gap-3"
+              >
                 <input
                   value={row.size}
-                  onChange={(event) => updateSize(index, "size", event.target.value)}
+                  onChange={(event) =>
+                    updateSize(index, "size", event.target.value)
+                  }
                   placeholder="ไซซ์"
-                  className="rounded-lg border border-gray-700 bg-gray-800 p-2 text-white focus:border-blue-500 focus:outline-none"
+                  className={cn(adminInputClass, "mt-0")}
                 />
                 <input
                   type="number"
                   min="0"
                   value={row.stock}
-                  onChange={(event) => updateSize(index, "stock", event.target.value)}
+                  onChange={(event) =>
+                    updateSize(index, "stock", event.target.value)
+                  }
                   placeholder="Stock"
-                  className="rounded-lg border border-gray-700 bg-gray-800 p-2 text-white focus:border-blue-500 focus:outline-none"
+                  className={cn(adminInputClass, "mt-0")}
                 />
                 <button
                   type="button"
                   onClick={() => removeSizeRow(index)}
-                  className="rounded-lg px-3 py-2 text-sm text-red-300 hover:bg-red-500/10"
+                  className={adminButtonClass.danger}
                 >
                   ลบ
                 </button>
@@ -460,11 +447,17 @@ export default function ShoeForm({
         <button
           onClick={handleSubmit}
           disabled={saving}
-          className="w-full rounded-lg bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
+          className={cn(adminButtonClass.primary, "w-full py-3")}
         >
-          {saving && <Skeleton tone="light" className="mx-auto h-4 w-28 bg-white/35" />}
+          {saving && (
+            <Skeleton tone="light" className="mx-auto h-4 w-28 bg-black/20" />
+          )}
           <span className={saving ? "sr-only" : ""}>
-          {saving ? "กำลังบันทึก..." : mode === "create" ? "สร้างสินค้า" : "อัปเดตสินค้า"}
+            {saving
+              ? "กำลังบันทึก..."
+              : mode === "create"
+                ? "สร้างสินค้า"
+                : "อัปเดตสินค้า"}
           </span>
         </button>
       </div>
