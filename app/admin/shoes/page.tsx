@@ -10,6 +10,7 @@ interface Shoe {
     id: string
     name: string
     price: string | number | null
+    featured: boolean
     brand: { name: string }
     images: { url: string }[]
     sizes: StockRow[]
@@ -184,7 +185,14 @@ export default function AdminShoesPage() {
 
                                 {/* NAME */}
                                 <td className="p-4 font-medium">
-                                    {shoe.name}
+                                    <div className="flex flex-col gap-2">
+                                        <span>{shoe.name}</span>
+                                        {shoe.featured && (
+                                            <span className="w-fit rounded-full border border-lime-300/30 bg-lime-300/10 px-2 py-1 text-xs text-lime-200">
+                                                Featured
+                                            </span>
+                                        )}
+                                    </div>
                                 </td>
 
                                 {/* BRAND */}

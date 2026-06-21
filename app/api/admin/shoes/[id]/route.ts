@@ -19,6 +19,7 @@ const updateShoeSchema = z.object({
   name: z.string().min(1),
   slug: z.string().min(1),
   description: z.string().optional().default(""),
+  featured: z.boolean().optional().default(false),
   brandId: z.string().uuid(),
   price: z.preprocess(
     (value) => {
@@ -65,6 +66,7 @@ export async function PUT(
       name,
       slug,
       description,
+      featured,
       brandId,
       images,
       specs,
@@ -97,6 +99,7 @@ export async function PUT(
         name,
         slug,
         description,
+        featured,
         brandId,
         price: decimalPrice,
 

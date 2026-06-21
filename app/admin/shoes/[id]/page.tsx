@@ -24,6 +24,7 @@ export default async function EditShoePage({ params }: Props) {
         images: {
           orderBy: { order: "asc" },
         },
+        specs: true,
         sizes: true,
       },
     }),
@@ -35,7 +36,14 @@ export default async function EditShoePage({ params }: Props) {
   const initialValues: ShoeFormValues = {
     name: shoe.name,
     description: shoe.description,
-    image: shoe.images[0]?.url ?? "",
+    images: shoe.images.length > 0 ? shoe.images.map((image) => image.url) : [""],
+    specs: shoe.specs.length > 0
+      ? shoe.specs.map((spec) => ({
+          label: spec.label,
+          value: spec.value,
+        }))
+      : [{ label: "", value: "" }],
+    featured: shoe.featured,
     brandId: shoe.brandId,
     price: shoe.price ? shoe.price.toString() : "",
     sizes: normalizeStockRows(shoe.sizes),
