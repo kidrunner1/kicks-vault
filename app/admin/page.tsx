@@ -333,7 +333,7 @@ function MetricCard({ metric }: { metric: AdminMetric }) {
   const content = (
     <>
       <p className="text-sm font-medium text-slate-600">{metric.label}</p>
-      <p className="mt-3 text-3xl font-semibold text-slate-950">
+      <p className="mt-3 break-words text-3xl font-semibold text-slate-950">
         {metric.value}
       </p>
       <p className="mt-2 text-xs leading-5 text-slate-600">{metric.helper}</p>

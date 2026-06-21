@@ -161,7 +161,14 @@ export function AdminChartBar({
         <span className="min-w-0 font-medium text-slate-800">{label}</span>
         <span className="shrink-0 font-semibold text-slate-950">{value}</span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+      <div
+        role="meter"
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={percent}
+        className="h-2 overflow-hidden rounded-full bg-slate-100"
+      >
         <div
           className={cn("h-full rounded-full", barTone[tone])}
           style={{ width: `${width}%` }}
