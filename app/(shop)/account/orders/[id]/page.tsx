@@ -19,6 +19,7 @@ import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
 import {
   buildFulfillmentTimeline,
+  getUserCancelEligibility,
   orderFulfillmentStatusLabels,
   type FulfillmentTimelineStepState,
   type OrderFulfillmentStatus,
@@ -31,6 +32,7 @@ import {
 } from "@/lib/payment"
 import { prisma } from "@/lib/prisma"
 import { uiAction } from "@/lib/ui-interactions"
+import CancelOrderSection from "./CancelOrderSection"
 
 interface Props {
   params: Promise<{ id: string }>
@@ -113,6 +115,12 @@ export default async function OrderDetailPage({ params }: Props) {
     deliveredAt: order.deliveredAt,
     cancelledAt: order.cancelledAt,
     cancelReason: order.cancelReason,
+  })
+  const cancelEligibility = getUserCancelEligibility({
+    status: order.status as OrderFulfillmentStatus,
+    createdAt: order.createdAt,
+    cancelledAt: order.cancelledAt,
+    stockRestoredAt: order.stockRestoredAt,
   })
 
   return (
@@ -279,6 +287,13 @@ export default async function OrderDetailPage({ params }: Props) {
               )}
             </div>
           </div>
+
+          <CancelOrderSection
+            orderId={order.id}
+            canCancel={cancelEligibility.canCancel}
+            reason={cancelEligibility.reason}
+            deadlineLabel={formatOrderDate(cancelEligibility.deadline)}
+          />
 
           {shippingAddress && (
             <div className="rounded-lg border border-black/10 bg-white p-5">
