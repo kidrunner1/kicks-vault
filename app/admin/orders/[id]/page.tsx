@@ -1,9 +1,13 @@
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ArrowLeft, CreditCard, MapPin, PackageCheck, User } from "lucide-react"
+import { ArrowLeft, CreditCard, MapPin, PackageCheck, Truck, User } from "lucide-react"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
+import {
+  orderFulfillmentStatusLabels,
+  type OrderFulfillmentStatus,
+} from "@/lib/order-fulfillment"
 import { prisma } from "@/lib/prisma"
 import {
   formatAdminDate,
@@ -15,6 +19,7 @@ import {
   shippingAddressLines,
   shortOrderId,
 } from "../order-display"
+import FulfillmentStatusForm from "./FulfillmentStatusForm"
 import PaymentStatusForm from "./PaymentStatusForm"
 
 interface AdminOrderDetailPageProps {
@@ -122,6 +127,22 @@ export default async function AdminOrderDetailPage({
                 value={orderStatusLabels[order.status]}
               />
               <InfoRow
+                label="สถานะ Fulfillment"
+                value={
+                  orderFulfillmentStatusLabels[
+                    order.status as OrderFulfillmentStatus
+                  ]
+                }
+              />
+              <InfoRow
+                label="บริษัทขนส่ง"
+                value={order.shippingCarrier ?? "-"}
+              />
+              <InfoRow
+                label="Tracking"
+                value={order.trackingNumber ?? "-"}
+              />
+              <InfoRow
                 label="สถานะ Payment"
                 value={paymentStatusLabels[order.paymentStatus]}
               />
@@ -226,6 +247,47 @@ export default async function AdminOrderDetailPage({
                 </div>
               )}
             </div>
+          </Panel>
+
+          <Panel
+            title="Fulfillment"
+            description="อัปเดตการเตรียมสินค้า การจัดส่ง และการยกเลิกออเดอร์"
+            icon={<Truck size={18} />}
+          >
+            <div className="mb-4 grid gap-3 text-sm">
+              <InfoRow
+                label="สถานะ"
+                value={
+                  orderFulfillmentStatusLabels[
+                    order.status as OrderFulfillmentStatus
+                  ]
+                }
+              />
+              <InfoRow
+                label="จัดส่งเมื่อ"
+                value={formatAdminDate(order.shippedAt)}
+              />
+              <InfoRow
+                label="ส่งสำเร็จเมื่อ"
+                value={formatAdminDate(order.deliveredAt)}
+              />
+              <InfoRow
+                label="ยกเลิกเมื่อ"
+                value={formatAdminDate(order.cancelledAt)}
+              />
+              <InfoRow
+                label="คืน Stock เมื่อ"
+                value={formatAdminDate(order.stockRestoredAt)}
+              />
+            </div>
+
+            <FulfillmentStatusForm
+              orderId={order.id}
+              status={order.status as OrderFulfillmentStatus}
+              shippingCarrier={order.shippingCarrier}
+              trackingNumber={order.trackingNumber}
+              cancelReason={order.cancelReason}
+            />
           </Panel>
 
           <Panel
