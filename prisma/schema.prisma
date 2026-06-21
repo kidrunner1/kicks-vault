@@ -148,6 +148,14 @@ model Order {
   paidAt        DateTime?
   paymentNote   String?
 
+  shippingCarrier String?
+  trackingNumber  String?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+  cancelledAt     DateTime?
+  cancelReason    String?
+  stockRestoredAt DateTime?
+
   items OrderItem[]
 
   createdAt DateTime @default(now())
