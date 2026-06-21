@@ -3,6 +3,7 @@
 import { createDefaultStockRows, normalizeStockRows, type StockRow } from "@/lib/commerce"
 import { useRouter } from "next/navigation"
 import { useMemo, useState } from "react"
+import { Skeleton } from "@/app/component/ui/Skeleton"
 
 export interface BrandOption {
   id: string
@@ -461,7 +462,10 @@ export default function ShoeForm({
           disabled={saving}
           className="w-full rounded-lg bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
         >
+          {saving && <Skeleton tone="light" className="mx-auto h-4 w-28 bg-white/35" />}
+          <span className={saving ? "sr-only" : ""}>
           {saving ? "กำลังบันทึก..." : mode === "create" ? "สร้างสินค้า" : "อัปเดตสินค้า"}
+          </span>
         </button>
       </div>
     </div>

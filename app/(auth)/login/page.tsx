@@ -10,6 +10,7 @@ import { z } from "zod"
 import FormInput from "../../component/ui/FormInput"
 import { useAuthStore } from "@/lib/auth-store"
 import { uiAction } from "@/lib/ui-interactions"
+import { Skeleton } from "@/app/component/ui/Skeleton"
 
 const loginSchema = z.object({
   email: z
@@ -169,7 +170,10 @@ export default function LoginPage() {
           className={`h-12 w-full px-5 text-sm font-semibold ${uiAction.accent}`}
         >
           <LogIn size={16} />
+          {loading && <Skeleton tone="light" className="h-4 w-28 bg-white/45" />}
+          <span className={loading ? "sr-only" : ""}>
           {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
+          </span>
         </button>
       </form>
 

@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
 import AppLogo from "@/app/component/ui/AppLogo"
+import { Skeleton } from "@/app/component/ui/Skeleton"
 
 export default function AdminShell({
   children,
@@ -95,7 +96,10 @@ export default function AdminShell({
               disabled={loggingOut}
               className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 rounded-lg transition disabled:opacity-50"
             >
+              {loggingOut && <Skeleton tone="light" className="h-4 w-28 bg-white/35" />}
+              <span className={loggingOut ? "sr-only" : ""}>
               {loggingOut ? "กำลังออกจากระบบ..." : "ออกจากระบบ"}
+              </span>
             </button>
           </div>
         </header>

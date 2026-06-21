@@ -22,6 +22,7 @@ import type { LucideIcon } from "lucide-react"
 import AppLogo from "./AppLogo"
 import { useAuthStore } from "@/lib/auth-store"
 import { uiAction } from "@/lib/ui-interactions"
+import { Skeleton } from "./Skeleton"
 
 interface Props {
   onClose: () => void
@@ -255,9 +256,15 @@ export default function FullscreenMenu({ onClose }: Props) {
 
           <div className="mt-6 rounded-lg border border-black/10 bg-white p-4 md:p-5">
             {isLoading ? (
-              <div className="flex items-center gap-3 text-sm text-black/60">
-                <span className="h-10 w-10 rounded-full bg-[#f4f3ef]" />
+              <div className="flex items-center gap-3" aria-busy="true" aria-label="กำลังตรวจสอบสถานะบัญชี">
+                <Skeleton tone="soft" className="h-10 w-10 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton tone="soft" className="h-4 w-44" />
+                  <Skeleton tone="soft" className="h-3 w-32" />
+                </div>
+                <span className="sr-only">
                 กำลังตรวจสอบสถานะบัญชี...
+                </span>
               </div>
             ) : isAuthenticated ? (
               <div className="space-y-5">
@@ -304,7 +311,10 @@ export default function FullscreenMenu({ onClose }: Props) {
                   className={`h-11 w-full px-4 text-sm font-medium ${uiAction.danger}`}
                 >
                   <LogOut size={16} />
+                  {isLoggingOut && <Skeleton tone="light" className="h-4 w-28 bg-white/45" />}
+                  <span className={isLoggingOut ? "sr-only" : ""}>
                   {isLoggingOut ? "กำลังออกจากระบบ..." : "ออกจากระบบ"}
+                  </span>
                 </button>
               </div>
             ) : (

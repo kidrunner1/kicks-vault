@@ -6,7 +6,6 @@ import { toast } from "sonner"
 import {
   CheckCircle2,
   Home,
-  Loader2,
   MapPin,
   Pencil,
   Phone,
@@ -28,6 +27,7 @@ import {
   type AddressInput,
 } from "@/lib/address"
 import { uiAction } from "@/lib/ui-interactions"
+import { Skeleton } from "@/app/component/ui/Skeleton"
 
 export interface AddressView extends AddressInput {
   id: string
@@ -316,8 +316,10 @@ export default function AddressBookClient({
             disabled={isPending}
             className={`mt-5 h-11 px-5 text-sm font-semibold ${uiAction.accent}`}
           >
-            {isPending && <Loader2 size={16} className="animate-spin" />}
+            {isPending && <Skeleton tone="light" className="h-4 w-28 bg-white/45" />}
+            <span className={isPending ? "sr-only" : ""}>
             {editingAddress ? "บันทึกที่อยู่" : "สร้างที่อยู่"}
+            </span>
           </button>
         </section>
       )}

@@ -23,6 +23,7 @@ import {
 } from "lucide-react"
 import { createOrder } from "@/app/actions/create-order"
 import AppLogo from "@/app/component/ui/AppLogo"
+import { Skeleton } from "@/app/component/ui/Skeleton"
 import { useCartStore } from "@/app/store/cart-store"
 import { formatAddress } from "@/lib/address"
 import { formatCurrency } from "@/lib/commerce"
@@ -553,7 +554,10 @@ export default function CartClient({
                   disabled={isCheckoutDisabled}
                   className={`mt-6 h-12 w-full px-6 text-sm font-semibold ${uiAction.accent}`}
                 >
+                  {loading && <Skeleton tone="light" className="h-4 w-32 bg-white/45" />}
+                  <span className={loading ? "sr-only" : ""}>
                   {loading ? "กำลังสร้างออเดอร์..." : "ยืนยันออเดอร์"}
+                  </span>
                 </button>
 
                 {!checkoutReady && isSignedIn && (

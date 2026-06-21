@@ -2,12 +2,20 @@
 
 import dynamic from "next/dynamic"
 import { motion, useReducedMotion } from "framer-motion"
+import { Skeleton } from "@/app/component/ui/Skeleton"
 
 const Model3D = dynamic(
   () => import("../3D/Model3D"),
   {
     ssr: false,
-    loading: () => null,
+    loading: () => (
+      <div className="absolute inset-0 flex items-center justify-center bg-neutral-100">
+        <div className="relative h-[62vmin] w-[62vmin] max-w-[720px]">
+          <Skeleton tone="soft" className="absolute inset-0 rounded-full" />
+          <Skeleton tone="light" className="absolute left-1/2 top-1/2 h-24 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+        </div>
+      </div>
+    ),
   }
 )
 

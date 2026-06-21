@@ -9,6 +9,7 @@ import MenuButton from "./Menubutton"
 import FullscreenMenu from "./FullscreenMenu"
 import { useAuthStore } from "@/lib/auth-store"
 import { filterActionClass } from "@/lib/ui-interactions"
+import { Skeleton } from "./Skeleton"
 
 export default function CornerMenu() {
   const [open, setOpen] = useState(false)
@@ -76,23 +77,35 @@ export default function CornerMenu() {
               shape: "rounded-full",
             })}
           >
-            <span
-              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition ${
-                isAuthenticated
-                  ? "border-black bg-black text-white"
-                  : "border-black/10 bg-white text-black"
-              }`}
-            >
-              {isAuthenticated ? accountInitial : <AccountIcon size={15} />}
-            </span>
-            <span className="hidden min-w-0 flex-col leading-tight md:flex">
-              <span className="font-medium text-black transition">
-                {accountLabel}
-              </span>
-              <span className="max-w-[118px] truncate text-xs text-black/65 transition">
-                {accountDetail}
-              </span>
-            </span>
+            {isLoading ? (
+              <>
+                <Skeleton tone="soft" className="h-8 w-8 shrink-0 rounded-full" />
+                <span className="hidden min-w-0 flex-col gap-1.5 md:flex">
+                  <Skeleton tone="soft" className="h-3 w-16" />
+                  <Skeleton tone="soft" className="h-2.5 w-24" />
+                </span>
+              </>
+            ) : (
+              <>
+                <span
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition ${
+                    isAuthenticated
+                      ? "border-black bg-black text-white"
+                      : "border-black/10 bg-white text-black"
+                  }`}
+                >
+                  {isAuthenticated ? accountInitial : <AccountIcon size={15} />}
+                </span>
+                <span className="hidden min-w-0 flex-col leading-tight md:flex">
+                  <span className="font-medium text-black transition">
+                    {accountLabel}
+                  </span>
+                  <span className="max-w-[118px] truncate text-xs text-black/65 transition">
+                    {accountDetail}
+                  </span>
+                </span>
+              </>
+            )}
           </Link>
         </motion.div>
 
