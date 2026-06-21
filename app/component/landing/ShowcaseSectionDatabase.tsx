@@ -44,6 +44,15 @@ interface Props {
   shoes: ShowcaseShoe[]
 }
 
+const cinematicCtaBase =
+  "inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold shadow-sm transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black [&_svg]:shrink-0"
+
+const cinematicPrimaryCta =
+  `${cinematicCtaBase} border border-[#d8ff6a] bg-[#d8ff6a] !text-black hover:border-white hover:bg-white hover:!text-black active:bg-white active:!text-black`
+
+const cinematicSecondaryCta =
+  `${cinematicCtaBase} border border-white/20 bg-white/10 !text-white hover:border-white hover:bg-white hover:!text-black active:bg-white active:!text-black`
+
 export default function ShowcaseSlider({ shoes }: Props) {
   const [index, setIndex] = useState(0)
   const prefersReducedMotion = useReducedMotion()
@@ -207,14 +216,14 @@ export default function ShowcaseSlider({ shoes }: Props) {
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href={`/product/${shoe.slug}`}
-                  className={`px-6 py-3 text-sm font-semibold ${uiAction.accent}`}
+                  className={cinematicPrimaryCta}
                 >
                   ดูคู่แนะนำ
                   <ArrowRight size={16} />
                 </Link>
                 <Link
                   href="/product"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/18 bg-white/8 px-6 py-3 text-sm font-medium text-white transition hover:border-white/35 hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  className={cinematicSecondaryCta}
                 >
                   เปรียบเทียบเพิ่มเติม
                 </Link>
