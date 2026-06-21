@@ -2,9 +2,17 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import {
+  BarChart3,
+  Boxes,
+  LogOut,
+  PackagePlus,
+  ReceiptText,
+} from "lucide-react"
 import { useState } from "react"
 import AppLogo from "@/app/component/ui/AppLogo"
 import { Skeleton } from "@/app/component/ui/Skeleton"
+import { adminButtonClass, cn } from "./admin-ui"
 
 export default function AdminShell({
   children,
@@ -16,10 +24,10 @@ export default function AdminShell({
   const [loggingOut, setLoggingOut] = useState(false)
 
   const navItems = [
-    { name: "Dashboard", href: "/admin" },
-    { name: "ออเดอร์", href: "/admin/orders" },
-    { name: "สินค้า", href: "/admin/shoes" },
-    { name: "เพิ่มสินค้า", href: "/admin/shoes/new" },
+    { name: "Dashboard", href: "/admin", icon: BarChart3 },
+    { name: "ออเดอร์", href: "/admin/orders", icon: ReceiptText },
+    { name: "สินค้า", href: "/admin/shoes", icon: Boxes },
+    { name: "เพิ่มสินค้า", href: "/admin/shoes/new", icon: PackagePlus },
   ]
 
   const activeHref = navItems.reduce<string | undefined>((current, item) => {
@@ -54,57 +62,100 @@ export default function AdminShell({
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 flex">
-      <aside className="w-64 bg-gray-900 border-r border-gray-800 p-6 hidden md:block">
-        <div className="mb-10">
-          <AppLogo inverse subLabel="Admin Panel" />
+    <div className="min-h-screen bg-slate-50 text-slate-950 lg:flex">
+      <aside className="hidden w-72 shrink-0 border-r border-slate-200 bg-white px-5 py-6 lg:flex lg:flex-col">
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <AppLogo subLabel="Admin Panel" />
         </div>
 
-        <nav className="space-y-2">
+        <nav className="mt-6 space-y-1">
           {navItems.map((item) => {
             const active = item.href === activeHref
+            const Icon = item.icon
 
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`
-                  block px-4 py-2 rounded-lg transition
-                  ${
-                    active
-                      ? "bg-blue-600 text-white"
-                      : "text-gray-400 hover:bg-gray-800 hover:text-white"
-                  }
-                `}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg border px-3 py-2.5 text-sm font-semibold transition",
+                  active
+                    ? "border-black bg-[#d8ff6a] text-black shadow-sm"
+                    : "border-transparent text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-950",
+                )}
               >
-                {item.name}
+                <Icon size={17} aria-hidden="true" />
+                <span>{item.name}</span>
               </Link>
             )
           })}
         </nav>
+
+        <div className="mt-auto rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+          <p className="font-semibold text-slate-900">Admin mode</p>
+          <p className="mt-1 leading-6">
+            จัดการร้าน สินค้า ออเดอร์ และ stock
+          </p>
+        </div>
       </aside>
 
-      <div className="flex-1 flex flex-col">
-        <header className="h-16 border-b border-gray-800 bg-gray-900 flex items-center justify-between px-8">
-          <div className="text-sm text-gray-400">Admin Dashboard</div>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:px-8">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-slate-950">
+                KicksVault Admin
+              </p>
+              <p className="text-xs text-slate-500">
+                เข้าสู่ระบบในฐานะ Admin
+              </p>
+            </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-gray-400">เข้าสู่ระบบในฐานะ Admin</div>
+            <nav className="flex gap-2 overflow-x-auto pb-1 lg:hidden">
+              {navItems.map((item) => {
+                const active = item.href === activeHref
+                const Icon = item.icon
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "inline-flex shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition",
+                      active
+                        ? "border-black bg-[#d8ff6a] text-black"
+                        : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-black",
+                    )}
+                  >
+                    <Icon size={16} aria-hidden="true" />
+                    {item.name}
+                  </Link>
+                )
+              })}
+            </nav>
+
             <button
               onClick={handleLogout}
               disabled={loggingOut}
-              className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 rounded-lg transition disabled:opacity-50"
+              className={cn(adminButtonClass.danger, "w-fit")}
             >
-              {loggingOut && <Skeleton tone="light" className="h-4 w-28 bg-white/35" />}
-              <span className={loggingOut ? "sr-only" : ""}>
-              {loggingOut ? "กำลังออกจากระบบ..." : "ออกจากระบบ"}
-              </span>
+              {loggingOut ? (
+                <Skeleton tone="light" className="h-4 w-24 bg-red-200" />
+              ) : (
+                <>
+                  <LogOut size={16} aria-hidden="true" />
+                  ออกจากระบบ
+                </>
+              )}
             </button>
           </div>
         </header>
 
-        <main className="flex-1 p-8">{children}</main>
+        <main className="flex-1 px-4 py-6 md:px-8 md:py-8">
+          <div className="mx-auto w-full max-w-7xl">{children}</div>
+        </main>
       </div>
     </div>
   )
