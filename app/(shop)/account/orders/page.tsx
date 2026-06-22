@@ -5,10 +5,19 @@ import {
   ArrowRight,
   Clock3,
   CreditCard,
+  PackageCheck,
   ReceiptText,
   ShoppingBag,
+  XCircle,
   type LucideIcon,
 } from "lucide-react"
+import {
+  ACCOUNT_ORDER_HISTORY_TABS,
+  getAccountOrderHistoryTab,
+  getAccountOrderStatusFilter,
+  getAccountOrderTabCounts,
+  type AccountOrderHistoryTab,
+} from "@/lib/account-orders"
 import { getCurrentUser } from "@/lib/auth"
 import { formatCurrency } from "@/lib/commerce"
 import { normalizeImagePath } from "@/lib/image"
@@ -18,7 +27,13 @@ import {
   paymentStatusToneClass,
 } from "@/lib/payment"
 import { prisma } from "@/lib/prisma"
-import { uiAction } from "@/lib/ui-interactions"
+import { filterActionClass, uiAction } from "@/lib/ui-interactions"
+
+interface OrdersPageProps {
+  searchParams?: Promise<{
+    status?: string | string[]
+  }>
+}
 
 function formatOrderDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
@@ -30,6 +45,7 @@ function statusClass(status: string) {
   if (status === "DELIVERED") return "bg-[#eef7f0] text-[#1f6a3a]"
   if (status === "CANCELLED") return "bg-red-50 text-red-600"
   if (status === "SHIPPED") return "bg-blue-50 text-blue-700"
+  if (status === "PROCESSING") return "bg-sky-50 text-sky-700"
 
   return "border border-black bg-[#d8ff6a] text-black"
 }
@@ -43,9 +59,51 @@ function orderStatusLabel(status: string) {
   return "รอดำเนินการ"
 }
 
-export default async function OrdersPage() {
+function emptyOrderTitle(tab: AccountOrderHistoryTab) {
+  if (tab === "cancelled") return "ยังไม่มีออเดอร์ที่ยกเลิก"
+  if (tab === "delivered") return "ยังไม่มีออเดอร์ที่ส่งสำเร็จ"
+  if (tab === "all") return "ยังไม่มีออเดอร์"
+
+  return "ไม่มีออเดอร์ที่กำลังดำเนินการ"
+}
+
+function emptyOrderDescription(tab: AccountOrderHistoryTab) {
+  if (tab === "cancelled") {
+    return "ออเดอร์ที่ยกเลิกแล้วจะถูกเก็บไว้ที่นี่ เพื่อดูเหตุผลและตรวจสอบย้อนหลังได้"
+  }
+
+  if (tab === "delivered") {
+    return "เมื่อร้านค้าจัดส่งสำเร็จ ออเดอร์จะถูกย้ายมาอยู่ในหมวดนี้"
+  }
+
+  if (tab === "all") {
+    return "ใบสรุปออเดอร์จะแสดงที่นี่หลัง Checkout จากสินค้าที่มี stock พร้อมขาย"
+  }
+
+  return "เมื่อออเดอร์ถูกยกเลิกหรือส่งสำเร็จแล้ว จะไม่ปะปนอยู่ในหมวดกำลังดำเนินการ"
+}
+
+function emptyOrderAction(tab: AccountOrderHistoryTab) {
+  if (tab === "active" || tab === "all") {
+    return {
+      href: "/product",
+      label: "เลือกซื้อจาก vault",
+    }
+  }
+
+  return {
+    href: "/account/orders?status=active",
+    label: "ดูออเดอร์ที่กำลังดำเนินการ",
+  }
+}
+
+export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const user = await getCurrentUser()
   if (!user) redirect("/login")
+
+  const params = await searchParams
+  const activeTab = getAccountOrderHistoryTab(params?.status)
+  const statusFilter = getAccountOrderStatusFilter(activeTab)
 
   const orders = await prisma.order.findMany({
     where: { userId: user.id },
@@ -66,28 +124,30 @@ export default async function OrdersPage() {
     orderBy: { createdAt: "desc" },
   })
 
-  const totalPairs = orders.reduce(
-    (sum, order) => sum + order.items.reduce((itemSum, item) => itemSum + item.quantity, 0),
-    0
-  )
-  const activeOrders = orders.filter((order) =>
-    ["PENDING", "PROCESSING", "SHIPPED"].includes(order.status)
-  ).length
-  const paidOrders = orders.filter((order) => order.paymentStatus === "PAID").length
-  const totalSpent = orders.reduce((sum, order) => sum + Number(order.total), 0)
+  const visibleOrders = statusFilter
+    ? orders.filter((order) =>
+        (statusFilter as readonly string[]).includes(order.status),
+      )
+    : orders
+  const tabCounts = getAccountOrderTabCounts(orders)
+  const activeTabMeta =
+    ACCOUNT_ORDER_HISTORY_TABS.find((tab) => tab.key === activeTab) ??
+    ACCOUNT_ORDER_HISTORY_TABS[0]
+  const totalSpent = orders
+    .filter((order) => order.status !== "CANCELLED")
+    .reduce((sum, order) => sum + Number(order.total), 0)
+  const emptyAction = emptyOrderAction(activeTab)
 
   return (
     <div className="space-y-10">
       <header className="grid gap-5 lg:grid-cols-[1fr_360px] lg:items-end">
         <div>
-          <p className="text-sm text-black/50">
-            ประวัติการสั่งซื้อ
-          </p>
+          <p className="text-sm text-black/50">ประวัติการสั่งซื้อ</p>
           <h1 className="mt-2 text-4xl font-semibold leading-tight">
             ออเดอร์ของคุณ
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-black/55">
-            ดูคู่ที่สั่งซื้อ ยอดรวม ไซซ์ที่มี Stock จริง และสถานะออเดอร์ได้ในหน้าเดียว
+            ดูออเดอร์ตามสถานะ ติดตามคู่ที่กำลังจัดส่ง และเก็บออเดอร์ที่ยกเลิกไว้ตรวจสอบย้อนหลัง
           </p>
         </div>
 
@@ -101,20 +161,60 @@ export default async function OrdersPage() {
       </header>
 
       <section className="grid gap-3 sm:grid-cols-4">
-        <StatCard icon={ReceiptText} label="ออเดอร์" value={orders.length.toString()} />
-        <StatCard icon={ShoppingBag} label="จำนวนคู่" value={totalPairs.toString()} />
-        <StatCard icon={Clock3} label="กำลังดำเนินการ" value={activeOrders.toString()} />
-        <StatCard icon={CreditCard} label="ชำระแล้ว" value={paidOrders.toString()} />
+        <StatCard
+          icon={ReceiptText}
+          label="ออเดอร์ทั้งหมด"
+          value={tabCounts.all.toString()}
+        />
+        <StatCard
+          icon={Clock3}
+          label="กำลังดำเนินการ"
+          value={tabCounts.active.toString()}
+        />
+        <StatCard
+          icon={PackageCheck}
+          label="ส่งสำเร็จ"
+          value={tabCounts.delivered.toString()}
+        />
+        <StatCard
+          icon={XCircle}
+          label="ยกเลิกแล้ว"
+          value={tabCounts.cancelled.toString()}
+        />
+      </section>
+
+      <section className="rounded-lg border border-black/10 bg-white p-4">
+        <div className="mb-3">
+          <h2 className="font-semibold text-black">สถานะออเดอร์</h2>
+          <p className="mt-1 text-sm text-black/55">
+            {activeTabMeta.description}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {ACCOUNT_ORDER_HISTORY_TABS.map((tab) => (
+            <Link
+              key={tab.key}
+              href={`/account/orders?status=${tab.key}`}
+              className={filterActionClass({
+                active: activeTab === tab.key,
+                className: "h-10 px-4 text-sm font-semibold",
+              })}
+            >
+              <span>{tab.label}</span>
+              <span className="rounded-full bg-white/70 px-2 py-0.5 text-xs text-black">
+                {tabCounts[tab.key]}
+              </span>
+            </Link>
+          ))}
+        </div>
       </section>
 
       {orders.length === 0 ? (
         <section className="grid gap-6 rounded-lg border border-black/10 bg-[#f4f3ef] p-6 md:grid-cols-[1fr_240px]">
           <div>
-            <h2 className="text-2xl font-semibold">
-              ยังไม่มีออเดอร์
-            </h2>
+            <h2 className="text-2xl font-semibold">ยังไม่มีออเดอร์</h2>
             <p className="mt-3 max-w-xl text-sm leading-7 text-black/55">
-              ใบสรุปออเดอร์จะแสดงที่นี่หลัง Checkout เริ่มจากเลือกสินค้าที่มี Stock และไซซ์ที่พร้อมขาย
+              ใบสรุปออเดอร์จะแสดงที่นี่หลัง Checkout เริ่มจากเลือกสินค้าที่มี stock และไซซ์ที่พร้อมขาย
             </p>
             <Link
               href="/product"
@@ -133,12 +233,29 @@ export default async function OrdersPage() {
             />
           </div>
         </section>
+      ) : visibleOrders.length === 0 ? (
+        <section className="rounded-lg border border-black/10 bg-[#f4f3ef] p-6">
+          <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-white">
+            <ShoppingBag size={20} />
+          </div>
+          <h2 className="text-2xl font-semibold">{emptyOrderTitle(activeTab)}</h2>
+          <p className="mt-3 max-w-xl text-sm leading-7 text-black/55">
+            {emptyOrderDescription(activeTab)}
+          </p>
+          <Link
+            href={emptyAction.href}
+            className={`mt-6 px-5 py-3 text-sm font-semibold ${uiAction.accent}`}
+          >
+            {emptyAction.label}
+            <ArrowRight size={15} />
+          </Link>
+        </section>
       ) : (
         <section className="space-y-4">
-          {orders.map((order) => {
+          {visibleOrders.map((order) => {
             const pairCount = order.items.reduce(
               (sum, item) => sum + item.quantity,
-              0
+              0,
             )
             const previewNames = order.items
               .slice(0, 2)
@@ -180,10 +297,14 @@ export default async function OrdersPage() {
                         <p className="font-semibold">
                           Order #{order.id.slice(0, 8)}
                         </p>
-                        <span className={`rounded-full px-3 py-1 text-[11px] font-medium ${statusClass(order.status)}`}>
+                        <span
+                          className={`rounded-full px-3 py-1 text-[11px] font-medium ${statusClass(order.status)}`}
+                        >
                           {orderStatusLabel(order.status)}
                         </span>
-                        <span className={`rounded-full px-3 py-1 text-[11px] font-medium ${paymentStatusToneClass[order.paymentStatus]}`}>
+                        <span
+                          className={`rounded-full px-3 py-1 text-[11px] font-medium ${paymentStatusToneClass[order.paymentStatus]}`}
+                        >
                           {paymentStatusLabels[order.paymentStatus]}
                         </span>
                       </div>
@@ -232,7 +353,7 @@ export default async function OrdersPage() {
               </p>
             </div>
             <p className="max-w-md text-sm leading-7 text-black/55">
-              ยอดรวมถูกบันทึกจากราคาจริงใน Database ณ เวลาที่สร้างออเดอร์
+              ยอดนี้ไม่นับออเดอร์ที่ยกเลิกแล้ว ส่วนออเดอร์ที่ยกเลิกยังคงอยู่ในประวัติเพื่อตรวจสอบย้อนหลัง
             </p>
           </div>
         </footer>

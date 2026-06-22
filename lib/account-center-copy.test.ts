@@ -5,7 +5,9 @@ import path from "node:path"
 
 const files = [
   "app/(shop)/account/page.tsx",
+  "app/(shop)/account/orders/page.tsx",
   "lib/account-center.ts",
+  "lib/account-orders.ts",
 ]
 
 const brokenCopyPattern = /[\u0080-\u009f\uFFFD]/

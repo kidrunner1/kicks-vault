@@ -33,7 +33,7 @@ export default function CancelOrderSection({
 
   useEffect(() => {
     if (state.ok) {
-      router.refresh()
+      router.replace("/account/orders?status=cancelled")
     }
   }, [router, state.ok])
 

@@ -84,7 +84,10 @@ export default async function AccountPage() {
       },
     }),
     prisma.order.findMany({
-      where: { userId: user.id },
+      where: {
+        userId: user.id,
+        status: { in: [...ACTIVE_ACCOUNT_ORDER_STATUSES] },
+      },
       include: {
         items: {
           include: {
@@ -238,18 +241,26 @@ export default async function AccountPage() {
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
         <section className="space-y-5">
           <SectionHeader
-            title="ออเดอร์ล่าสุด"
-            actionHref="/account/orders"
+            title="ออเดอร์ที่กำลังดำเนินการ"
+            actionHref="/account/orders?status=active"
             actionLabel="ดูทั้งหมด"
           />
 
           {latestOrders.length === 0 ? (
             <EmptyAction
               icon={ShoppingBag}
-              title="ยังไม่มีออเดอร์"
-              description="เริ่มจากเลือกคู่ที่มีไซซ์พร้อมขาย แล้วประวัติการสั่งซื้อจะมาอยู่ตรงนี้"
-              href="/product"
-              actionLabel="เลือกซื้อสินค้า"
+              title={
+                totalOrders > 0
+                  ? "ไม่มีออเดอร์ที่กำลังดำเนินการ"
+                  : "ยังไม่มีออเดอร์"
+              }
+              description={
+                totalOrders > 0
+                  ? "ออเดอร์ที่ส่งสำเร็จหรือยกเลิกแล้วถูกย้ายไปอยู่ในประวัติทั้งหมด"
+                  : "เริ่มจากเลือกคู่ที่มีไซซ์พร้อมขาย แล้วประวัติการสั่งซื้อจะมาอยู่ตรงนี้"
+              }
+              href={totalOrders > 0 ? "/account/orders?status=all" : "/product"}
+              actionLabel={totalOrders > 0 ? "ดูประวัติทั้งหมด" : "เลือกซื้อสินค้า"}
             />
           ) : (
             <div className="space-y-3">

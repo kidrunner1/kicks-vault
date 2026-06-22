@@ -114,6 +114,6 @@ export async function cancelUserOrder(
 
   return {
     ok: true,
-    message: "ยกเลิกออเดอร์แล้ว และคืน stock กลับเข้าระบบเรียบร้อย",
+    message: "ยกเลิกออเดอร์แล้ว คืน stock เรียบร้อย และย้ายไปหมวดยกเลิกแล้ว",
   }
 }
