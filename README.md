@@ -1,225 +1,120 @@
-# 📘 Kicks Vault – Sneaker E-commerce Web App
+# KicksVault
 
-Kicks Vault is a **full-stack e-commerce web application** for sneakers, built to practice and demonstrate core concepts in modern web development, including authentication, product management, and order systems.
+KicksVault is a Next.js App Router storefront for premium sneakers. It includes a public storefront, authenticated customer account area, cart and checkout, order history, user cancellation, and an admin dashboard for product, stock, payment mock, and fulfillment management.
 
----
+## Documentation
 
-## 🚀 Project Overview
+Start here:
 
-This project focuses on building a **solid foundation of e-commerce logic**, such as:
+- [Documentation index](./docs/README.md)
+- [User guide](./docs/USER_GUIDE.md)
+- [Admin guide](./docs/ADMIN_GUIDE.md)
+- [Developer guide](./docs/DEVELOPER_GUIDE.md)
+- [Architecture](./docs/ARCHITECTURE.md)
+- [Operations](./docs/OPERATIONS.md)
 
-* Authentication & Authorization
-* Product & Inventory Management
-* Cart & Order Flow
-* Relational Database Design
+Project direction:
 
-> ⚠️ This is a **prototype version** — not production-ready yet.
+- [Product notes](./PRODUCT.md)
+- [Agent/developer rules](./AGENTS.md)
 
----
-## 🎯 Features
-### ✅ Implemented
-#### 👤 Authentication
+## Current Features
 
-* Register / Login
-* Role-based access (USER / ADMIN)
-* Cookie + Refresh Token
+- Public landing page and product store
+- Product list/detail with search, filters, collections, stock visibility, and recommendations
+- Customer auth with JWT cookies and refresh flow
+- Client cart with Zustand
+- Address book with default address
+- Checkout using database prices and transaction-based stock decrement
+- Mock payment methods: manual, bank transfer, cash on delivery
+- Order history with active, delivered, cancelled, and all tabs
+- User order cancellation within 30 minutes while pending
+- Admin dashboard with revenue, fulfillment, payment, stock, and catalog health summaries
+- Admin product and stock management
+- Admin local image upload
+- Admin order payment and fulfillment controls
 
-#### 👟 Product System
+## Tech Stack
 
-* Product listing & detail
-* Brand relationship
-* Images, specs, and sizes
-* Featured products
+- Next.js 16 App Router
+- React 19
+- TypeScript
+- Prisma 6
+- PostgreSQL
+- Tailwind CSS 4
+- Zustand
+- Zod
+- bcrypt
+- jose
 
-#### ❤️ Favorite (Wishlist)
+## Quick Start
 
-* Add / Remove favorite items
-* Prevent duplicate using unique constraint
+Install dependencies:
 
-#### 🛒 Cart (Client-side)
-
-* Built with Zustand
-* Add product with size & quantity
-
-#### 📦 Order System (Basic)
-
-* Create order from cart
-* OrderItem stores:
-
-  * price (snapshot)
-  * quantity
-  * size
-
-#### 📊 Inventory System
-
-* Stock management per size (ShoeSize)
-
----
-
-### ❌ Not Implemented Yet
-
-* Payment System (Stripe / PromptPay)
-* Shipping Address
-* Real-time Order Tracking
-* Cart persistence (database)
-
----
-
-## 🧭 User Flow
-
-```
-Login / Register
-      ↓
-Browse Products
-      ↓
-View Product Detail
-      ↓
-Add to Cart (Zustand)
-      ↓
-Checkout
-      ↓
-Create Order + OrderItems
-      ↓
-Order Status = PENDING
-```
----
-
-## 🗄️ Database Design
-### 🧩 Core Entities
-
-* User
-* Brand
-* Shoe (Product)
-* ShoeImage
-* ShoeSpec
-* ShoeSize (Inventory)
-* Favorite
-* Order
-* OrderItem
-
-### 🔗 Key Relationships
-
-* User → Orders (1:M)
-* Order → OrderItems (1:M)
-* Shoe → ShoeSize (1:M)
-* User ↔ Shoe (Favorite)
-
----
-## 🧠 Design Decisions
-
-* Use **OrderItem** to snapshot price and size at purchase time
-* Use **Decimal** for price (avoid floating-point errors)
-* Use **unique constraints** to prevent duplicate favorites
-* Use **ShoeSize** for inventory per size
-* Use **Zustand** for lightweight client-side cart
-
----
-
-## ⚙️ Tech Stack
-### Frontend
-
-* React / Next.js
-* Zustand (state management)
-
-### Backend
-
-* Node.js / Express
-
-### Database
-
-* PostgreSQL
-* Prisma ORM
-
----
-
-## 🔐 Authentication & Security
-
-* Access Token (short-lived)
-* Refresh Token (stored in HTTP-only cookie)
-* Password hashing (bcrypt)
-* Input validation (e.g., Zod / Joi)
-* Protected API routes
-
----
-
-## 📦 Order Flow (Technical)
-
-```
-Client Cart (Zustand)
-        ↓
-Checkout API
-        ↓
-Create Order
-        ↓
-Create OrderItems
-        ↓
-Calculate total
-        ↓
-(Update stock - planned improvement)
+```powershell
+npm.cmd install
 ```
 
----
+Create local environment file:
 
-## ⚠️ Limitations
+```powershell
+Copy-Item .env.example .env
+```
 
-* No payment integration
-* No shipping system
-* Cart is not persistent across devices
-* No real-time inventory sync
+Edit `.env` with your local database URL and JWT secret. Do not commit `.env`.
 
----
+Generate Prisma Client and migrate the database:
 
-## 🛠️ Admin Capabilities
+```powershell
+npx.cmd prisma generate
+npx.cmd prisma migrate dev
+```
 
-* Manage products (CRUD)
-* Manage brands
-* View and update orders
-* Manage stock per size
+Seed product data:
 
----
+```powershell
+npx.cmd prisma db seed
+```
 
-## 📖 User Guide
+Run the app:
 
-### 👤 User
+```powershell
+npm.cmd run dev
+```
 
-1. Register / Login
-2. Browse products
-3. Add to cart
-4. Checkout
-5. View order status
+## Verification
 
-### 🛠️ Admin
+Run lint:
 
-* Add / Edit / Delete products
-* Manage inventory
-* Update order status
+```powershell
+npm.cmd run lint
+```
 
----
+Run production build:
 
-## 🚀 Future Improvements
+```powershell
+npm.cmd run build
+```
 
-* 💳 Payment Integration (Stripe / PromptPay)
-* 📍 Shipping Address System
-* 🔄 Persistent Cart (database)
-* 📦 Real-time Order Tracking
-* 📊 Admin Dashboard Analytics
+Run focused tests:
 
----
+```powershell
+npx.cmd tsx --test lib/order-fulfillment.test.ts lib/account-orders.test.ts lib/admin-upload.test.ts
+```
 
-## 💡 Key Learning Outcomes
+## Important Notes
 
-* Full-stack architecture design
-* Relational database modeling
-* Authentication flow with tokens
-* State management (client vs server)
-* Building scalable e-commerce logic
+- Checkout totals must come from database prices, not client cart prices.
+- Order creation and stock decrement must stay inside one Prisma transaction.
+- Admin pages must keep server-side guards.
+- Refresh tokens are stored as hashes.
+- Cancelled orders should remain in history/admin for audit, but should not appear in the active customer flow.
+- Uploaded product images are stored locally under `public/uploads/shoes` in this prototype.
 
----
+## Known Limitations
 
-## 📌 Author
-
-Built as a **Full Stack Development Practice Project** to demonstrate real-world system design and implementation.
-
----
-
-⭐ If you find this project useful, feel free to star the repo!
+- No real payment gateway yet.
+- No production-grade object storage yet.
+- Cart is not persisted across devices.
+- No email or notification system yet.
+- Admin audit log is not implemented yet.
